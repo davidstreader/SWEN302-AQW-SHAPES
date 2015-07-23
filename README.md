@@ -8,7 +8,7 @@ Team: AQW
 Team members:<br />
 Jacky Chang<br />
 Geoffrey Longuet<br />
-Liam Parker
+Liam Parker<br />
 Jinpeng Song<br />
 Claire Sun<br />
 Jiaheng Wang
