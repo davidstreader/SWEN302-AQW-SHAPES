@@ -7,7 +7,7 @@ $(document).ready(drawShizz);
 function drawShizz()
 {
     //var canvas = document.getElementById('game-area');
-    var canvas = $('#game-area');
+    var canvas = document.getElementById('game-area');
     var context = canvas.getContext('2d');
 
 // set line width for all lines
