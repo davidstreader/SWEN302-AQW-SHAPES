@@ -1,0 +1,34 @@
+Introduction Rules
+#IRule1
+├A,├B
+├A^B
+#IRule2
+├A
+├AvB
+#IRule3
+├B
+├AvB
+#IRule4
+u:A├B
+├A⇒B
+#IRule5
+u:A├p
+├¬A
+#IRule6
+├ T
+Elimination Rules
+#ERule1
+├AvB
+├A
+#ERule2
+A^B
+├B
+#ERule3
+├AvB u:A├C  w:B├C
+├C
+#ERule4
+├A→B ├A
+├B
+#ERule5
+├¬A ├A
+├C

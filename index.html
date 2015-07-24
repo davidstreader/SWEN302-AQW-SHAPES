@@ -1,17 +1,23 @@
+<<<<<<< HEAD
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 
 <head>
-<title>SHAPES</title>
+<title>Logic Game</title>
 <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<link rel="stylesheet" type="text/css" href="style.css" /> 
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<link rel="stylesheet" href="css/stylesheet.css?v=1.0">
 <script>type = "text/javascript" src = "http://d3js.org/d3.v3.min.js" charset = "utf-8"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
+
 </head>
 
-<body>
+<body onload="test();">
 	<div id="main">
 		<div id="rulesPanel">
-			<div id="rulesPanelHeader"><h2>Rules</h2></div>
+			<div id="rulesPanelHeader">
+				<h2>Rules</h2>
+			</div>
 			<div id="rulesPanelSvg"></div>
 		</div>
 
@@ -26,9 +32,13 @@
 				<input id="uploadFile" type="file">
 			</div>
 			<div id="canvasSvg">
-				<canvas id = "gameAreaCanvas"></canvas>
+				<canvas id="game-area"></canvas>
 			</div>
 		</div>
 	</div>
+	<script src="js/d3.min.js"></script>
+	<script src="js/events.js"></script>
+	<script src="js/parser.js"></script>
+	<script src="js/game.js"></script>
 </body>
 </html>
