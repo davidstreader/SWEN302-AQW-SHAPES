@@ -1,12 +1,34 @@
-harro
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales non neque vel dapibus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur nunc urna, molestie elementum accumsan a, consectetur eu ligula. Nam interdum blandit augue et semper. Vestibulum finibus lacus ut tellus scelerisque, a rutrum purus mollis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce fringilla commodo erat, ut facilisis augue blandit et. Integer dictum quis ante eget mollis. In aliquam diam nec diam vehicula, auctor aliquet ipsum scelerisque. Aliquam efficitur nisi vestibulum accumsan posuere. Nunc pretium, augue at faucibus vestibulum, magna turpis egestas tellus, id lacinia risus nunc non odio. Proin vehicula mauris sit amet tempor dapibus.
-
-Cras feugiat venenatis est in ullamcorper. Sed laoreet nisi et mi ullamcorper, a scelerisque sem aliquet. Duis at diam eu nulla auctor interdum et nec neque. Nunc varius ornare velit, ut pretium lacus egestas eget. Pellentesque dapibus laoreet mauris. Nam sapien libero, volutpat convallis semper non, pulvinar ut ipsum. Proin dictum consequat libero vitae fermentum. Pellentesque viverra massa eros, sed tincidunt leo eleifend ac. Quisque sed rutrum nisi, sed bibendum enim. Cras venenatis suscipit turpis, vel imperdiet enim tempus et. Vivamus placerat lobortis augue non porta. In leo nulla, convallis ut ante in, cursus pretium augue. Nunc in nibh nec justo varius ullamcorper vel et mi. Sed vitae suscipit purus.
-
-In interdum tempus urna sit amet tempor. Donec eget arcu ex. Ut massa sem, euismod at elementum eleifend, eleifend id eros. Morbi at sapien velit. Aliquam iaculis non massa eu scelerisque. Morbi id neque gravida dolor sodales semper eget sed augue. Vivamus cursus, arcu vehicula bibendum posuere, justo felis aliquam nisl, ac porta velit nisi sit amet enim. Nam eu dictum risus. Quisque tristique at purus vitae convallis. Nam gravida neque lectus, sed faucibus mauris commodo quis.
-
-Etiam vitae feugiat risus, id maximus justo. Integer ac mattis nisl. Nullam tincidunt justo quis odio cursus viverra. Cras varius ex sed turpis consequat, in efficitur urna convallis. Morbi sit amet dui et arcu dignissim gravida. Nunc orci lectus, rutrum sit amet porta quis, porttitor vitae elit. Proin feugiat quam dictum, posuere lorem sit amet, tristique ex. Nam ut sapien dolor. Cras fermentum turpis quis sollicitudin dictum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Phasellus porttitor tristique risus, id vulputate nulla luctus ut. Aenean ex enim, tempus ac tellus ut, pretium accumsan neque. In et vulputate nibh. Suspendisse a velit nec arcu blandit consequat non quis lorem. Maecenas consequat mattis ipsum, in pretium turpis lobortis at.
-
-Nam id placerat urna, vitae facilisis nibh. Donec in egestas tortor. Integer nec suscipit risus. Nullam at euismod elit. Mauris non eleifend sapien, ac mattis ipsum. Proin luctus risus sit amet nulla porta maximus. Fusce vitae viverra purus. 
+Introduction Rules
+#IRule1
+├A,├B
+├A^B
+#IRule2
+├A
+├AvB
+#IRule3
+├B
+├AvB
+#IRule4
+u:A├B
+├A⇒B
+#IRule5
+u:A├p
+├¬A
+#IRule6
+├ T
+Elimination Rules
+#ERule1
+├AvB
+├A
+#ERule2
+A^B
+├B
+#ERule3
+├AvB u:A├C  w:B├C
+├C
+#ERule4
+├A→B ├A
+├B
+#ERule5
+├¬A ├A
+├C

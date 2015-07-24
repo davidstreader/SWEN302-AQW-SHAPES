@@ -10,9 +10,8 @@ function generateAST() {
 }
 
 function test() {
-	d3.text("js/logic_rules.txt",function (data) {
-			//$("#content").append(data);
-			console.log(data);
+	d3.text("js/logic_rules.txt",function(data) {
+		
+		console.log(data);
 	});
-
 }
