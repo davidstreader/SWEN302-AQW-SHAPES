@@ -42,13 +42,15 @@ function drawShizz()
  * Shape Object
  * An object representing a shape.
  */
-function Shape(shapePoints) {
+function Shape(startX, startY, shapePoints) {
     var points = shapePoints;
+    var x = startX;
+    var y = startY;
 
     this.drawShape = function(context){
-        context.moveTo(points[0].x, points[0].y);
+        context.moveTo(points[0].x + startX, points[0].y + startY);
         for(var i=1; i<points.length; i++){
-            context.lineTo(points[i].x, points[i].y);
+            context.lineTo(points[i].x + startX, points[i].y + startY);
         }
         context.lineJoin = 'miter';
         context.stroke();
