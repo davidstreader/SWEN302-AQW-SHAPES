@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<title>SHAPES</title>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<link rel="stylesheet" type="text/css" href="style.css" /> 
+<script>type = "text/javascript" src = "http://d3js.org/d3.v3.min.js" charset = "utf-8"></script>
+</head>
+
+<body>
+	<div id="main">
+		<div id="rulesPanel">
+			<div id="rulesPanelHeader"><h2>Rules</h2></div>
+			<div id="rulesPanelSvg"></div>
+		</div>
+
+		<div id="gameAreaPanel">
+			<div id="menuBar">
+				<button id="resetButton" class="menuBarButton">Reset</button>
+				<button id="showHideButton" class="menuBarButton">Show/Hide</button>
+				<button id="viewAnswerButton" class="menuBarButton">View Answer</button>
+				<button id="hintButton" class="menuBarButton">Hint</button>
+				<button id="zoomInButton" class="menuBarButton">+</button>
+				<button id="zoomOutButton" class="menuBarButton">-</button>
+				<input id="uploadFile" type="file">
+			</div>
+			<div id="canvasSvg">
+				<canvas id = "gameAreaCanvas"></canvas>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
