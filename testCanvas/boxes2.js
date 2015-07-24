@@ -1,30 +1,42 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(startX, startY, shapePoints) {
-    var points = shapePoints;
-    var x = startX;
-    var y = startY;
+function Shape(x, y, points) {
+    this.points = points;
+    this.x = x;
+    this.y = y;
 
     this.draw = function(context){
-        context.moveTo(points[0].x + x, points[0].y + y);
+          context.moveTo(points[0].x + x, points[0].y + y);
         for(var i=1; i<points.length; i++){
             context.lineTo(points[i].x + x, points[i].y + y);
         }
         context.lineJoin = 'miter';
         context.stroke();
-    };
+       };
 
     this.addPoint = function(xPt, yPt){
         points.append({x:xPt, y:yPt});
     };
 }
 
+
 // Determine if a point is inside the shape's bounds
-Shape.prototype.contains = function(mx, my) { //rewrite for polygon
-  // All we have to do is make sure the Mouse X,Y fall in the area between
-  // the shape's X and (X + Width) and its Y and (Y + Height)
-  return  (this.x <= mx) && (this.x + this.w >= mx) &&
-          (this.y <= my) && (this.y + this.h >= my);
+Shape.prototype.contains = function(mouseX, mouseY,ctx) {
+   ctx.beginPath();
+   ctx.moveTo(100,100);
+    ctx.lineTo(200,200);
+    ctx.lineTo(100,300);
+    ctx.lineTo(0,200);
+    ctx.lineTo(100,100);
+    ctx.closePath();
+    console.log("mouse at "+mouseX+" : "+mouseY);
+    if(ctx.isPointInPath(mouseX,mouseY)){
+            console.log("true meow");
+
+      return true;
+    }
+        
+return false;
 }
 
 function CanvasState(canvas) {
@@ -77,8 +89,9 @@ function CanvasState(canvas) {
     var my = mouse.y;
     var shapes = myState.shapes;
     var l = shapes.length;
+    console.log("ctx ="+myState.ctx);
     for (var i = l-1; i >= 0; i--) {
-      if (shapes[i].contains(mx, my)) {
+      if (shapes[i].contains(mx, my, myState.ctx)) {
         var mySel = shapes[i];
         // Keep track of where in the object we clicked
         // so we can move it smoothly (see mousemove)
@@ -199,7 +212,7 @@ CanvasState.prototype.getMouse = function(e) {
 // You could uncomment this init() reference and place the script reference inside the body tag
 //init();
 var shapes={
-    AND :[{x:100, y:100}, {x:100, y:300}, {x:400, y:480}],
+    AND :[{x:100, y:100}, {x:200, y:200}, {x:100, y:300}, {x:0, y:200}, {x:100, y:100}],
     OR : [{x:100, y:100}, {x:300, y:200}, {x:100, y:50}]
 };
 function init() {
@@ -209,7 +222,8 @@ function init() {
   // Lets make some partially transparent
 //  s.addShape(new Shape(80,150,60,30, 'rgba(127, 255, 212, .5)'));
  // s.addShape(new Shape(125,80,30,80, 'rgba(245, 222, 179, .7)'));
-  s.addShape(new Shape(100,100,shapes.AND));
-  s.addShape(new Shape(0,0,shapes.OR));
+  s.addShape(new Shape(0,0,shapes.AND));
+  
+  //s.addShape(new Shape(0,0,shapes.OR));
 
 }
