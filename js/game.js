@@ -37,3 +37,28 @@ function drawShizz()
     context.lineJoin = 'bevel';
     context.stroke();
 }
+
+/**
+ * Shape Object
+ * An object representing a shape.
+ */
+function Shape(shapePoints) {
+    var points = shapePoints;
+
+    this.drawShape = function(context){
+        context.moveTo(points[0].x, points[0].y);
+        for(var i=1; i<points.length; i++){
+            context.lineTo(points[i].x, points[i].y);
+        }
+        context.lineJoin = 'miter';
+        context.stroke();
+    };
+
+    this.addPoint = function(xPt, yPt){
+        points.append({x:xPt, y:yPt})
+    };
+}
+var shapes={
+    AND : [{x:0, y:0}, {x:0, y:0}, {x:0, y:0}],
+    OR : [{x:0, y:0}, {x:0, y:0}, {x:0, y:0}]
+};
