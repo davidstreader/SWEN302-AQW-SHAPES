@@ -1,6 +1,6 @@
 "use strict";
-// having fun looking at liam's face
-
+var operator = {and: "^", or: "v" , implies: "⇒", negation : "¬", turnStyle:"├"};
+var variable = {A:"A", B:"B", C:"C", X:"X", Y:"Y"};
 function loadFile() {
 
 }
@@ -9,11 +9,8 @@ function generateAST() {
 
 }
 
-function test() {
-	d3.text("js/logic_rules.txt",function(data) {
-		
-	//	console.log(data);
-	});
+function test(){
+  
 }
 
 var Rule = function(above, below){

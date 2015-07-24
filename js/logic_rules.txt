@@ -24,11 +24,11 @@ Elimination Rules
 A^B
 ├B
 #ERule3
-├AvB u:A├C  w:B├C
+├AvB,u:A├C,w:B├C
 ├C
 #ERule4
-├A→B ├A
+├A→B,├A
 ├B
 #ERule5
-├¬A ├A
+├¬A,├A
 ├C
