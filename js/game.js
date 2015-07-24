@@ -28,9 +28,9 @@ function Shape(startX, startY) {
 }
 
 Shape.prototype.drawShape = function(context){
-    context.moveTo(this.points[0].x + x, this.points[0].y + y);
-    for(var i=1; i<points.length; i++){
-        context.lineTo(this.points[i].x + x, this.points[i].y + y);
+    context.moveTo(this.points[0].x + this.x, this.points[0].y + this.y);
+    for(var i=1; i<this.points.length; i++){
+        context.lineTo(this.points[i].x + this.x, this.points[i].y + this.y);
     }
     context.lineJoin = 'miter';
     context.stroke();
