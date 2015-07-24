@@ -48,9 +48,9 @@ function Shape(startX, startY, shapePoints) {
     var y = startY;
 
     this.drawShape = function(context){
-        context.moveTo(points[0].x + startX, points[0].y + startY);
+        context.moveTo(points[0].x + x, points[0].y + y);
         for(var i=1; i<points.length; i++){
-            context.lineTo(points[i].x + startX, points[i].y + startY);
+            context.lineTo(points[i].x + x, points[i].y + y);
         }
         context.lineJoin = 'miter';
         context.stroke();
