@@ -196,7 +196,7 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
-  var cs = new CanvasState(document.getElementById('canvas1'));
+  var cs = new CanvasState(document.getElementById('game-area'));
   cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
   cs.addShape(new Shape(15,15,shapePoints.OR,"#00F"));
   
