@@ -1,0 +1,14 @@
+[  
+    { "type": "Introduction", "name": "Rule1", "above": "├A,├B", "below": "├A^B" },
+    { "type": "Introduction", "name": "Rule2", "above": "├A", "below": "├AvB"},
+	{ "type": "Introduction", "name": "Rule3", "above": "├B", "below": "├AvB"},
+	{ "type": "Introduction", "name": "Rule4", "above": "u:A├B", "below": "├A⇒B"},
+	{ "type": "Introduction", "name": "Rule5", "above": "u:A├p", "below": "├¬A"},
+	{ "type": "Introduction", "name": "Rule6", "above": "", "below": "├T" },
+    { "type": "Elimination", "name": "Rule1", "above": "├A^B", "below": "├A"},
+    { "type": "Elimination", "name": "Rule2", "above": "├A^B", "below": "├B"},
+	{ "type": "Elimination", "name": "Rule3", "above": "├AvB,u:A├C,w:B├C", "below": "├C"},
+	{ "type": "Elimination", "name": "Rule4", "above": "├A⇒B,├A", "below": "├B"},
+	{ "type": "Elimination", "name": "Rule5", "above": "├¬A,├A", "below": "├C"}
+   
+]
