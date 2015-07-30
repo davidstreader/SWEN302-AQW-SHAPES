@@ -23,6 +23,7 @@ inputFile.change(function () {
 			reader.onload = function (event) {
 				var result = event.target.result;
 				selectedFile[fileName] = result;
+				reader.readAsText(file);
 			};
 		} else {
 			alert("json file only!")
