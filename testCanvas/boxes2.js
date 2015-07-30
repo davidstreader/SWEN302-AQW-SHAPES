@@ -1,38 +1,39 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
-function Shape(x, y, points) {
+
+//c is the canvas created for debugging purposes only
+var c;
+
+function Shape(currX, currY, points, color) {
     this.points = points;
-    this.x = x;
-    this.y = y;
-
-    this.draw = function(context){
-          context.moveTo(points[0].x + x, points[0].y + y);
-        for(var i=1; i<points.length; i++){
-            context.lineTo(points[i].x + x, points[i].y + y);
-        }
-        context.lineJoin = 'miter';
-        context.stroke();
-       };
-
-    this.addPoint = function(xPt, yPt){
-        points.append({x:xPt, y:yPt});
-    };
+    this.currX = currX;
+    this.currY = currY;
+    this.color = color;
 }
 
+Shape.prototype.draw = function(context){
+  context.beginPath();
+  context.moveTo(this.currX + this.points[0].x, this.currY + this.points[0].y);
+  for(var i=0; i<this.points.length; i++){
+      context.lineTo(this.currX + this.points[i].x , this.currY + this.points[i].y);
+  }
+  context.fillStyle = this.color;
+  context.fill();
+  context.lineJoin = 'round';
+  context.stroke();
+  context.closePath();
+};
 
-// Determine if a point is inside the shape's bounds
+// Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
+// Start from back to get the newest placed if theres overlap
 Shape.prototype.contains = function(mouseX, mouseY,ctx) {
    ctx.beginPath();
-   ctx.moveTo(100,100);
-    ctx.lineTo(200,200);
-    ctx.lineTo(100,300);
-    ctx.lineTo(0,200);
-    ctx.lineTo(100,100);
-    ctx.closePath();
-    console.log("mouse at "+mouseX+" : "+mouseY);
+   ctx.moveTo(this.points[0].x+this.currX,this.points[0].y+this.currY);
+   for(var i=1;i<this.points.length;i++){
+     ctx.lineTo(this.points[i].x+this.currX,this.points[i].y+this.currY);
+   }
     if(ctx.isPointInPath(mouseX,mouseY)){
             console.log("true meow");
-
       return true;
     }
         
@@ -40,8 +41,7 @@ return false;
 }
 
 function CanvasState(canvas) {
-  // **** First some setup! ****
-  
+  //setup for when canvas is made
   this.canvas = canvas;
   this.width = canvas.width;
   this.height = canvas.height;
@@ -55,8 +55,7 @@ function CanvasState(canvas) {
     this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
     this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
   }
-  // Some pages have fixed-position bars (like the stumbleupon bar) at the top or left of the page
-  // They will mess up mouse coordinates and this fixes that
+ 
   var html = document.body.parentNode;
   this.htmlTop = html.offsetTop;
   this.htmlLeft = html.offsetLeft;
@@ -71,7 +70,7 @@ function CanvasState(canvas) {
   this.dragoffx = 0; // See mousedown and mousemove events for explanation
   this.dragoffy = 0;
   
-  // **** Then events! ****
+  // **** events ****
   
   // This is an example of a closure!
   // Right here "this" means the CanvasState. But we are making events on the Canvas itself,
@@ -88,15 +87,13 @@ function CanvasState(canvas) {
     var mx = mouse.x;
     var my = mouse.y;
     var shapes = myState.shapes;
-    var l = shapes.length;
-    console.log("ctx ="+myState.ctx);
-    for (var i = l-1; i >= 0; i--) {
+    for (var i = shapes.length-1 ; i >= 0 ; i--) {
       if (shapes[i].contains(mx, my, myState.ctx)) {
         var mySel = shapes[i];
         // Keep track of where in the object we clicked
         // so we can move it smoothly (see mousemove)
-        myState.dragoffx = mx - mySel.x;
-        myState.dragoffy = my - mySel.y;
+        myState.dragoffx = mx - mySel.currX;
+        myState.dragoffy = my - mySel.currY;
         myState.dragging = true;
         myState.selection = mySel;
         myState.valid = false;
@@ -111,30 +108,36 @@ function CanvasState(canvas) {
     }
   }, true);
   canvas.addEventListener('mousemove', function(e) {
-    if (myState.dragging){
-      var mouse = myState.getMouse(e);
-      // We don't want to drag the object by its top-left corner, we want to drag it
-      // from where we clicked. Thats why we saved the offset and use it here
-      myState.selection.x = mouse.x - myState.dragoffx;
-      myState.selection.y = mouse.y - myState.dragoffy;   
-      myState.valid = false; // Something's dragging so we must redraw
-    }
+  if (myState.dragging){
+    var mouse = myState.getMouse(e);
+    // We don't want to drag the object by its top-left corner, we want to drag it
+    // from where we clicked. Thats why we saved the offset and use it here
+    myState.selection.currX = mouse.x - myState.dragoffx;
+    myState.selection.currY = mouse.y - myState.dragoffy;   
+    myState.valid = false; // redraw
+  }
   }, true);
   canvas.addEventListener('mouseup', function(e) {
     myState.dragging = false;
   }, true);
+ 
+ //Fun function to return random color
+  function get_random_color() {
+  function c() {
+    return Math.floor(Math.random()*256).toString(16)
+  }
+  return "#"+c()+c()+c();
+}
   // double click for making new shapes
   canvas.addEventListener('dblclick', function(e) {
     var mouse = myState.getMouse(e);
-    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, 20, 20, 'rgba(0,255,0,.6)'));
+    myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
   }, true);
   
+
   // **** Options! ****
-  
-  this.selectionColor = '#CC0000';
-  this.selectionWidth = 2;  
   this.interval = 30;
-  setInterval(function() { myState.draw(); }, myState.interval);
+ setInterval(function() { myState.draw(); }, myState.interval);
 }
 
 CanvasState.prototype.addShape = function(shape) {
@@ -154,31 +157,11 @@ CanvasState.prototype.draw = function() {
     var ctx = this.ctx;
     var shapes = this.shapes;
     this.clear();
-    
-    // ** Add stuff you want drawn in the background all the time here **
-    
     // draw all shapes
-    var l = shapes.length;
-    for (var i = 0; i < l; i++) {
-      var shape = shapes[i];
-      // We can skip the drawing of elements that have moved off the screen:
-      if (shape.x > this.width || shape.y > this.height ||
-          shape.x + shape.w < 0 || shape.y + shape.h < 0) continue;
-      shapes[i].draw(ctx);
+    for (var i = 0; i < shapes.length; i++) {
+       shapes[i].draw(ctx);
     }
-    
-    // draw selection
-    // right now this is just a stroke along the edge of the selected Shape
-    if (this.selection != null) {
-      ctx.strokeStyle = this.selectionColor;
-      ctx.lineWidth = this.selectionWidth;
-      var mySel = this.selection;
-      ctx.strokeRect(mySel.x,mySel.y,mySel.w,mySel.h);
-    }
-    
-    // ** Add stuff you want drawn on top all the time here **
-    
-    this.valid = true;
+  this.valid = true;
   }
 }
 
@@ -203,27 +186,21 @@ CanvasState.prototype.getMouse = function(e) {
 
   mx = e.pageX - offsetX;
   my = e.pageY - offsetY;
-  
-  // We return a simple javascript object (a hash) with x and y defined
   return {x: mx, y: my};
 }
 
-// If you dont want to use <body onLoad='init()'>
-// You could uncomment this init() reference and place the script reference inside the body tag
-//init();
-var shapes={
+var shapePoints={
     AND :[{x:100, y:100}, {x:200, y:200}, {x:100, y:300}, {x:0, y:200}, {x:100, y:100}],
-    OR : [{x:100, y:100}, {x:300, y:200}, {x:100, y:50}]
+    OR : [{x:100, y:100}, {x:300, y:200}, {x:100, y:50}, {x:100,y:100}]
 };
-function init() {
-  var s = new CanvasState(document.getElementById('canvas1'));
-//  s.addShape(new Shape(40,40,300,100)); // The default is gray
- // s.addShape(new Shape(60,140,40,60, 'lightskyblue'));
-  // Lets make some partially transparent
-//  s.addShape(new Shape(80,150,60,30, 'rgba(127, 255, 212, .5)'));
- // s.addShape(new Shape(125,80,30,80, 'rgba(245, 222, 179, .7)'));
-  s.addShape(new Shape(0,0,shapes.AND));
-  
-  //s.addShape(new Shape(0,0,shapes.OR));
 
+//initilisation method called from html on load up
+function init() {
+  var cs = new CanvasState(document.getElementById('canvas1'));
+  cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
+  cs.addShape(new Shape(15,15,shapePoints.OR,"#00F"));
+  
+  // debuggin pruposes only
+  c = cs;
+ 
 }
