@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en-US"><!-- html5 -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>scratch work to test viewport zooming of svg with canvas child</title>
+<!--<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">-->
+<style>
+<!-- Note: don't try setting virtual canvas width and height here for svg,foreignObject,canvas;
+CSS sizing breaks the virtual canvas (tried in Firefox).  Given this, any dynamic resizing from JS
+through DOM may require tricks (workarounds), and may not work at all if the CSS layout sizing stage
+re-evaluates the svg element. TODO: find a dynamic workaround.
+-->
+</style>
+<!-- TODO: Test on IE. Use ExCanvas.js? -->
+<!-- TODO: Replace JQuery with Event.js -->
+<!--<script src="jquery-1.10.2.min.js" type="text/javascript"></script> <!-- jquery used for cross-browser event binding -->
+<script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+<!-- <script src="fabric.min.js" type="text/javascript"></script> -->
+<script src="http://fabricjs.com/lib/fabric.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(window).load(function() {
+    //var fcanvas = new fabric.Canvas("canvas_one"); // BUG: fabric.Canvas clears itself after a bit of use.
+
+
+    var ctx = document.getElementById("canvas_one").getContext("2d");
+    ctx.fillStyle = "#00FF00";
+    ctx.fillRect(0,0,125,125);
+    ctx.fillRect(250,250,250,250);
+    var r = document.getElementById("svg_root");
+    var vb_width_reset = 500, vb_height_reset = 500;
+    r.setAttribute("viewBox", "0 0 " + vb_width_reset + " " + vb_height_reset); // FireFox bug: must init attribute here, though redundant.
+    var zoom_step = 0.2;
+
+    $("#svg_root").mousedown(function(event){ // event.type == 1 is left-click, right-click on my system is 3
+        var r = document.getElementById("svg_root");
+        var bcr = this.getBoundingClientRect(), p_x = event.pageX, p_y = event.pageY;
+        var vc_x = p_x - bcr.left, vc_y = p_y - bcr.top; // visable pixel coords
+        var n_x = vc_x / bcr.width, n_y = vc_y / bcr.height; // coords fraction of reset area
+        var vb = r.getAttribute("viewBox").split(" ",4);
+        var vb_x_reset = n_x * vb_width_reset, vb_y_reset = n_y * vb_height_reset; // reset area coords
+        var zoom = event.which == 1 ? 1.0 - zoom_step : 1.0 + zoom_step;
+        var nwidth = zoom * vb[2], nheight = zoom * vb[3];
+        var nminx = vb_x_reset - 0.5*nwidth, nminy = vb_y_reset - 0.5*nheight;
+        r.setAttribute("viewBox", [nminx,nminy,nwidth,nheight].map(Math.round).join(" "));
+    });
+
+    $(document).keypress(function(event) {
+        var r = document.getElementById("svg_root"); // jquery attr() much slower, and doesn't work here anyways.
+        var c = String.fromCharCode(event.which);
+        var ctx = document.getElementById("canvas_one").getContext("2d");
+        if (c == "1") {
+            r.setAttribute("viewBox", "0 0 250 250");
+        } else if(c == "2") {
+            r.setAttribute("viewBox", "250 0 250 250");
+        } else if(c == "3") {
+            r.setAttribute("viewBox", "0 250 250 250");
+        } else if(c == "4") {
+            r.setAttribute("viewBox", "250 250 250 250");
+        } else if(c == "d") {
+            ctx.fillStyle = "#00FFFF";
+            ctx.fillRect(375,125,37,37);
+            ctx.fillRect(125,125,37,37);
+            ctx.fillRect(375,375,37,37);
+        } else if(c == "c") {
+            ctx.clearRect(375,125,37,37); // sets to same color as style's background-color
+            ctx.clearRect(125,125,37,37);
+            ctx.clearRect(375,375,37,37);
+         } else if(c == "o" || c == "0") {
+            r.setAttribute("viewBox", "0 0 1000 1000"); // greater-than where svg and canvas elements fit
+         } else {
+            r.setAttribute("viewBox", "0 0 500 500");  // original exact-fit
+        }
+    });
+
+    $(document).contextmenu(function(event) {
+         return false;  // We use right-click for zoom, etc., so we don't want the browser context menu popping up in the view.
+    });
+});
+</script>
+</head>
+<body style="background-color:white">
+
+<svg id="svg_root" width="500" height="500" style="background-color:black" preserveAspectRatio="xMinYMin slice">
+
+<circle cx="125" cy="125" r="100" stroke="black" stroke-width="2" fill="red" />
+
+<foreignObject x="0" y="0" width="500" height="500">
+    <canvas id="canvas_one" width="500" height="500" />
+</foreignObject>
+
+<circle cx="325" cy="325" r="100" stroke="black" stroke-width="2" fill="blue" />
+
+</svg>
+
+
+
+</body>
+</html>
