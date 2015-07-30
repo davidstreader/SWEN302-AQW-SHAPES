@@ -36,7 +36,7 @@ Shape.prototype.contains = function(mouseX, mouseY,ctx) {
             console.log("true meow");
       return true;
     }
-        
+
 return false;
 }
 
@@ -55,13 +55,13 @@ function CanvasState(canvas) {
     this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
     this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
   }
- 
+
   var html = document.body.parentNode;
   this.htmlTop = html.offsetTop;
   this.htmlLeft = html.offsetLeft;
 
   // **** Keep track of state! ****
-  
+
   this.valid = false; // when set to false, the canvas will redraw everything
   this.shapes = [];  // the collection of things to be drawn
   this.dragging = false; // Keep track of when we are dragging
@@ -69,16 +69,16 @@ function CanvasState(canvas) {
   this.selection = null;
   this.dragoffx = 0; // See mousedown and mousemove events for explanation
   this.dragoffy = 0;
-  
+
   // **** events ****
-  
+
   // This is an example of a closure!
   // Right here "this" means the CanvasState. But we are making events on the Canvas itself,
   // and when the events are fired on the canvas the variable "this" is going to mean the canvas!
   // Since we still want to use this particular CanvasState in the events we have to save a reference to it.
   // This is our reference!
   var myState = this;
-  
+
   //fixes a problem where double clicking causes text to get selected on the canvas
   canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
   // Up, down, and move are for dragging
@@ -113,14 +113,14 @@ function CanvasState(canvas) {
     // We don't want to drag the object by its top-left corner, we want to drag it
     // from where we clicked. Thats why we saved the offset and use it here
     myState.selection.currX = mouse.x - myState.dragoffx;
-    myState.selection.currY = mouse.y - myState.dragoffy;   
+    myState.selection.currY = mouse.y - myState.dragoffy;
     myState.valid = false; // redraw
   }
   }, true);
   canvas.addEventListener('mouseup', function(e) {
     myState.dragging = false;
   }, true);
- 
+
  //Fun function to return random color
   function get_random_color() {
   function c() {
@@ -133,7 +133,7 @@ function CanvasState(canvas) {
     var mouse = myState.getMouse(e);
     myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
   }, true);
-  
+
 
   // **** Options! ****
   this.interval = 30;
@@ -170,7 +170,7 @@ CanvasState.prototype.draw = function() {
 // If you wanna be super-correct this can be tricky, we have to worry about padding and borders
 CanvasState.prototype.getMouse = function(e) {
   var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
-  
+
   // Compute the total offset
   if (element.offsetParent !== undefined) {
     do {
@@ -196,11 +196,11 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
-  var cs = new CanvasState(document.getElementById('canvas1'));
+  var cs = new CanvasState(document.getElementById('canvasGameArea'));
   cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
   cs.addShape(new Shape(15,15,shapePoints.OR,"#00F"));
-  
+
   // debuggin pruposes only
   c = cs;
- 
+
 }

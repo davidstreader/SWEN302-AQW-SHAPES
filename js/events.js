@@ -4,10 +4,12 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
+var canvasGameArea = document.getElementById("canvasGameArea");
+
 var inputFile = $("#uploadFile");
 var gameAreaCanvas = document.getElementById("gameAreaCanvas");
 var fileName = null;
-var selectedFile = null;
+var selectedFile = [];
 
 inputFile.change(function () {
 	var file, reader, slashIndex;
@@ -15,16 +17,18 @@ inputFile.change(function () {
 	if (this.files.length > 0) {
 		file = this.files[0];
 		fileName = file.name;
+		selectedFile[fileName] = null;
 
-		slashIndex = fileName.lastIndexOf("/");
+		slashIndex = fileName.lastIndexOf(".");
 
 		if (fileName.substring(slashIndex) === ".json") {
 			reader = new FileReader();
+
 			reader.onload = function (event) {
 				var result = event.target.result;
 				selectedFile[fileName] = result;
-				reader.readAsText(file);
 			};
+			reader.readAsText(file);
 		} else {
 			alert("json file only!")
 		}
