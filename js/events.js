@@ -4,122 +4,67 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
+
+var canvasGameArea = document.getElementById("canvasGameArea");
+var canvasSvg = document.getElementById("canvasSvg");
+
 var inputFile = $("#uploadFile");
-var gameAreaCanvas = document.getElementById("gameAreaCanvas");
-var selectedFile = null;
-
-resetButton.addEventListener("click", function(){
-
-});
+var fileName = null;
+var selectedFile = [];
 
 inputFile.change(function () {
-	var i, l, file, fileName, fileNameList, lastValid;
-	var hasFinished = true;
-
-	function readFileList(currentFileName, currentFile){
-		var reader = new FileReader();
-
-		reader.onload = function (event) {
-			var result = event.target.result;
-
-			try {
-				localStorage["file:" + currentFileName] = result;
-			}
-			catch (err) {
-				console.error(err.message);
-				return;
-			}
-
-			addFile(currentFileName);
-
-			if (lastValid === currentFileName) {
-				openFile(currentFileName);
-
-				if (uploadStoreLastSelect !== undefined){
-
-					if (lastSelect === uploadStoreLastSelect) {
-						currentDirectory = uploadStoreCurrentDirectory;
-					}
-				}
-			}
-		};
-
-		if (isText(currentFileName)) {
-			reader.readAsText(currentFile);
-		} else if (isImage(currentFileName) || isAudio(currentFileName)){
-			reader.readAsDataURL(currentFile);
-		}
-	}
-
-	fileNameList = [];
-
-	for (i = 0, l = this.files.length; i < l; i += 1) {
-		file = this.files[i];
-		fileName = file.name;
-
-		/**
-		if (!validateName(fileName, "file")) {
-			if (!confirm("Rename the file on upload?")) {
-				continue;
-			}
-
-			fileName = getName(fileName, "file");
-
-			if (!fileName) {
-				continue;
-			}
-		}
-		 */
-
-		fileNameList[i] = fileName;
-	}
-
-	for (i = 0; i < l; i += 1) {
-		console.log("aa: "+fileNameList[i]);
-		if (fileNameList[i] !== undefined) {
-			hasFinished = false;
-			readFileList(fileNameList[i], this.files[i]);
-			lastValid = fileNameList[i];
-			console.log(fileNameList[i]);
-		}
-	}
-});
-
-input.change(function () {
-	var file, fileName, reader;
+	var file, reader, slashIndex;
 
 	if (this.files.length > 0) {
 		file = this.files[0];
 		fileName = file.name;
-		if (path.extname(fileName) === ".jason") {
-			if (!validateName(fileName)) {
-				if (!confirm("Rename the file on upload?")) {
-					return;
-				}
+		selectedFile = [];
+		slashIndex = fileName.lastIndexOf(".");
 
-				fileName = getName();
+		if (fileName.substring(slashIndex) === ".json") {
+			reader = new FileReader();
 
-				if (!fileName) {
-					return;
-				}
-			}
-		}
-
-		reader = new FileReader();
-		reader.onload = function (event) {
-			var result = event.target.result;
-			if (!isText(fileName)) {
-				result = btoa(result);
-			}
-
-			selectedFile[fileName] = result;
-		};
-
-		if (isText(fileName)) {
+			reader.onload = function (event) {
+				var result = event.target.result;
+				selectedFile = result;
+			};
 			reader.readAsText(file);
 		} else {
-			reader.readAsBinaryString(file);
+			alert("json file only!")
 		}
 	}
 });
-isChanged: isChanged
+
+function update() {
+	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
+	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
+}
+
+
+resetButton.addEventListener("click", function(){
+	init();
+});
+
+zoomInButton.addEventListener("click", function(){
+	var ctx = c.ctx;
+	ctx.scale(1.2,1.2);
+	c.valid = false;
+	c.draw();
+
+});
+zoomOutButton.addEventListener("click", function(){
+	var ctx = c.ctx;
+	c.valid = false;
+	ctx.scale(0.8,0.8);
+
+});
+
+window.onresize = function(){
+	c.width = canvasGameArea.parentNode.clientWidth;
+	c.height = canvasGameArea.parentNode.clientHeight;
+	console.log(c.width+"   "+c.height);
+	c.valid = false;
+	c.draw();
+	window.location.reload();
+
+}
