@@ -7922,6 +7922,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return node;
 	  }
+	  
+	  function parseLogicalImply(){
+	  		var node = parseLogicalAnd();
+	  		
+	  		while (token == 'implies') {
+	  			getTokenSkipNewline();
+	  			node = new OperatorNode('imply', 'imply', [node, parseBitwise()]);
+	  		}
+	  		
+	  		return node;
+	  }
 
 	  /**
 	   * bitwise or, 'x | y'
