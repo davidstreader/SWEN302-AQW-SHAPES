@@ -60,11 +60,12 @@ zoomOutButton.addEventListener("click", function(){
 });
 
 window.onresize = function(){
-	c.width = canvasGameArea.parentNode.clientWidth;
-	c.height = canvasGameArea.parentNode.clientHeight;
-	console.log(c.width+"   "+c.height);
+	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
+	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
+	c.width = canvasGameArea.width;
+	c.height = canvasGameArea.height;
+	c.clear();
 	c.valid = false;
 	c.draw();
 	window.location.reload();
-
 }
