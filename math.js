@@ -7426,7 +7426,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'xor': true,
 	    'or': true,
 	    'not': true,
-	    'implies': true
+	    'implies': true,
+	    'proves':true
 	  };
 
 	  var extra_nodes = {};             // current extra nodes
@@ -7925,11 +7926,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	  
 	  function parseLogicalImply(){
-  		var node = parseBitwiseOr();
+  		var node = parseLogicalProve();
 	
   		while (token == 'implies') {
   			getTokenSkipNewline();
-  			node = new OperatorNode('imply', 'imply', [node, parseBitwiseOr()]);
+  			node = new OperatorNode('implies', 'implies', [node, parseLogicalProve()]);
+  		}
+	  		
+  		return node;
+	  }
+
+	  function parseLogicalProve(){
+  		var node = parseBitwiseOr();
+	
+  		while (token == 'proves') {
+  			getTokenSkipNewline();
+  			node = new OperatorNode('proves', 'proves', [node, parseBitwiseOr()]);
   		}
 	  		
   		return node;
