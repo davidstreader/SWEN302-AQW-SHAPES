@@ -32,12 +32,7 @@ Shape.prototype.contains = function(mouseX, mouseY,ctx) {
    for(var i=1;i<this.points.length;i++){
      ctx.lineTo(this.points[i].x+this.currX,this.points[i].y+this.currY);
    }
-    if(ctx.isPointInPath(mouseX,mouseY)){
-            console.log("true meow");
-      return true;
-    }
-        
-return false;
+    return ctx.isPointInPath(mouseX,mouseY);
 }
 
 function CanvasState(canvas) {
@@ -190,17 +185,43 @@ CanvasState.prototype.getMouse = function(e) {
 }
 
 var shapePoints={
-    AND :[{x:100, y:100}, {x:200, y:200}, {x:100, y:300}, {x:0, y:200}, {x:100, y:100}],
-    OR : [{x:100, y:100}, {x:300, y:200}, {x:100, y:50}, {x:100,y:100}]
+    AND :[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
+    OR : [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
+   IMPLIES: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
+    NOT :  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+   TURNSTYLE :  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
+   RULE :  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+   QUESTION : [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+   
+   A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+   B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]
+   
+   
+   
 };
 
 //initilisation method called from html on load up
 function init() {
   var cs = new CanvasState(document.getElementById('canvas1'));
+  var canvas = document.getElementById('canvas1');
+  canvas.width = canvasSvg.clientWidth;
+  canvas.height = canvasSvg.clientHeight;
+  cs.width = canvasSvg.clientWidth;
+  cs.height = canvasSvg.clientHeight;
+  cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
+  cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
   cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
-  cs.addShape(new Shape(15,15,shapePoints.OR,"#00F"));
+  cs.addShape(new Shape(115,15,shapePoints.OR,"#00F"));
+  cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
+  cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
+  cs.addShape(new Shape(385,25,shapePoints.NOT,"#0FF"));
+  cs.addShape(new Shape(15,125,shapePoints.TURNSTYLE,"#0F0"));
   
-  // debuggin pruposes only
+  cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
+  cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
+  cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
+  cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
+    // debuggin pruposes only
   c = cs;
  
 }
