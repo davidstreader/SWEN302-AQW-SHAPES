@@ -8,9 +8,9 @@ var inputFile = $("#uploadFile");
 var gameAreaCanvas = document.getElementById("gameAreaCanvas");
 var selectedFile = null;
 
-resetButton.addEventListener("click", funtion(){
+resetButton.addEventListener("click", function(){
 
-})
+});
 
 inputFile.change(function () {
 	var i, l, file, fileName, fileNameList, lastValid;
@@ -123,5 +123,3 @@ input.change(function () {
 	}
 });
 isChanged: isChanged
-};
-};
