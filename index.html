@@ -10,6 +10,7 @@
 <script src="lib/d3.min.js"></script>
 <script src="js/game.js"></script>
 
+
 </head>
 
 <body onload="init();">
@@ -33,13 +34,17 @@
 				<input id="uploadFile" type="file">
 			</div>
 			<div id="canvasSvg">
-    <canvas id="canvas1" width=600 height=480>
+    			<canvas id="canvasGameArea">
+
 			</div>
 		</div>
 	</div>
-	<script src="js/events.js"></script>
 	<script src="js/parser.js"></script>
-	
+	<script src="js/events.js"></script>
+    			<script>
 
+    			update();
+
+    			</script>
 </body>
 </html>
