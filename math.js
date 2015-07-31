@@ -7425,7 +7425,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'and': true,
 	    'xor': true,
 	    'or': true,
-	    'not': true
+	    'not': true,
+	    'implies': true
 	  };
 
 	  var extra_nodes = {};             // current extra nodes
@@ -7913,25 +7914,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @private
 	   */
 	  function parseLogicalAnd() {
-	    var node = parseBitwiseOr();
+	    var node = parseLogicalImply()
 
 	    while (token == 'and') {
 	      getTokenSkipNewline();
-	      node = new OperatorNode('and', 'and', [node, parseBitwiseOr()]);
+	      node = new OperatorNode('and', 'and', [node, parseLogicalImply()]);
 	    }
 
 	    return node;
 	  }
 	  
 	  function parseLogicalImply(){
-	  		var node = parseLogicalAnd();
+  		var node = parseBitwiseOr();
+	
+  		while (token == 'implies') {
+  			getTokenSkipNewline();
+  			node = new OperatorNode('imply', 'imply', [node, parseBitwiseOr()]);
+  		}
 	  		
-	  		while (token == 'implies') {
-	  			getTokenSkipNewline();
-	  			node = new OperatorNode('imply', 'imply', [node, parseBitwise()]);
-	  		}
-	  		
-	  		return node;
+  		return node;
 	  }
 
 	  /**
