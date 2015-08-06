@@ -18,14 +18,12 @@ function ComboShape(currX, currY, shapes) {
 }
 
 ComboShape.prototype.contains = function(x, y, ctx){
-    var ret = false;
-    this.shapeList.forEach(function(e){
-        if(e.contains(ctx, x, y)){
-            ret = true;
+    for(var i=0; i<this.shapeList.length; i++){
+        if(this.shapeList[i].contains(x, y, ctx)){
             return true;
         }
-    });
-    return ret;
+    }
+    return false;
 };
 
 ComboShape.prototype.draw = function(ctx) {
