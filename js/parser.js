@@ -10,7 +10,7 @@ function generateAST() {
 }
 
 function test(){
-// console.log( parse(""));
+ console.log(math.parse("A ∧ B"));
 }
 
 var Rule = function(above, below){
