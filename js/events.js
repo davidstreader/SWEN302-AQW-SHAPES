@@ -4,6 +4,7 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
+
 var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("canvasSvg");
 
@@ -66,4 +67,5 @@ window.onresize = function(){
 	c.clear();
 	c.valid = false;
 	c.draw();
+	window.location.reload();
 }
