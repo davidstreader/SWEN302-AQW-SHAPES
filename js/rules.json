@@ -1,13 +1,12 @@
 [  
-    { "type": "Introduction", "name": "And Introduction", "above": ["├A","├B"], "below": "├A^B" },
-    { "type": "Introduction", "name": "Or Introduction", "above": ["├A"], "below": "├AvB"},
-	{ "type": "Introduction", "name": "Or Introduction", "above": ["├B"], "below": "├AvB"},
-	{ "type": "Introduction", "name": "Implies Introduction", "above": ["A├B"], "below": "├A⇒B"},
-	{ "type": "Introduction", "name": "Not Introduction", "above": ["A├"], "below": "├¬A"},
-    { "type": "Elimination", "name": "And Elimination", "above": ["├A^B"], "below": "├A"},
-    { "type": "Elimination", "name": "And Elimination", "above": ["├A^B"], "below": "├B"},
-	{ "type": "Elimination", "name": "Or Elimination", "above": ["├AvB","A├C","B├C"], "below": "├C"},
-	{ "type": "Elimination", "name": "Implies Elimination", "above": ["├A⇒B","├A"], "below": "├B"},
-	{ "type": "Elimination", "name": "Not Elimination", "above": ["├¬A","├A"], "below": "├C"}
-   
+    { "type": "Introduction", "name": "And Introduction", "above": ["⊢A","⊢B"], "below": "⊢A∧B" },
+    { "type": "Introduction", "name": "Or Introduction", "above": ["⊢A"], "below": "⊢A∨B"},
+    { "type": "Introduction", "name": "Or Introduction", "above": ["⊢B"], "below": "⊢A∨B"},
+    { "type": "Introduction", "name": "Implies Introduction", "above": ["A⊢B"], "below": "⊢A→B"},
+    { "type": "Introduction", "name": "Not Introduction", "above": ["A⊢"], "below": "⊢¬A"},
+    { "type": "Elimination", "name": "And Elimination", "above": ["⊢A∧B"], "below": "⊢A"},
+    { "type": "Elimination", "name": "And Elimination", "above": ["⊢A∧B"], "below": "⊢B"},
+    { "type": "Elimination", "name": "Or Elimination", "above": ["⊢A∨B","A⊢C","B⊢C"], "below": "⊢C"},
+    { "type": "Elimination", "name": "Implies Elimination", "above": ["⊢A→B","⊢A"], "below": "⊢B"},
+    { "type": "Elimination", "name": "Not Elimination", "above": ["⊢¬A","⊢A"], "below": "⊢C"}
 ]
