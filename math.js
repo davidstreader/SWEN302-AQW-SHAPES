@@ -7378,6 +7378,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  // map with all delimiters
 	  var DELIMITERS = {
+	     '∧': true,
+	    '∨': true,
+	    '¬': true,
+	    '→': true,
+	    '⊢':true,
 	    ',': true,
 	    '(': true,
 	    ')': true,
@@ -7411,7 +7416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    '>': true,
 	    '<=': true,
 	    '>=': true,
-
+		
 	    '<<': true,
 	    '>>': true,
 	    '>>>': true
@@ -7885,7 +7890,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function parseLogicalOr() {
 	    var node = parseLogicalXor();
 
-	    while (token == 'or') {
+	    while (token == '∨') {
 	      getTokenSkipNewline();
 	      node = new OperatorNode('or', 'or', [node, parseLogicalXor()]);
 	    }
@@ -7917,7 +7922,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function parseLogicalAnd() {
 	    var node = parseLogicalImply()
 
-	    while (token == 'and') {
+	    while (token == '∧') {
 	      getTokenSkipNewline();
 	      node = new OperatorNode('and', 'and', [node, parseLogicalImply()]);
 	    }
@@ -7928,7 +7933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function parseLogicalImply(){
   		var node = parseLogicalProve();
 	
-  		while (token == 'implies') {
+  		while (token == '→') {
   			getTokenSkipNewline();
   			node = new OperatorNode('implies', 'implies', [node, parseLogicalProve()]);
   		}
@@ -7937,16 +7942,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  function parseLogicalProve(){
-  		var node = parseBitwiseOr();
+  		var node = parseLogicalNot();
 	
-  		while (token == 'proves') {
+  		while (token == '⊢') {
   			getTokenSkipNewline();
-  			node = new OperatorNode('proves', 'proves', [node, parseBitwiseOr()]);
+  			node = new OperatorNode('proves', 'proves', [node, parseLogicalNot()]);
   		}
 	  		
   		return node;
 	  }
-
+      function parseLogicalNot(){
+  		var node = parseBitwiseOr();
+	
+  		while (token == '¬') {
+  			getTokenSkipNewline();
+  			node = new OperatorNode('not', 'not', [node, parseBitwiseOr()]);
+  		}
+	  		
+  		return node;
+	  }
 	  /**
 	   * bitwise or, 'x | y'
 	   * @return {Node} node
