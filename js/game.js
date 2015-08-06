@@ -11,6 +11,29 @@ function Shape(currX, currY, points, color) {
     this.color = color;
 }
 
+function ComboShape(currX, currY, shapes) {
+    this.shapeList = shapes;
+    this.currX = currX;
+    this.currY = currY;
+}
+
+ComboShape.prototype.contains = function(x, y, ctx){
+    var ret = false;
+    this.shapeList.forEach(function(e){
+        if(e.contains(ctx, x, y)){
+            ret = true;
+            return true;
+        }
+    });
+    return ret;
+};
+
+ComboShape.prototype.draw = function(ctx) {
+    this.shapeList.forEach(function(e){
+        e.draw(ctx);
+    });
+};
+
 Shape.prototype.draw = function(context){
   context.beginPath();
   context.moveTo(this.currX + this.points[0].x, this.currY + this.points[0].y);
@@ -33,7 +56,7 @@ Shape.prototype.contains = function(mouseX, mouseY,ctx) {
      ctx.lineTo(this.points[i].x+this.currX,this.points[i].y+this.currY);
    }
     return ctx.isPointInPath(mouseX,mouseY);
-}
+};
 
 function CanvasState(canvas) {
   //setup for when canvas is made
@@ -208,19 +231,24 @@ function init() {
   canvas.height = canvasSvg.clientHeight;
   cs.width = canvasSvg.clientWidth;
   cs.height = canvasSvg.clientHeight;
-  cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
-  cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
-  cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
-  cs.addShape(new Shape(115,15,shapePoints.OR,"#00F"));
-  cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-  cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-  cs.addShape(new Shape(385,25,shapePoints.NOT,"#0FF"));
-  cs.addShape(new Shape(15,125,shapePoints.TURNSTYLE,"#0F0"));
-  
-  cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
-  cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
-  cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
-  cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
+  //cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
+  //cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
+  //cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
+  //cs.addShape(new Shape(115,15,shapePoints.OR,"#00F"));
+  //cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
+  //cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
+  //cs.addShape(new Shape(385,25,shapePoints.NOT,"#0FF"));
+  //cs.addShape(new Shape(15,125,shapePoints.TURNSTYLE,"#0F0"));
+  //
+  //cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
+  //cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
+  //cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
+  //cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
+
+    var combo = new ComboShape(10, 10, [new Shape(115,125,shapePoints.A,"#FF0"), new Shape(115,15,shapePoints.OR,"#00F")]);
+    cs.addShape(combo);
+    //combo.draw(cs.ctx);
+
     // debuggin pruposes only
   c = cs;
  
