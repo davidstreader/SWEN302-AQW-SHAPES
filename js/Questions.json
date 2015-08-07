@@ -1,66 +1,76 @@
-CONJECTUREPANEL "Classical conjectures"
-¬¬E ⊢ E
-⊢ E∨¬E
-⊢ ((E→F)→E)→E
-¬F→¬E ⊢ E→F
-¬(¬E∧¬F) ⊢ E∨F
-¬(¬E∨¬F) ⊢ E∧F
-¬(E∧F) ⊢ ¬E∨¬F
-(E→F)∨(F→E)
-CONJECTUREPANEL Conjectures
-E, F ⊢ E∧F
-E∧F ⊢ E
-E∧F ⊢ F
-E∧(F∧G) ⊢ (E∧F)∧G
-(E∧F)∧G ⊢ E∧(F∧G)
-E, E→F ⊢ F
-E→F, F→G, E ⊢ G
-E→(F→G), E→F, E ⊢ G
-E→F, F→G ⊢ E→G
-E→F→G ⊢ F→E→G
-E→F→G ⊢ (E→F)→(E→G)
-E ⊢ F→E
-⊢ E→F→E
-E→F ⊢ (F→G)→E→G
-E→F→G→H ⊢ G→F→E→H
-⊢ (E→F→G)→(E→F)→E→G
-(E→F)→G ⊢ E→F→G
-E∧F ⊢ E→F
-(E→F)∧(E→G) ⊢ E→(F∧G)
-E→(F∧G) ⊢ (E→F)∧(E→G)
-E→F→G ⊢ (E∧F)→G
-(E∧F)→G ⊢ E→F→G
-(E→F)→G ⊢ (E∧F)→G
-E∧(F→G) ⊢ (E→F)→G
-E ⊢ E∨F
-F ⊢ E∨F
-E∨F ⊢ F∨E
-F→G ⊢ (E∨F)→(E∨G)
-E∨E ⊢ E
-E ⊢ E∨E
-E∨(F∨G) ⊢ (E∨F)∨G
-(E∨F)∨G ⊢ E∨(F∨G)
-E∧(F∨G) ⊢ (E∧F)∨(E∧G)
-E∧F∨E∧G ⊢ E∧(F∨G)
-E∨F∧G ⊢ (E∨F)∧(E∨G)
-(E∨F)∧(E∨G) ⊢ E∨F∧G
-(E→G)∧(F→G) ⊢ E∨F→G
-E∨F→G ⊢ (E→G)∧(F→G)
-E ⊢ E∧⊤ 
-E∧⊤ ⊢E 
-E ⊢ E∨⊤ 
-E ⊢ E∨⊥ 
-E∨⊥ ⊢E 
-E∧⊥ ⊢ E 
-E ⊢ ¬¬E
-¬E ⊢ E→F
-E→F ⊢ ¬F→¬E
-E∨F, ¬F ⊢ E
-E∨F, ¬E ⊢ F
-E∨F ⊢ ¬(¬E∧¬F)
-E∧F ⊢ ¬(¬E∨¬F)
-¬(E∨F) ⊢ ¬E∧¬F
-¬E∧¬F ⊢ ¬(E∨F)
-¬E∨¬F ⊢ ¬(E∧F)
-⊢ ¬(E∧¬E)
-E∧¬E ⊢ F
+[  
+    { "name": "Question1", "value": "¬¬E ⊢ E"},
+    { "name": "Question1", "value": "⊢ E∨¬E"},
+    { "name": "Question1", "value": "⊢ ((E→F)→E)→E"},
+    { "name": "Question1", "value": "¬F→¬E ⊢ E→F"},
+    { "name": "Question1", "value": "¬(¬E∧¬F) ⊢ E∨F"},
+    { "name": "Question1", "value": "¬(E∧F) ⊢ ¬E∨¬F"},
+    { "name": "Question1", "value": "E∧F ⊢ F"},
+    { "name": "Question1", "value": "E∧F ⊢ E"},
+    { "name": "Question1", "value": "E∧(F∧G) ⊢ (E∧F)∧G"},
+    { "name": "Question1", "value": "(E∧F)∧G ⊢ E∧(F∧G)"},
+    { "name": "Question1", "value": "E ∧ E→F ⊢ F"},
+    { "name": "Question1", "value": "E→F ∧ F→G ∧ E ⊢ G"},
+    { "name": "Question1", "value": "E→F ∧ F→G ⊢ E→G"},
+    { "name": "Question1", "value": "E→F→G ⊢ F→E→G"},
+    { "name": "Question1", "value": "E→F→G ⊢ (E→F)→(E→G)"},
+    { "name": "Question1", "value": "E ⊢ F→E"},
+    { "name": "Question1", "value": "⊢ E→F→E"},
+    { "name": "Question1", "value": "E→F ⊢ (F→G)→E→G"},
+    { "name": "Question1", "value": "E→F→G→H ⊢ G→F→E→H"},
+    { "name": "Question1", "value": "⊢ (E→F→G)→(E→F)→E→G"},
+    { "name": "Question1", "value": "(E→F)→G ⊢ E→F→G"},
+    { "name": "Question1", "value": "E∧F ⊢ E→F"},
+    { "name": "Question1", "value": "(E→F)∧(E→G) ⊢ E→(F∧G)"},
+    { "name": "Question1", "value": "E→F→G ⊢ (E∧F)→G"},
+    { "name": "Question1", "value": "(E∧F)→G ⊢ E→F→G"},
+    { "name": "Question1", "value": "(E→F)→G ⊢ (E∧F)→G"},
+    { "name": "Question1", "value": "E∧(F→G) ⊢ (E→F)→G"},
+    { "name": "Question1", "value": "(E→F)→G ⊢ (E∧F)→G"},
+    { "name": "Question1", "value": "E ⊢ E∨F"},
+    { "name": "Question1", "value": "F ⊢ E∨F"},
+    { "name": "Question1", "value": "E∨F ⊢ F∨E"},
+    { "name": "Question1", "value": "F→G ⊢ (E∨F)→(E∨G)"},
+    { "name": "Question1", "value": "E ⊢ E∨E"},
+    { "name": "Question1", "value": "E∨(F∨G) ⊢ (E∨F)∨G"},
+    { "name": "Question1", "value": "(E∨F)∨G ⊢ E∨(F∨G)"},
+    { "name": "Question1", "value": "E∧(F∨G) ⊢ (E∧F)∨(E∧G)"},
+    { "name": "Question1", "value": "E∧F∨E∧G ⊢ E∧(F∨G)"},
+    { "name": "Question1", "value": "E∨F∧G ⊢ (E∨F)∧(E∨G)"},
+    { "name": "Question1", "value": "(E∨F)∧(E∨G) ⊢ E∨F∧G"},
+    { "name": "Question1", "value": "(E→G)∧(F→G) ⊢ E∨F→G"},
+    { "name": "Question1", "value": "E∨F→G ⊢ (E→G)∧(F→G)"},
+    { "name": "Question1", "value": "E ⊢ E∧⊤"}
+ 	{ "name": "Question1", "value": "E∧⊤ ⊢E "},
+ 	{ "name": "Question1", "value": "E ⊢ E∨⊤ "},
+ 	{ "name": "Question1", "value": "E ⊢ E∨⊥ "},
+ 	{ "name": "Question1", "value": "E∨⊥ ⊢E "},
+ 	{ "name": "Question1", "value": "E∧⊥ ⊢ E "},
+ 	{ "name": "Question1", "value": "E ⊢ ¬¬E"},
+ 	{ "name": "Question1", "value": "¬E ⊢ E→F"},
+ 	{ "name": "Question1", "value": "E→F ⊢ ¬F→¬E"},
+ 	{ "name": "Question1", "value": "(E∨F) ∧ ¬F ⊢ E"},
+ 	{ "name": "Question1", "value": "(E∨F) ∧ ¬E ⊢ F"},
+ 	{ "name": "Question1", "value": "E∨F ⊢ ¬(¬E∧¬F)"},
+ 	{ "name": "Question1", "value": "E∧F ⊢ ¬(¬E∨¬F)"},
+ 	{ "name": "Question1", "value": "¬(E∨F) ⊢ ¬E∧¬F"},
+ 	{ "name": "Question1", "value": "¬E∧¬F ⊢ ¬(E∨F)"},
+ 	{ "name": "Question1", "value": "¬E∨¬F ⊢ ¬(E∧F)"},
+ 	{ "name": "Question1", "value": "⊢ ¬(E∧¬E)"},
+ 	{ "name": "Question1", "value": "E∧¬E ⊢ F"}
+    
+    
+    
+    
+    
+]
+
+
+
+
+
+
+
+
+
+ 
