@@ -3,7 +3,7 @@
 
 //c is the canvas created for debugging purposes only
 var c;
-var MAX_COLLISION_RADIUS = 100;
+var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
     this.points = points;
@@ -20,19 +20,13 @@ function ComboShape(currX, currY, collisionX, collisionY,  shapes) {
     this.collY = collisionY;
 }
 
-ComboShape.prototype.collidingWith = function(shapes){
-    for(var i=0; i<shapes.length; i++) {
-        if(shapes[i]!=this) {
-            //console.log("shapes[i].collX: " + shapes[i].collX + " this.collX: " + this.collX);
-            //console.log("shapes[i].collY: " + shapes[i].collY + " this.collY: " + this.collY);
-            var lenX = Math.abs((shapes[i].collX + shapes[i].currX) - (this.collX + this.currX));
-            var lenY = Math.abs((shapes[i].collY + shapes[i].currY) - (this.collY + this.currY));
-            var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
-            if(hypot<MAX_COLLISION_RADIUS){
-                console.log("Collision detected, hypotenuse length: " + hypot);
-                return true;
-            }
-        }
+ComboShape.prototype.collidingWith = function(shape){
+    var lenX = Math.abs((shape.collX + shape.currX) - (this.collX + this.currX));
+    var lenY = Math.abs((shape.collY + shape.currY) - (this.collY + this.currY));
+    var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
+    if(hypot<MAX_COLLISION_RADIUS){
+        console.log("Collision detected, hypotenuse length: " + hypot);
+        return true;
     }
     return false;
 };
@@ -112,11 +106,14 @@ function CanvasState(canvas) {
 	canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
 
     canvas.addEventListener('mouseup', function(e){
-        //TODO Stuff below is bad and inefficient. Need to fix it.
         var shapes = myState.shapes;
         for(var i=0; i<shapes.length; i++){
-            if(shapes[i].collidingWith(shapes)){
-                break;
+            for(var j=0; j<shapes.length; j++) {
+                if(shapes[i]===shapes[j]){break;}
+                if (shapes[i].collidingWith(shapes[j])) {
+                    //TODO handle shape snapping here.
+                    break;
+                }
             }
         }
     });
