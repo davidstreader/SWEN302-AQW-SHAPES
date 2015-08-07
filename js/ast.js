@@ -26,37 +26,22 @@ function isDelimiter(token){
   return false;
 }
 
-function evalBrakcets(str){
-  var pointer = 1;
-  var count = 1;
-  while(pointer < str.length){
-   if(string.charAt(pointer) == ')'){
-     count--;
-     if(count == 0){
-      return substring(currentString, index, pointer); 
-     }
-   }
-   else if(str.charAt(pointer) == '('){
-      count++;
-   }
-   pointer++;
-  }
-  throw new SyntaxError("Missing closing bracket");
-}
-
 function parse(str){
  return eval( str.replace(/\s+/g, '') );
 }
 
 function eval(str){
+    console.log(str);
   var root;
   var index=0;
   var prec=99;
   var highestIndex = 0;
+  if(str.charAt(0) == '(' && str.charAt(str.length-1) == ')'){
+   return eval(str.substring(1,str.length-1)); 
+  }
   if(nextToken(str,0).length == str.length){
    return new Variable(str);
   }
-  
   while(index < str.length){
     if(precendence(nextToken(str,index)) < prec){
       //console.log(nextToken(str,index) + " has prec " + precendence(nextToken(str,index)));
@@ -71,10 +56,27 @@ function eval(str){
   return root;
 }
 
-
 function nextToken(str,i){
   var index = i;
   var length = 0;
+  if(str.charAt(i) == '('){
+    var start = index;
+    index++;
+    var count = 1;
+    while(index < str.length){
+      if(str.charAt(index) == ')'){
+	count--;
+	if(count == 0){
+	  return str.substring(start, index+1);
+	}
+      }
+      else if(str.charAt(index) == '('){
+	count++;
+      }
+      index++;
+    }
+    throw new SyntaxError("Missing closing bracket on " + str);
+  }
   if(isDelimiter(str.charAt(index))){
    return str.charAt(index); 
   }
