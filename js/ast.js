@@ -22,38 +22,41 @@ function isDelimiter(token){
    case '∧': return true;
    case '¬': return true;
    //case '(': return 5;
- }  
- return isWhiteSpace(token);
+    }  
+  return false;
 }
-/*
-function evalBrakcets(string){
+
+function evalBrakcets(str){
   var pointer = 1;
   var count = 1;
-  while(pointer < string.length){
+  while(pointer < str.length){
    if(string.charAt(pointer) == ')'){
      count--;
      if(count == 0){
       return substring(currentString, index, pointer); 
      }
    }
-   else if(string.charAt(pointer) == '('){
+   else if(str.charAt(pointer) == '('){
       count++;
    }
    pointer++;
   }
   throw new SyntaxError("Missing closing bracket");
-}*/
+}
 
 function parse(str){
-  console.log(str);
+ return eval( str.replace(/\s+/g, '') );
+}
+
+function eval(str){
   var root;
   var index=0;
   var prec=99;
   var highestIndex = 0;
-  if(nextToken(str,0).length == lengthWithoutSpace(str)){
+  if(nextToken(str,0).length == str.length){
    return new Variable(str);
   }
-  while(isWhiteSpace(str.charAt(index)) && index < str.length){index++;}
+  
   while(index < str.length){
     if(precendence(nextToken(str,index)) < prec){
       //console.log(nextToken(str,index) + " has prec " + precendence(nextToken(str,index)));
@@ -61,30 +64,16 @@ function parse(str){
       highestIndex = index;
     }
     index+=nextToken(str,index).length;
-    while(isWhiteSpace(str.charAt(index))){index++;}
   }
   root = new Operator(str.charAt(highestIndex));
-  root.left = parse(str.substring(0,highestIndex));
-  root.right = parse(str.substring(highestIndex+1, str.length));
+  root.left = eval(str.substring(0,highestIndex));
+  root.right = eval(str.substring(highestIndex+1, str.length));
   return root;
 }
 
-function lengthWithoutSpace(str){
- var index;
-var length = 0;
-for(index = 0; index < str.length; index++){
- if(!isWhiteSpace(str.charAt(index))){
-   length++;
- }
-}
-return length;
-}
 
 function nextToken(str,i){
   var index = i;
-  while(isWhiteSpace(str.charAt(index)) && index < str.length){
-    index++;
-  } 
   var length = 0;
   if(isDelimiter(str.charAt(index))){
    return str.charAt(index); 
@@ -94,10 +83,6 @@ function nextToken(str,i){
     index++;
   }
   return str.substring(index-length,index);
-}
-
-function isWhiteSpace(ch) { 
-    return (ch === '\u0009') || (ch === ' ') || (ch === '\u00A0');
 }
 
 var Rule = function(above, below){
