@@ -3,6 +3,7 @@
 
 //c is the canvas created for debugging purposes only
 var c;
+var MAX_COLLISION_RADIUS = 100;
 
 function Shape(currX, currY, points, color) {
     this.points = points;
@@ -11,11 +12,30 @@ function Shape(currX, currY, points, color) {
     this.color = color;
 }
 
-function ComboShape(currX, currY, shapes) {
+function ComboShape(currX, currY, collisionX, collisionY,  shapes) {
     this.shapeList = shapes;
     this.currX = currX;
     this.currY = currY;
+    this.collX = collisionX;
+    this.collY = collisionY;
 }
+
+ComboShape.prototype.collidingWith = function(shapes){
+    for(var i=0; i<shapes.length; i++) {
+        if(shapes[i]!=this) {
+            //console.log("shapes[i].collX: " + shapes[i].collX + " this.collX: " + this.collX);
+            //console.log("shapes[i].collY: " + shapes[i].collY + " this.collY: " + this.collY);
+            var lenX = Math.abs((shapes[i].collX + shapes[i].currX) - (this.collX + this.currX));
+            var lenY = Math.abs((shapes[i].collY + shapes[i].currY) - (this.collY + this.currY));
+            var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
+            if(hypot<MAX_COLLISION_RADIUS){
+                console.log("Collision detected, hypotenuse length: " + hypot);
+                return true;
+            }
+        }
+    }
+    return false;
+};
 
 ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
     for(var i=0; i < this.shapeList.length; i++) {
@@ -90,6 +110,17 @@ function CanvasState(canvas) {
 
 	//fixes a problem where double clicking causes text to get selected on the canvas
 	canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+
+    canvas.addEventListener('mouseup', function(e){
+        //TODO Stuff below is bad and inefficient. Need to fix it.
+        var shapes = myState.shapes;
+        for(var i=0; i<shapes.length; i++){
+            if(shapes[i].collidingWith(shapes)){
+                break;
+            }
+        }
+    });
+
 	// Up, down, and move are for dragging
 	canvas.addEventListener('mousedown', function(e) {
 		var mouse = myState.getMouse(e);
@@ -102,7 +133,6 @@ function CanvasState(canvas) {
 
 				bringToFront(mySel); // bring the select shape to the front
 				myState.shapes = shapes; // sign the new reranged shapes to myState
-
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
 				myState.dragoffx = mx - mySel.currX;
@@ -258,12 +288,12 @@ function init() {
     //cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
     //cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
 
-    var rule = new ComboShape(10, 10,
+    var rule = new ComboShape(10, 10, 225, 300,
         [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
     );
     cs.addShape(rule);
 
-    var question = new ComboShape(10, 400,
+    var question = new ComboShape(10, 400, 225, 100,
         [new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.A,"#00F"), new Shape(330,110,shapePoints.B,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
     );
     cs.addShape(question);
