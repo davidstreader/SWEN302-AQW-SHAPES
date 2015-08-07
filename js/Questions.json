@@ -1,0 +1,66 @@
+CONJECTUREPANEL "Classical conjectures"
+¬¬E ⊢ E
+⊢ E∨¬E
+⊢ ((E→F)→E)→E
+¬F→¬E ⊢ E→F
+¬(¬E∧¬F) ⊢ E∨F
+¬(¬E∨¬F) ⊢ E∧F
+¬(E∧F) ⊢ ¬E∨¬F
+(E→F)∨(F→E)
+CONJECTUREPANEL Conjectures
+E, F ⊢ E∧F
+E∧F ⊢ E
+E∧F ⊢ F
+E∧(F∧G) ⊢ (E∧F)∧G
+(E∧F)∧G ⊢ E∧(F∧G)
+E, E→F ⊢ F
+E→F, F→G, E ⊢ G
+E→(F→G), E→F, E ⊢ G
+E→F, F→G ⊢ E→G
+E→F→G ⊢ F→E→G
+E→F→G ⊢ (E→F)→(E→G)
+E ⊢ F→E
+⊢ E→F→E
+E→F ⊢ (F→G)→E→G
+E→F→G→H ⊢ G→F→E→H
+⊢ (E→F→G)→(E→F)→E→G
+(E→F)→G ⊢ E→F→G
+E∧F ⊢ E→F
+(E→F)∧(E→G) ⊢ E→(F∧G)
+E→(F∧G) ⊢ (E→F)∧(E→G)
+E→F→G ⊢ (E∧F)→G
+(E∧F)→G ⊢ E→F→G
+(E→F)→G ⊢ (E∧F)→G
+E∧(F→G) ⊢ (E→F)→G
+E ⊢ E∨F
+F ⊢ E∨F
+E∨F ⊢ F∨E
+F→G ⊢ (E∨F)→(E∨G)
+E∨E ⊢ E
+E ⊢ E∨E
+E∨(F∨G) ⊢ (E∨F)∨G
+(E∨F)∨G ⊢ E∨(F∨G)
+E∧(F∨G) ⊢ (E∧F)∨(E∧G)
+E∧F∨E∧G ⊢ E∧(F∨G)
+E∨F∧G ⊢ (E∨F)∧(E∨G)
+(E∨F)∧(E∨G) ⊢ E∨F∧G
+(E→G)∧(F→G) ⊢ E∨F→G
+E∨F→G ⊢ (E→G)∧(F→G)
+E ⊢ E∧⊤ 
+E∧⊤ ⊢E 
+E ⊢ E∨⊤ 
+E ⊢ E∨⊥ 
+E∨⊥ ⊢E 
+E∧⊥ ⊢ E 
+E ⊢ ¬¬E
+¬E ⊢ E→F
+E→F ⊢ ¬F→¬E
+E∨F, ¬F ⊢ E
+E∨F, ¬E ⊢ F
+E∨F ⊢ ¬(¬E∧¬F)
+E∧F ⊢ ¬(¬E∨¬F)
+¬(E∨F) ⊢ ¬E∧¬F
+¬E∧¬F ⊢ ¬(E∨F)
+¬E∨¬F ⊢ ¬(E∧F)
+⊢ ¬(E∧¬E)
+E∧¬E ⊢ F

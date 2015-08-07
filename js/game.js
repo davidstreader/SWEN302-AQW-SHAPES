@@ -49,129 +49,126 @@ ComboShape.prototype.draw = function(context) {
     }
 };
 
-/*
- Shape.prototype.draw = function(context){
- context.beginPath();
- context.moveTo(this.currX + this.points[0].x, this.currY + this.points[0].y);
- for(var i=0; i<this.points.length; i++){
- context.lineTo(this.currX + this.points[i].x , this.currY + this.points[i].y);
- }
- context.fillStyle = this.color;
- context.fill();
- context.lineJoin = 'round';
- context.stroke();
- context.closePath();
- };
-
- // Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
- // Start from back to get the newest placed if theres overlap
- /*Shape.prototype.contains = function(mouseX, mouseY,ctx) {
- ctx.beginPath();
- ctx.moveTo(this.points[0].x+this.currX,this.points[0].y+this.currY);
- for(var i=1;i<this.points.length;i++){
- ctx.lineTo(this.points[i].x+this.currX,this.points[i].y+this.currY);
- }
- return ctx.isPointInPath(mouseX,mouseY);
- };*/
-
 function CanvasState(canvas) {
-    //setup for when canvas is made
-    this.canvas = canvas;
-    this.width = canvas.width;
-    this.height = canvas.height;
-    this.ctx = canvas.getContext('2d');
-    // This complicates things a little but but fixes mouse co-ordinate problems
-    // when there's a border or padding. See getMouse for more detail
-    var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
-    if (document.defaultView && document.defaultView.getComputedStyle) {
-        this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10)      || 0;
-        this.stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10)       || 0;
-        this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
-        this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
-    }
+	//setup for when canvas is made
+	this.canvas = canvas;
+	this.width = canvas.width;
+	this.height = canvas.height;
+	this.ctx = canvas.getContext('2d');
+	// This complicates things a little but but fixes mouse co-ordinate problems
+	// when there's a border or padding. See getMouse for more detail
+	var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+	if (document.defaultView && document.defaultView.getComputedStyle) {
+		this.stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingLeft'], 10)      || 0;
+		this.stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10)       || 0;
+		this.styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10)  || 0;
+		this.styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10)   || 0;
+	}
 
-    var html = document.body.parentNode;
-    this.htmlTop = html.offsetTop;
-    this.htmlLeft = html.offsetLeft;
+	var html = document.body.parentNode;
+	this.htmlTop = html.offsetTop;
+	this.htmlLeft = html.offsetLeft;
 
-    // **** Keep track of state! ****
+	// **** Keep track of state! ****
 
-    this.valid = false; // when set to false, the canvas will redraw everything
-    this.shapes = [];  // the collection of things to be drawn
-    this.dragging = false; // Keep track of when we are dragging
-    // the current selected object. In the future we could turn this into an array for multiple selection
-    this.selection = null;
-    this.dragoffx = 0; // See mousedown and mousemove events for explanation
-    this.dragoffy = 0;
+	this.valid = false; // when set to false, the canvas will redraw everything
+	this.shapes = [];  // the collection of things to be drawn
+	this.dragging = false; // Keep track of when we are dragging
+	// the current selected object. In the future we could turn this into an array for multiple selection
+	this.selection = null;
+	this.dragoffx = 0; // See mousedown and mousemove events for explanation
+	this.dragoffy = 0;
 
-    // **** events ****
+	// **** events ****
 
-    // This is an example of a closure!
-    // Right here "this" means the CanvasState. But we are making events on the Canvas itself,
-    // and when the events are fired on the canvas the variable "this" is going to mean the canvas!
-    // Since we still want to use this particular CanvasState in the events we have to save a reference to it.
-    // This is our reference!
-    var myState = this;
+	// This is an example of a closure!
+	// Right here "this" means the CanvasState. But we are making events on the Canvas itself,
+	// and when the events are fired on the canvas the variable "this" is going to mean the canvas!
+	// Since we still want to use this particular CanvasState in the events we have to save a reference to it.
+	// This is our reference!
+	var myState = this;
 
-    //fixes a problem where double clicking causes text to get selected on the canvas
-    canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
-    // Up, down, and move are for dragging
-    canvas.addEventListener('mousedown', function(e) {
-        var mouse = myState.getMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-        var shapes = myState.shapes;
-        for (var i = shapes.length-1 ; i >= 0 ; i--) {
-            if (shapes[i].contains(mx, my, myState.ctx)) {
-                var mySel = shapes[i];
-                // Keep track of where in the object we clicked
-                // so we can move it smoothly (see mousemove)
-                myState.dragoffx = mx - mySel.currX;
-                myState.dragoffy = my - mySel.currY;
-                myState.dragging = true;
-                myState.selection = mySel;
-                myState.valid = false;
-                return;
-            }
-        }
-        // havent returned means we have failed to select anything.
-        // If there was an object selected, we deselect it
-        if (myState.selection) {
-            myState.selection = null;
-            myState.valid = false; // Need to clear the old selection border
-        }
-    }, true);
-    canvas.addEventListener('mousemove', function(e) {
-        if (myState.dragging){
-            var mouse = myState.getMouse(e);
-            // We don't want to drag the object by its top-left corner, we want to drag it
-            // from where we clicked. Thats why we saved the offset and use it here
-            myState.selection.currX = mouse.x - myState.dragoffx;
-            myState.selection.currY = mouse.y - myState.dragoffy;
-            myState.valid = false; // redraw
-        }
-    }, true);
-    canvas.addEventListener('mouseup', function(e) {
-        myState.dragging = false;
-    }, true);
+	//fixes a problem where double clicking causes text to get selected on the canvas
+	canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+	// Up, down, and move are for dragging
+	canvas.addEventListener('mousedown', function(e) {
+		var mouse = myState.getMouse(e);
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = myState.shapes;
+		for (var i = shapes.length-1 ; i >= 0 ; i--) {
+			if (shapes[i].contains(mx, my, myState.ctx)) {
+				var mySel = shapes[i];
 
-    //Fun function to return random color
-    function get_random_color() {
-        function c() {
-            return Math.floor(Math.random()*256).toString(16)
-        }
-        return "#"+c()+c()+c();
-    }
-    // double click for making new shapes
-    canvas.addEventListener('dblclick', function(e) {
-        var mouse = myState.getMouse(e);
-        myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
-    }, true);
+				bringToFront(mySel); // bring the select shape to the front
+				myState.shapes = shapes; // sign the new reranged shapes to myState
+
+				// Keep track of where in the object we clicked
+				// so we can move it smoothly (see mousemove)
+				myState.dragoffx = mx - mySel.currX;
+				myState.dragoffy = my - mySel.currY;
+				myState.dragging = true;
+				myState.selection = mySel;
+				myState.valid = false;
+				return;
+			}
+		}
+		// havent returned means we have failed to select anything.
+		// If there was an object selected, we deselect it
+		if (myState.selection) {
+			myState.selection = null;
+			myState.valid = false; // Need to clear the old selection border
+		}
+		function bringToFront(object){
+	      idx = shapes.indexOf(object);
+	      // if object is not on top of stack (last item in an array)
+	      if (idx !== shapes.length-1) {
+	      	var temp  = new Array(shapes.length);
+	        var i = 0;
+	        var j = 0;
+	        for (; i<shapes.length; i++) {
+	        	if(shapes[i]!==object){
+	        		temp[j] = shapes[i];
+	        		j++;
+	        	}
+	          }
+	         temp[temp.length-1] = object;
+	          shapes = temp;
+		}
+	}
+	}, true);
+
+	canvas.addEventListener('mousemove', function(e) {
+		if (myState.dragging){
+			var mouse = myState.getMouse(e);
+			// We don't want to drag the object by its top-left corner, we want to drag it
+			// from where we clicked. Thats why we saved the offset and use it here
+			myState.selection.currX = mouse.x - myState.dragoffx;
+			myState.selection.currY = mouse.y - myState.dragoffy;
+			myState.valid = false; // redraw
+		}
+	}, true);
+	canvas.addEventListener('mouseup', function(e) {
+		myState.dragging = false;
+	}, true);
+
+	//Fun function to return random color
+	function get_random_color() {
+		function c() {
+			return Math.floor(Math.random()*256).toString(16)
+		}
+		return "#"+c()+c()+c();
+	}
+	// double click for making new shapes
+	canvas.addEventListener('dblclick', function(e) {
+		var mouse = myState.getMouse(e);
+		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
+	}, true);
 
 
-    // **** Options! ****
-    this.interval = 30;
-    setInterval(function() { myState.draw(); }, myState.interval);
+	// **** Options! ****
+	this.interval = 30;
+	setInterval(function() { myState.draw(); }, myState.interval);
 }
 
 CanvasState.prototype.addShape = function(shape) {
