@@ -90,6 +90,7 @@ function CanvasState(canvas) {
 		for (var i = shapes.length-1 ; i >= 0 ; i--) {
 			if (shapes[i].contains(mx, my, myState.ctx)) {
 				var mySel = shapes[i];
+				shapes = bringToFront(mySel, shapes);
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
 				myState.dragoffx = mx - mySel.currX;
@@ -106,7 +107,26 @@ function CanvasState(canvas) {
 			myState.selection = null;
 			myState.valid = false; // Need to clear the old selection border
 		}
+		function bringToFront(object, objects){
+	      idx = objects.indexOf(object);
+	      // if object is not on top of stack (last item in an array)
+	      if (idx !== objects.length-1) {
+	      	var temp  = new Array(objects.length);
+	        objects.splice(idx, 1);
+	        var i = 0;
+	        for (; i<objects.length; i++) {
+	        	temp[i] = objects[i];
+	          }
+	         temp[i++] = object;
+	          objects = [];
+	          objects = temp;
+	          myState.valid = false;
+	          myState.draw();
+	          return objects;
+	        }
+	}
 	}, true);
+
 	canvas.addEventListener('mousemove', function(e) {
 		if (myState.dragging){
 			var mouse = myState.getMouse(e);
@@ -204,3 +224,4 @@ function init() {
 	c = cs;
 
 }
+
