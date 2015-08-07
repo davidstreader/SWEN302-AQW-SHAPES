@@ -270,7 +270,7 @@ function init() {
     cs.addShape(rule);
 
     var question = new ComboShape(10, 400,
-        [new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,110,shapePoints.A,"#00F"), new Shape(330,110,shapePoints.B,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+        [new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.A,"#00F"), new Shape(330,110,shapePoints.B,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
     );
     cs.addShape(question);
     //combo.draw(cs.ctx);
