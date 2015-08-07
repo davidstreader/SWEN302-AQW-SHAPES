@@ -17,21 +17,39 @@ function ComboShape(currX, currY, shapes) {
     this.currY = currY;
 }
 
-ComboShape.prototype.contains = function(x, y, ctx){
-    for(var i=0; i<this.shapeList.length; i++){
-        if(this.shapeList[i].contains(x, y, ctx)){
+ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
+    for(var i=0; i < this.shapeList.length; i++) {
+        var currShape = this.shapeList[i];
+        ctx.beginPath();
+        ctx.moveTo(this.currX + currShape.points[0].currX + currShape.points[0].x, this.currY + currShape.points[0].y + currShape.points[0].currY);
+        for (var j = 0; j < currShape.points.length; j++) {
+            ctx.lineTo(this.currX + currShape.currX + currShape.points[j].x, this.currY + currShape.currY + currShape.points[j].y);
+        }
+        ctx.closePath();
+        if (ctx.isPointInPath(mouseX, mouseY)) {
             return true;
         }
-    }
+ }
     return false;
 };
 
-ComboShape.prototype.draw = function(ctx) {
-    this.shapeList.forEach(function(e){
-        e.draw(ctx);
-    });
+ComboShape.prototype.draw = function(context) {
+    for(var i=0; i < this.shapeList.length; i++) {
+        var currShape = this.shapeList[i];
+        context.beginPath();
+        context.moveTo(this.currX + currShape.points[0].currX + currShape.points[0].x, this.currY + currShape.points[0].y + currShape.points[0].currY);
+        for (var j = 0; j < currShape.points.length; j++) {
+            context.lineTo(this.currX + currShape.currX + currShape.points[j].x, this.currY + currShape.currY + currShape.points[j].y);
+        }
+        context.fillStyle = currShape.color;
+        context.fill();
+        context.lineJoin = 'round';
+        context.stroke();
+        context.closePath();
+    }
 };
 
+/*
 Shape.prototype.draw = function(context){
   context.beginPath();
   context.moveTo(this.currX + this.points[0].x, this.currY + this.points[0].y);
@@ -44,17 +62,18 @@ Shape.prototype.draw = function(context){
   context.stroke();
   context.closePath();
 };
+*/
 
 // Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 // Start from back to get the newest placed if theres overlap
-Shape.prototype.contains = function(mouseX, mouseY,ctx) {
+/*Shape.prototype.contains = function(mouseX, mouseY,ctx) {
    ctx.beginPath();
    ctx.moveTo(this.points[0].x+this.currX,this.points[0].y+this.currY);
    for(var i=1;i<this.points.length;i++){
      ctx.lineTo(this.points[i].x+this.currX,this.points[i].y+this.currY);
    }
     return ctx.isPointInPath(mouseX,mouseY);
-};
+};*/
 
 function CanvasState(canvas) {
   //setup for when canvas is made
@@ -144,15 +163,17 @@ function CanvasState(canvas) {
   }
   return "#"+c()+c()+c();
 }
+/*
   // double click for making new shapes
   canvas.addEventListener('dblclick', function(e) {
     var mouse = myState.getMouse(e);
     myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
   }, true);
   
+*/
 
   // **** Options! ****
-  this.interval = 30;
+  this.interval = 1000/60;
  setInterval(function() { myState.draw(); }, myState.interval);
 }
 
@@ -243,7 +264,9 @@ function init() {
   //cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
   //cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
 
-    var combo = new ComboShape(10, 10, [new Shape(115,125,shapePoints.A,"#FF0"), new Shape(115,15,shapePoints.OR,"#00F")]);
+    var combo = new ComboShape(10, 10,
+        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+    );
     cs.addShape(combo);
     //combo.draw(cs.ctx);
 
