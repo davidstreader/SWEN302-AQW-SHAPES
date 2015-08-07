@@ -24,6 +24,7 @@ inputFile.change(function () {
 		if (fileName.substring(slashIndex) === ".json") {
 			d3.json("js/"+ fileName, function (error, data){
 				selectedFile = data;
+				generateASTs();
 			});
 			/*reader = new FileReader();
 
