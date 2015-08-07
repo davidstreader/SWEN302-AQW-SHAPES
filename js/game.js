@@ -159,11 +159,11 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	// double click for making new shapes
+/*	// double click for making new shapes
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
 		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
-	}, true);
+	}, true);*/
 
 
 	// **** Options! ****
