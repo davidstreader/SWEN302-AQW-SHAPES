@@ -167,7 +167,7 @@ function CanvasState(canvas) {
 
 
 	// **** Options! ****
-	this.interval = 30;
+	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
 }
 
@@ -238,8 +238,8 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
-    var cs = new CanvasState(document.getElementById('canvas1'));
-    var canvas = document.getElementById('canvas1');
+    var canvas = document.getElementById('canvasGameArea');
+    var cs = new CanvasState(canvas);
     canvas.width = canvasSvg.clientWidth;
     canvas.height = canvasSvg.clientHeight;
     cs.width = canvasSvg.clientWidth;
