@@ -4,7 +4,7 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
-
+var imageBin = document.getElementById("imageBin");
 var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("canvasSvg");
 
@@ -60,6 +60,11 @@ zoomOutButton.addEventListener("click", function(){
 	c.valid = false;
 	ctx.scale(0.8,0.8);
 
+});
+imageBin.addEventListener("mouseover", function(){
+	var obj = c.shapes[c.shapes.length-1];
+	c.shapes.splice(c.shapes.indexOf(obj),1);
+	console.log("mouseover should remove rules on game area not rule panle")
 });
 
 window.onresize = function(){

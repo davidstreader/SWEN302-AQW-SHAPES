@@ -244,6 +244,7 @@ function init() {
     canvas.height = canvasSvg.clientHeight;
     cs.width = canvasSvg.clientWidth;
     cs.height = canvasSvg.clientHeight;
+   
     //cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
     //cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
     //cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));

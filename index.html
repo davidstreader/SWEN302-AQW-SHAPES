@@ -15,33 +15,31 @@
 <body onload="init();">
 
 	<div id="main">
-	<div id="menuBarPanel">
-		<div id="menuBar" style="left:0px;20px">
-				<button id="resetButton" class="menuBarButton">Reset</button>
-				<button id="showHideButton" class="menuBarButton">Show/Hide</button>
-				<button id="viewAnswerButton" class="menuBarButton">View Answer</button>
-				<button id="hintButton" class="menuBarButton">Hint</button>
-				<button id="zoomInButton" class="menuBarButton" style="">+</button>
-				<button id="zoomOutButton" class="menuBarButton">-</button>
-				<input id="uploadFile" type="file">
-			</div>
-	</div>
+		<div id="menuBarPanel">
+			<div id="menuBar" style="left:0px;20px">
+					<button id="resetButton" class="menuBarButton">Reset</button>
+					<button id="showHideButton" class="menuBarButton">Show/Hide</button>
+					<button id="viewAnswerButton" class="menuBarButton">View Answer</button>
+					<button id="hintButton" class="menuBarButton">Hint</button>
+					<button id="zoomInButton" class="menuBarButton" style="">+</button>
+					<button id="zoomOutButton" class="menuBarButton">-</button>
+					<input id="uploadFile" type="file">
+				</div>
+		</div>
+
 		<div id="rulesPanel">
-			<div id="panelHeader">
-				<h2>Rules</h2>
-			</div>
+			<div id="panelHeader"><h2>Rules</h2></div>
 			<div id="rulesPanelSvg"></div>
 		</div>
 
 		<div id="gameAreaPanel">
-			<div id="panelHeader">
-				<h2>Game Area</h2>
-			</div>
-					<div id="canvasSvg">
-    			<canvas id="canvasGameArea">
-
-			</div>
+			<div id="panelHeader"><h2>Game Area</h2></div>
+			<div id="canvasSvg"><canvas id="canvasGameArea">
 		</div>
+					<img type="image" id = "imageBin" src="resources/trashBin.png"></img>
+
+		</div>
+
 	</div>
 	<script src="js/events.js"></script>
 
