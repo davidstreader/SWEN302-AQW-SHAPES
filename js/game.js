@@ -264,10 +264,15 @@ function init() {
   //cs.addShape(new Shape(115,125,shapePoints.A,"#FF0"));
   //cs.addShape(new Shape(235,125,shapePoints.B,"#000"));
 
-    var combo = new ComboShape(10, 10,
+    var rule = new ComboShape(10, 10,
         [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
     );
-    cs.addShape(combo);
+    cs.addShape(rule);
+
+    var question = new ComboShape(10, 400,
+        [new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,110,shapePoints.A,"#00F"), new Shape(330,110,shapePoints.B,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+    );
+    cs.addShape(question);
     //combo.draw(cs.ctx);
 
     // debuggin pruposes only
