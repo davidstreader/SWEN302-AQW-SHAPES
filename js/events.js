@@ -45,6 +45,9 @@ function update() {
 
 
 resetButton.addEventListener("click", function(){
+	c.shapes = null;
+	c.ctx = null;
+	c = null;
 	init();
 });
 
