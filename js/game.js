@@ -90,9 +90,10 @@ function CanvasState(canvas) {
 		for (var i = shapes.length-1 ; i >= 0 ; i--) {
 			if (shapes[i].contains(mx, my, myState.ctx)) {
 				var mySel = shapes[i];
-				bringToFront(mySel);
-				//myState.valid=false;
-				//myState.draw();
+
+				bringToFront(mySel); // bring the select shape to the front
+				myState.shapes = shapes; // sign the new reranged shapes to myState
+
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
 				myState.dragoffx = mx - mySel.currX;
@@ -114,7 +115,6 @@ function CanvasState(canvas) {
 	      // if object is not on top of stack (last item in an array)
 	      if (idx !== shapes.length-1) {
 	      	var temp  = new Array(shapes.length);
-	      //  objects.splice(idx, 1);
 	        var i = 0;
 	        var j = 0;
 	        for (; i<shapes.length; i++) {
@@ -218,12 +218,13 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
-	var cs = new CanvasState(document.getElementById('canvasGameArea'));
+	var cs = new 
+	(document.getElementById('canvasGameArea'));
 	cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
 	cs.addShape(new Shape(15,15,shapePoints.OR,"#00F"));
 
 	// debuggin purposes only
-	c = cs;
+//	c = cs;
 
 }
 
