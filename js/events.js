@@ -22,13 +22,16 @@ inputFile.change(function () {
 		slashIndex = fileName.lastIndexOf(".");
 
 		if (fileName.substring(slashIndex) === ".json") {
-			reader = new FileReader();
+			d3.json("js/"+ fileName, function (error, data){
+				selectedFile = data;
+			});
+			/*reader = new FileReader();
 
 			reader.onload = function (event) {
 				var result = event.target.result;
 				selectedFile = result;
 			};
-			reader.readAsText(file);
+			reader.readAsText(file);*/
 		} else {
 			alert("json file only!")
 		}
