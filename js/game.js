@@ -34,33 +34,47 @@ ComboShape.prototype.collidingWith = function(shape){
 ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
     for(var i=0; i < this.shapeList.length; i++) {
         var currShape = this.shapeList[i];
-        ctx.beginPath();
-        ctx.moveTo(this.currX + currShape.points[0].currX + currShape.points[0].x, this.currY + currShape.points[0].y + currShape.points[0].currY);
-        for (var j = 0; j < currShape.points.length; j++) {
-            ctx.lineTo(this.currX + currShape.currX + currShape.points[j].x, this.currY + currShape.currY + currShape.points[j].y);
-        }
-        ctx.closePath();
-        if (ctx.isPointInPath(mouseX, mouseY)) {
+        if(currShape.contains(mouseX, mouseY, ctx, this.currX, this.currY)){
+            console.log("currshape contains point: " + mouseX + ", " + mouseY);
             return true;
         }
     }
     return false;
 };
 
+// Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
+// Start from back to get the newest placed if theres overlap
+Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
+    offsetX = offsetX || 0;
+    offsetY = offsetY || 0;
+    ctx.beginPath();
+    ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+    for(var i=0; i<this.points.length; i++){
+        ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+    }
+    return ctx.isPointInPath(mouseX,mouseY);
+};
+
 ComboShape.prototype.draw = function(context) {
     for(var i=0; i < this.shapeList.length; i++) {
         var currShape = this.shapeList[i];
-        context.beginPath();
-        context.moveTo(this.currX + currShape.points[0].currX + currShape.points[0].x, this.currY + currShape.points[0].y + currShape.points[0].currY);
-        for (var j = 0; j < currShape.points.length; j++) {
-            context.lineTo(this.currX + currShape.currX + currShape.points[j].x, this.currY + currShape.currY + currShape.points[j].y);
-        }
-        context.fillStyle = currShape.color;
-        context.fill();
-        context.lineJoin = 'round';
-        context.stroke();
-        context.closePath();
+        currShape.draw(context, this.currX, this.currY);
     }
+};
+
+Shape.prototype.draw = function(context, offsetX, offsetY){
+    offsetX = offsetX || 0;
+    offsetY = offsetY || 0;
+    context.beginPath();
+    context.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+    for(var i=0; i<this.points.length; i++){
+        context.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+    }
+    context.fillStyle = this.color;
+    context.fill();
+    context.lineJoin = 'round';
+    context.stroke();
+    context.closePath();
 };
 
 function CanvasState(canvas) {
@@ -112,6 +126,15 @@ function CanvasState(canvas) {
                 if(shapes[i]===shapes[j]){break;}
                 if (shapes[i].collidingWith(shapes[j])) {
                     //TODO handle shape snapping here.
+                    var newShapes = [];
+                    var deltaX = shapes[i].collX - shapes[j].collX;
+                    var deltaY = shapes[i].collY - shapes[j].collY;
+
+                    newShapes.concat(shapes[i].shapeList);
+                    newShapes.concat(shapes[j].shapeList);
+                    var newCombo = new ComboShape(shapes[i].currX, shapes[i].currY, 0, 0, newShapes);
+                    shapes.splice(j, 1);
+                    shapes[i] = newCombo;
                     break;
                 }
             }
