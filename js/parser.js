@@ -7,6 +7,7 @@ function generateASTs() {
  for(i = 0;i<selectedFile.length;i++){
    questions.push(parse(selectedFile[i].value));
  }
+ console.log(questions);
 }
 
 var operators;
@@ -41,13 +42,22 @@ function parse(str){
 }
 
 function eval(str){
-    console.log(str);
+    //console.log(str);
   var root;
   var index=0;
   var prec=99;
   var highestIndex = 0;
   if(str.charAt(0) == '(' && str.charAt(str.length-1) == ')'){
-   return eval(str.substring(1,str.length-1)); 
+    var i;
+    var count=0;
+    for(i=0;i<str.length-1;i++){
+      if(str.charAt(i) == '('){
+	count++;
+      }
+    }
+    if(count == 0){
+      return eval(str.substring(1,str.length-1)); 
+    }
   }
   if(nextToken(str,0).length == str.length){
    return new Variable(str);
