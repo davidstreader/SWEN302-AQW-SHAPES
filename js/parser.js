@@ -1,4 +1,3 @@
-"use strict";
 
 var questions;
 
@@ -6,7 +5,7 @@ function generateASTs() {
  var i;
  questions = [];
  for(i = 0;i<selectedFile.length;i++){
-   questions.push(eval(selectedFile[i]));
+   questions.push(parse(selectedFile[i].value));
  }
 }
 
