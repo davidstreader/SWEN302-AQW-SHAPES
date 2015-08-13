@@ -50,7 +50,7 @@ function eval(str){
   if(str.charAt(0) == '(' && str.charAt(str.length-1) == ')'){
     var i;
     var count=0;
-    for(i=0;i<str.length-1;i++){
+    for(i=1;i<str.length-1;i++){
       if(str.charAt(i) == '('){
 	count++;
       }
