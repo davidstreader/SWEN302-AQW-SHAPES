@@ -162,12 +162,23 @@ function CanvasState(canvas) {
 
 	// double click for making new shapes
 	canvas.addEventListener('dblclick', function(e) {
-		console.log("dbclick");
-		//var mouse = myState.getMouse(e);
-		c.addShape(
-		new ComboShape(10, 10,
-		        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-		    ))
+		var mouse = myState.getMouse(e);
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = myState.shapes;
+		for (var i = shapes.length-1 ; i >= 0 ; i--) {
+			console.log(i);
+			if (shapes[i].contains(mx, my, myState.ctx)) {
+				console.log("dbclick");
+				var mySel = shapes[i];
+				
+				c.addShape(
+				new ComboShape(10, 10,
+				        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+				    ))
+				return;
+			}
+		}
 	}, true);
 
 
