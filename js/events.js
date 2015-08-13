@@ -4,7 +4,7 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
-
+var imageBin = document.getElementById("imageBin");
 var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("canvasSvg");
 
@@ -22,13 +22,17 @@ inputFile.change(function () {
 		slashIndex = fileName.lastIndexOf(".");
 
 		if (fileName.substring(slashIndex) === ".json") {
-			reader = new FileReader();
+			d3.json("js/"+ fileName, function (error, data){
+				selectedFile = data;
+				generateASTs();
+			});
+			/*reader = new FileReader();
 
 			reader.onload = function (event) {
 				var result = event.target.result;
 				selectedFile = result;
 			};
-			reader.readAsText(file);
+			reader.readAsText(file);*/
 		} else {
 			alert("json file only!")
 		}
@@ -42,6 +46,9 @@ function update() {
 
 
 resetButton.addEventListener("click", function(){
+	c.shapes = null;
+	c.ctx = null;
+	c = null;
 	init();
 });
 
@@ -57,6 +64,11 @@ zoomOutButton.addEventListener("click", function(){
 	c.valid = false;
 	ctx.scale(0.8,0.8);
 
+});
+imageBin.addEventListener("mouseover", function(){
+	var obj = c.shapes[c.shapes.length-1];
+	c.shapes.splice(c.shapes.indexOf(obj),1);
+	console.log("mouseover should remove rules on game area not rule panle")
 });
 
 window.onresize = function(){
