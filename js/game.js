@@ -159,11 +159,16 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-/*	// double click for making new shapes
+
+	// double click for making new shapes
 	canvas.addEventListener('dblclick', function(e) {
-		var mouse = myState.getMouse(e);
-		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
-	}, true);*/
+		console.log("dbclick");
+		//var mouse = myState.getMouse(e);
+		c.addShape(
+		new ComboShape(10, 10,
+		        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.A,"#00F"), new Shape(330,15,shapePoints.B,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+		    ))
+	}, true);
 
 
 	// **** Options! ****
