@@ -62,6 +62,18 @@ ComboShape.prototype.draw = function(context) {
 	}
 };
 
+ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
+	var newShapeList = [];
+	for(var i=0; i<this.shapeList.length; i++){
+		newShapeList[i] = this.shapeList[i].applyDelta(deltaX, deltaY);
+	}//Note, doesn't recurse down to Shape. Just applies to comboShape.
+	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList);
+};
+
+Shape.prototype.applyDelta = function(deltaX, deltaY){
+	return new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
+};
+
 Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
@@ -126,15 +138,16 @@ function CanvasState(canvas) {
 				if(shapes[i]===shapes[j]){break;}
 				if (shapes[i].collidingWith(shapes[j])) {
 					//TODO handle shape snapping here.
+					console.log(i + " " + j);
 					var newShapes = [];
-					var deltaX = shapes[i].collX - shapes[j].collX;
-					var deltaY = shapes[i].collY - shapes[j].collY;
-
-					newShapes.concat(shapes[i].shapeList);
-					newShapes.concat(shapes[j].shapeList);
-					var newCombo = new ComboShape(shapes[i].currX, shapes[i].currY, 0, 0, newShapes);
-					shapes.splice(j, 1);
-					shapes[i] = newCombo;
+					var deltaX = shapes[j].collX - shapes[i].collX;
+					var deltaY = shapes[j].collY - shapes[i].collY;
+					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
+					newShapes = shapes[j].shapeList.concat(s1.shapeList);
+					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes);
+					shapes = shapes.splice(j, 1);
+					myState.valid = false;
+					myState.draw();
 					break;
 				}
 			}
