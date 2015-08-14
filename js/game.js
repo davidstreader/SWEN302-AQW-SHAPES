@@ -12,12 +12,13 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY,  shapes) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes, scale) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
+	this.scale = scale;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -57,9 +58,15 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 
 ComboShape.prototype.draw = function(context) {
 	for(var i=0; i < this.shapeList.length; i++) {
+		if(this.scale != undefined && this.scale > 0) {
+			for (var j = 0; j < this.shapeList.points.length; j++) {
+				this.shapeList.points[j] = this.shapeList.points[j] * this.scale;
+			}
+		}
 		var currShape = this.shapeList[i];
 		currShape.draw(context, this.currX, this.currY);
 	}
+
 };
 
 ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
@@ -283,28 +290,74 @@ CanvasState.prototype.getMouse = function(e) {
 	return {x: mx, y: my};
 }
 
-function CreateShape(logicArray){
-	for(var i =0; i < logicArray.length; i++){
-		var value = operator.value;
-		var left = operator.left;
-		var right = operator.right;
+
+function createShape(logicArray){
+   	for(var i =0; i < logicArray.length; i++){
+		var logicShapes =[];
+		var OpValue = logicArray[i].value;
+		var left = logicArray[i].left;
+		var right = logicArray[i].right;
+
+		if(OpValue =="")
+			continue;
+		else {
+			console.log(OpValue);
+			logicShapes.push(new Shape(180.225, shapePoints[OpValue]));
+		}
+		if(left =="")
+			continue;
+		else if(left instanceof Operator)
+			buildShape(left,15,15,0.3);
+		else
+		 	logicShapes.push(new Shape(15.15.shapePoints.left));
+
+		if(right =="")
+			continue;
+		else if(right instanceof Operator)
+			buildShape(right,330,15,0.3);
+		else
+			logicShapes.push(new Shape(330.15.shapePoints.right));
+
+		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 	}
 
 }
 
+
+
+function buildShape(operator,x,y,scale){
+	var logicShapes =[];
+	var OpValue = operator.value;
+	var left = operator.left;
+	var right = operator.right;
+	logicShapes.push(new Shape(180.225,shapePoints.OpValue));
+	if(left instanceof Operator)
+		buildShape(operator.left,15,15,scale*0.3);
+	else
+		logicShapes.push(new Shape(15.15.shapePoints.left));
+	if(right instanceof Operator)
+		buildShape(operator.right,330,15,scale*0.3);
+	else
+		logicShapes.push(new Shape(330.15.shapePoints.right));
+
+	var result = new ComboShape(x,y,0,0,0.3,logicShapes);
+	return result;
+}
+
 var shapePoints={
-	AND :[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
-	OR : [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
-	IMPLIES: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
-	NOT :  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	"⊢" :  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
-	RULE :  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-	QUESTION : [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+	AND 		:[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
+	OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
+	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
+	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+	TURNSTILE 	:  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
+	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
-	E :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	F :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
-	G :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]
-
+	A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
+	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
+	F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
 };
 
 //initilisation method called from html on load up
@@ -329,18 +382,19 @@ function init() {
 	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
 
+	var value = '→';
 	var rule = new ComboShape(10, 10, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.E,"#00F"), new Shape(330,15,shapePoints.F,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
 	cs.addShape(rule);
 
 	var question = new ComboShape(10, 400, 225, 100,
-		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.E,"#00F"), new Shape(330,110,shapePoints.F,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
 	cs.addShape(question);
 	//combo.draw(cs.ctx);
 
-	// debuggin pruposes only
+	// debugging purposes only
 	c = cs;
 
 }
