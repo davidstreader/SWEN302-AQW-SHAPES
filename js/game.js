@@ -301,22 +301,22 @@ function createShape(logicArray){
 		if(OpValue =="")
 			continue;
 		else {
-			console.log(OpValue);
-			logicShapes.push(new Shape(180.225, shapePoints[OpValue]));
+			var sp = shapePoints[OpValue];
+			logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
 		}
 		if(left =="")
 			continue;
 		else if(left instanceof Operator)
-			buildShape(left,15,15,0.3);
+			logicShapes.add(buildShape(left,15,15,0.3));
 		else
-		 	logicShapes.push(new Shape(15.15.shapePoints.left));
+		 	logicShapes.push(new Shape(15,15,shapePoints.left));
 
 		if(right =="")
 			continue;
 		else if(right instanceof Operator)
-			buildShape(right,330,15,0.3);
+			logicShapes.add(buildShape(right,330,15,0.3));
 		else
-			logicShapes.push(new Shape(330.15.shapePoints.right));
+			logicShapes.push(new Shape(330,15,shapePoints.right));
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 	}
@@ -330,17 +330,26 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
-	logicShapes.push(new Shape(180.225,shapePoints.OpValue));
-	if(left instanceof Operator)
-		buildShape(operator.left,15,15,scale*0.3);
-	else
-		logicShapes.push(new Shape(15.15.shapePoints.left));
-	if(right instanceof Operator)
-		buildShape(operator.right,330,15,scale*0.3);
-	else
-		logicShapes.push(new Shape(330.15.shapePoints.right));
 
-	var result = new ComboShape(x,y,0,0,0.3,logicShapes);
+	if(OpValue !=""){
+		var sp = shapePoints[OpValue];
+		logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
+	}
+
+	if(left =="" && left instanceof Operator)
+		logicShapes.add(buildShape(left,15,15,0.3));
+
+	else if(left == "")
+		logicShapes.push(new Shape(15,15,shapePoints.left));
+
+	if(right =="" && right instanceof Operator)
+		logicShapes.add(buildShape(right,330,15,0.3));
+
+	else if(right =="")
+		logicShapes.push(new Shape(330,15,shapePoints.right));
+
+	var result = (new ComboShape(400,400,225,100,logicShapes));
+
 	return result;
 }
 
