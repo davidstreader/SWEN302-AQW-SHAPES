@@ -59,8 +59,10 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 ComboShape.prototype.draw = function(context) {
 	for(var i=0; i < this.shapeList.length; i++) {
 		if(this.scale != undefined && this.scale > 0) {
-			for (var j = 0; j < this.shapeList.points.length; j++) {
-				this.shapeList.points[j] = this.shapeList.points[j] * this.scale;
+			for (var j = 0; j < this.shapeList.length; j++) {
+				for(var k =0; k < this.shapeList[j].points.length; k++)
+				this.shapeList[j].points[k].x = this.shapeList[j].points[k].x * this.scale;
+				this.shapeList[j].points[k].y = this.shapeList[j].points[k].y * this.scale;
 			}
 		}
 		var currShape = this.shapeList[i];
@@ -292,31 +294,31 @@ CanvasState.prototype.getMouse = function(e) {
 
 
 function createShape(logicArray){
-   	for(var i =0; i < logicArray.length; i++){
-		var logicShapes =[];
+   	for(var i =15; i < 16; i++){
+		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
 		var right = logicArray[i].right;
 
-		if(OpValue =="")
+		if(OpValue.value =="")
 			continue;
 		else {
 			var sp = shapePoints[OpValue];
 			logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
 		}
-		if(left =="")
+		if(left.value =="")
 			continue;
 		else if(left instanceof Operator)
-			logicShapes.add(buildShape(left,15,15,0.3));
+			logicShapes.push(buildShape(left,15,15,0.3));
 		else
-		 	logicShapes.push(new Shape(15,15,shapePoints.left));
+		 	logicShapes.push(new Shape(15,15,shapePoints[left.value]));
 
-		if(right =="")
+		if(right.value =="")
 			continue;
 		else if(right instanceof Operator)
-			logicShapes.add(buildShape(right,330,15,0.3));
+			logicShapes.push(buildShape(right,330+400,15+400,0.3));
 		else
-			logicShapes.push(new Shape(330,15,shapePoints.right));
+			logicShapes.push(new Shape(330,15,shapePoints[right.value]));
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 	}
@@ -330,25 +332,26 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#FFF"));
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
 		logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
 	}
 
-	if(left =="" && left instanceof Operator)
-		logicShapes.add(buildShape(left,15,15,0.3));
+	if(left.value !="" && left instanceof Operator)
+		logicShapes.push(buildShape(left,15,15,0.3));
 
-	else if(left == "")
-		logicShapes.push(new Shape(15,15,shapePoints.left));
+	else if(left.value != "")
+		logicShapes.push(new Shape(15,15,shapePoints[left.value]));
 
-	if(right =="" && right instanceof Operator)
-		logicShapes.add(buildShape(right,330,15,0.3));
+	if(right.value !="" && right instanceof Operator)
+		logicShapes.push(buildShape(right,330,15,0.3));
 
-	else if(right =="")
-		logicShapes.push(new Shape(330,15,shapePoints.right));
+	else if(right.value !="")
+		logicShapes.push(new Shape(330,15,shapePoints[right.value]));
 
-	var result = (new ComboShape(400,400,225,100,logicShapes));
+	var result = (new ComboShape(x,y,225,100,logicShapes,scale));
 
 	return result;
 }
@@ -391,7 +394,6 @@ function init() {
 	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
 
-	var value = '→';
 	var rule = new ComboShape(10, 10, 225, 300,
 		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
