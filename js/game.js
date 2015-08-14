@@ -12,13 +12,12 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, scale) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-	this.scale = scale;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -43,6 +42,27 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 	return false;
 };
 
+Shape.prototype.scale = function(scaleFactor){
+	scaleFactor = scaleFactor || 1;
+	for(var i=0; i<this.points.length; i++){
+		this.points[i].x = this.points[i].x * scaleFactor;
+		this.points[i].y = this.points[i].y * scaleFactor;
+	}
+	this.currX = this.currX * scaleFactor;
+	this.currY = this.currY * scaleFactor;
+};
+
+ComboShape.prototype.scale = function(scaleFactor){
+	scaleFactor= scaleFactor || 1;
+	for(var i=0; i<this.shapeList.length; i++){
+		this.shapeList[i].scale(scaleFactor);
+	}
+	this.currX = this.currX * scaleFactor;
+	this.currY = this.currY * scaleFactor;
+	this.collX = this.collX * scaleFactor;
+	this.collY = this.collY * scaleFactor;
+};
+
 // Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 // Start from back to get the newest placed if theres overlap
 Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
@@ -58,13 +78,6 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 
 ComboShape.prototype.draw = function(context) {
 	for(var i=0; i < this.shapeList.length; i++) {
-		if(this.scale != undefined && this.scale > 0) {
-			for (var j = 0; j < this.shapeList.length; j++) {
-				for(var k =0; k < this.shapeList[j].points.length; k++)
-				this.shapeList[j].points[k].x = this.shapeList[j].points[k].x * this.scale;
-				this.shapeList[j].points[k].y = this.shapeList[j].points[k].y * this.scale;
-			}
-		}
 		var currShape = this.shapeList[i];
 		currShape.draw(context, this.currX, this.currY);
 	}
@@ -146,7 +159,6 @@ function CanvasState(canvas) {
 			for(var j=0; j<shapes.length; j++) {
 				if(shapes[i]===shapes[j]){break;}
 				if (shapes[i].collidingWith(shapes[j])) {
-					//TODO handle shape snapping here.
 					console.log(i + " " + j);
 					var newShapes = [];
 					var deltaX = shapes[j].collX - shapes[i].collX;
@@ -154,6 +166,8 @@ function CanvasState(canvas) {
 					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
 					newShapes = shapes[j].shapeList.concat(s1.shapeList);
 					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes);
+					//TODO don't use this here. It is an example of how to scale
+					shapes[i].scale(0.5);
 					shapes = shapes.splice(j, 1);
 					myState.valid = false;
 					myState.draw();
