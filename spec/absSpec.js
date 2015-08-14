@@ -56,6 +56,38 @@ describe("Test Turnstile", function() {
      expect(V1.equals(V2)).toBe(true);
   });
 });
+describe("Test Not", function() {
+  var V1;
+  var V2;
+  beforeEach(function() {
+  	V1 = parse("¬A");
+  	V2 = new Operator("¬");
+ 	V2.left = new Variable("");
+  	V2.right = new Variable("A");
+  	console.log(V1);
+  	console.log(V2);
+  });
+  it("V1 should be equals to V2", function() {
+     expect(V1.equals(V2)).toBe(true);
+  });
+});
+describe("Test Multiple Not", function() {
+  var V1;
+  var V2;
+  beforeEach(function() {
+  	V1 = parse("A ⊢ ¬¬A");
+  	V2 = new Operator("⊢");
+ 	V2.left = new Variable("A");
+  	V2.right = new Operator("¬");
+  	V2.right.left = new Variable("")
+  	V2.right.right = new Operator("¬");
+  	V2.right.right.left = new Variable("");
+  	V2.right.right.right = new Variable("A");
+  });
+  it("V1 should be equals to V2", function() {
+     expect(V1.equals(V2)).toBe(true);
+  });
+});
 describe("Test Order of Precedence 01", function() {
   var V1;
   var V2;
