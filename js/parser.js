@@ -36,6 +36,15 @@ function isDelimiter(token){
     }  
   return false;
 }
+function findOperator(token){
+    switch(token){
+        case '⊢': return 'TURNSTILE';
+        case '→':return  'IMPLIES';
+        case '∨':return 'OR';
+        case '∧': return 'AND';
+        case '¬': return 'NOT';
+    }
+}
 
 function parse(str){
  return eval( str.replace(/\s+/g, '') );
@@ -70,7 +79,7 @@ function eval(str){
     }
     index+=nextToken(str,index).length;
   }
-  root = new Operator(str.charAt(highestIndex));
+  root = new Operator(findOperator(str.charAt(highestIndex)));
   root.left = eval(str.substring(0,highestIndex));
   root.right = eval(str.substring(highestIndex+1, str.length));
   return root;
