@@ -25,6 +25,8 @@ inputFile.change(function () {
 			d3.json("js/"+ fileName, function (error, data){
 				selectedFile = data;
 				generateASTs();
+				createShape(questions);
+
 			});
 			/*reader = new FileReader();
 
