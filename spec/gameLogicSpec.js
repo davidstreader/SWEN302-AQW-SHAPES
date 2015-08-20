@@ -1,4 +1,4 @@
-describe("Test get variable", function() {
+describe("Test getVariable 01", function() {
     var V1;
     var V2;
     var V3;
@@ -6,7 +6,7 @@ describe("Test get variable", function() {
     beforeEach(function() {
         V1 = parse("A ∧ B");
         V2 = getVariables(V1);
-        console.log(V2);
+       // console.log(V2);
         V3 = ["A","B"];
         for(var i = 0; i<V3.length; i++){
             if(V3[i] != V2[i]){
@@ -15,7 +15,29 @@ describe("Test get variable", function() {
         }
     });
 
-    it("Check should be true", function() {
+    it("A AND B should have variables A and B", function() {
+        expect(check).toBe(true);
+    });
+});
+
+describe("Test getVariable 02", function() {
+    var V1;
+    var V2;
+    var V3;
+    var check = true;
+    beforeEach(function() {
+        V1 = parse("(A∨B)∧(A∨C) ⊢ A∨B∧C");
+        V2 = getVariables(V1);
+        //console.log(V2);
+        V3 = ["A","B","C"];
+        for(var i = 0; i<V3.length; i++){
+            if(V3[i] != V2[i]){
+                check = false;
+            }
+        }
+    });
+
+    it("(A∨B)∧(A∨C) ⊢ A∨B∧C should have variables A, B, and C. Got "+V2+" instead.", function() {
         expect(check).toBe(true);
     });
 });
@@ -36,7 +58,7 @@ describe("Test removeDuplicate", function() {
         }
     });
 
-    it("V1 should be equals to V2", function() {
+    it("[A,B,B,C,C] should leave [A,B,C] after removing duplicates", function() {
         expect(check).toBe(true);
     });
 });
@@ -47,7 +69,7 @@ describe("Test contains", function() {
         V1 = ["A","B","C"];
     });
 
-    it("V1 should be equals to V2", function() {
+    it("[A,B,C] should contain A", function() {
         expect(contains(V1,"A")).toBe(true);
     });
 });
