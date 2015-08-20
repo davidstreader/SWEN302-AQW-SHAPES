@@ -24,9 +24,9 @@ function getVariables(expression){
 }
 
 function removeDuplicates(array){
- variable out = [];
+ var out = [];
 for(var i=0;i<array.length;i++){
- if(!contains(out, array[i]){
+ if(!contains(out, array[i])){
   out.push(array[i]);
  }
 }
