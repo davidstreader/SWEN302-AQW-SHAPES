@@ -6,7 +6,7 @@ var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
 var imageBin = document.getElementById("imageBin");
 var canvasGameArea = document.getElementById("canvasGameArea");
-var canvasSvg = document.getElementById("canvasSvg");
+var canvasSvg = document.getElementById("gameAreaPanel");
 
 var inputFile = $("#uploadFile");
 var fileName = null;
@@ -55,17 +55,37 @@ resetButton.addEventListener("click", function(){
 });
 
 zoomInButton.addEventListener("click", function(){
-	var ctx = c.ctx;
-	ctx.scale(1.2,1.2);
-	c.valid = false;
-	c.draw();
+	console.log(j);
+	if(j==1){ 
+		return;
+	}
+	else{
+		j = 1+(1-j);
+		var ctx = c.ctx;
+		for(var i = 0; i<c.shapes.length; i++){
+			c.shapes[i].scale(j)
+		}
+		c.valid = false;
+		c.draw();
+	}
+	
 
 });
+var j = 1;
 zoomOutButton.addEventListener("click", function(){
+	console.log(j);
+	if(j<0.6){ 
+		return;
+	}
+	else{
+		j = j -0.2;
+	}
 	var ctx = c.ctx;
+	for(var i = 0; i<c.shapes.length; i++){
+		c.shapes[i].scale(j)
+	}
 	c.valid = false;
-	ctx.scale(0.8,0.8);
-
+	c.draw();
 });
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];

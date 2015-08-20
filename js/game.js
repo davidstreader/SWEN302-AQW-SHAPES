@@ -6,7 +6,7 @@ var c;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
-	this.points = points;
+	this.points = JSON.parse(JSON.stringify(points));
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
