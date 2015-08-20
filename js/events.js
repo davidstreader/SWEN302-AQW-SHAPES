@@ -53,37 +53,39 @@ resetButton.addEventListener("click", function(){
 	c = null;
 	init();
 });
-
+var zoomInFactor = 1;
 zoomInButton.addEventListener("click", function(){
-	console.log(j);
-	if(j==1){ 
+	if(zoomInFactor>1.6){ 
 		return;
 	}
 	else{
-		j = 1+(1-j);
+		zoomInFactor = zoomInFactor+ 0.2;
 		var ctx = c.ctx;
 		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scale(j)
+			c.shapes[i].scale(zoomInFactor)
 		}
 		c.valid = false;
 		c.draw();
+		console.log("zoom in clicked: "+zoomInFactor);
+
 	}
 	
 
 });
-var j = 1;
+var zoomOutFactor = 1;
 zoomOutButton.addEventListener("click", function(){
-	console.log(j);
-	if(j<0.6){ 
+	if(zoomOutFactor<0.6){ 
 		return;
 	}
 	else{
-		j = j -0.2;
+		zoomOutFactor = zoomOutFactor -0.2;
 	}
 	var ctx = c.ctx;
 	for(var i = 0; i<c.shapes.length; i++){
-		c.shapes[i].scale(j)
+		c.shapes[i].scale(zoomOutFactor)
 	}
+	console.log("zoom out clicked: "+zoomOutFactor);
+
 	c.valid = false;
 	c.draw();
 });
