@@ -9,14 +9,14 @@
 <script src="lib/jquery-2.1.4.min.js"></script>
 <script src="lib/d3.min.js"></script>
 <script src="js/parser.js" charset="utf-8"></script>
-<script src="js/game.js"></script>
+<script src="js/game.js" charset="utf-8"></script>
 </head>
 
 <body onload="init();">
 
 	<div id="main">
 		<div id="menuBarPanel">
-			<div id="menuBar" style="left:0px;20px">
+			<div id="menuBar" style="left:0px">
 					<button id="resetButton" class="menuBarButton">Reset</button>
 					<button id="showHideButton" class="menuBarButton">Show/Hide</button>
 					<button id="viewAnswerButton" class="menuBarButton">View Answer</button>
@@ -31,12 +31,10 @@
 			<div id="panelHeader"><h2>Rules</h2></div>
 			<div id="rulesPanelSvg"></div>
 		</div>
-
 		<div id="gameAreaPanel">
 			<div id="panelHeader"><h2>Game Area</h2></div>
-			<div id="canvasSvg"><canvas id="canvasGameArea">
-		</div>
-					<img type="image" id = "imageBin" src="resources/trashBin.png"></img>
+			<div id="canvasSvg"><canvas id="canvasGameArea"></div>
+			<img type="image" id = "imageBin" src="resources/trashBin.png"></img>
 
 		</div>
 
