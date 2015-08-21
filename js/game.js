@@ -12,12 +12,15 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes, ruleLeft, ruleRight
+) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
+	this.ruleLeft = ruleLeft;
+	this.ruleRight = ruleRight;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -76,10 +79,12 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
-ComboShape.prototype.draw = function(context) {
+ComboShape.prototype.draw = function(context, offsetX, offsetY) {
+	offsetX = offsetX || this.currX;
+	offsetY = offsetY || this.currY;
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
-		currShape.draw(context, this.currX, this.currY);
+		currShape.draw(context, offsetX, offsetY);
 	}
 
 };
