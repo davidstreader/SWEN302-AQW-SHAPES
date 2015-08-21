@@ -1,9 +1,18 @@
 
 var questions;
-var rules;
+var rules = [];
+loadRules();
 function loadRules(){
     d3.json("js/rules.json", function (error, data){
-        rules = data;
+        for(var i = 0; i < data.length; i++){
+             var aboveArray  = [];
+            for(var j = 0; j <data[i].above.length; j++){
+                aboveArray.push(parse(data[i].above[j]));
+            }
+            var currentRule = {Name: data[i].type, above: aboveArray, below: parse(data[i].below)};
+            rules.push(currentRule);
+        }
+        //rules = data;
     });
 }
 function generateASTs() {
