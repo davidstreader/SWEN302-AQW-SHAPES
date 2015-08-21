@@ -20,7 +20,6 @@ function generateASTs() {
  for(var i = 0;i<selectedFile.length;i++){
    questions.push(parse(selectedFile[i].value));
  }
- console.log(questions);
 }
 
 var operators;
