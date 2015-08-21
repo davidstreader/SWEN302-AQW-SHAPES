@@ -2,7 +2,7 @@
 // For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c;
+var c, cr;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -66,8 +66,32 @@ ComboShape.prototype.scale = function(scaleFactor){
 	this.collY = this.collY * scaleFactor;
 };
 
-// Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
-// Start from back to get the newest placed if theres overlap
+Shape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor = scaleFactor || 1;
+	for(var i=0; i<this.points.length; i++){
+		this.points[i].x = this.points[i].x / scaleFactor;
+		this.points[i].y = this.points[i].y / scaleFactor;
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+};
+
+ComboShape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor= scaleFactor || 1;
+	for(var i=0; i<this.shapeList.length; i++){
+		this.shapeList[i].scaleDivide(scaleFactor);
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+	this.collX = this.collX / scaleFactor;
+	this.collY = this.collY / scaleFactor;
+};
+
+
+
+
+//Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
+//Start from back to get the newest placed if theres overlap
 Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
@@ -234,15 +258,18 @@ function CanvasState(canvas) {
 	}, true);
 
 	canvas.addEventListener('mousemove', function(e) {
-		if (myState.dragging){
-			var mouse = myState.getMouse(e);
-			// We don't want to drag the object by its top-left corner, we want to drag it
-			// from where we clicked. Thats why we saved the offset and use it here
-			myState.selection.currX = mouse.x - myState.dragoffx;
-			myState.selection.currY = mouse.y - myState.dragoffy;
-			myState.valid = false; // redraw
+		if (myState == c){
+			if (myState.dragging){
+				var mouse = myState.getMouse(e);
+				// We don't want to drag the object by its top-left corner, we want to drag it
+				// from where we clicked. Thats why we saved the offset and use it here
+				myState.selection.currX = mouse.x - myState.dragoffx;
+				myState.selection.currY = mouse.y - myState.dragoffy;
+				myState.valid = false; // redraw
+			}
 		}
 	}, true);
+	
 	canvas.addEventListener('mouseup', function(e) {
 		myState.dragging = false;
 	}, true);
@@ -254,13 +281,29 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	// double click for making new shapes
+
+	//double click rule shapes 
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
-		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = cr.shapes;
+		for (var i = shapes.length-1; i >= 0 ; i--) {
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				console.log("dbclick");	
+				var s = [];
+				for(var j = 0; j<shapes[i].shapeList.length; j++){
+					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+				}
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+				console.log(c.shapes[c.shapes.length-1] == shapes[i]);
+				console.log(c.shapes[c.shapes.length-1]);
+				console.log(shapes[i]);
+
+				return;
+			}
+		}
 	}, true);
-
-
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -275,8 +318,8 @@ CanvasState.prototype.clear = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-// While draw is called as often as the INTERVAL variable demands,
-// It only ever does something if the canvas gets invalidated by our code
+//While draw is called as often as the INTERVAL variable demands,
+//It only ever does something if the canvas gets invalidated by our code
 CanvasState.prototype.draw = function() {
 	// if our state is invalid, redraw and validate!
 	if (!this.valid) {
@@ -292,8 +335,10 @@ CanvasState.prototype.draw = function() {
 }
 
 
-// Creates an object with x and y defined, set to the mouse position relative to the state's canvas
-// If you wanna be super-correct this can be tricky, we have to worry about padding and borders
+
+
+//Creates an object with x and y defined, set to the mouse position relative to the state's canvas
+//If you wanna be super-correct this can be tricky, we have to worry about padding and borders
 CanvasState.prototype.getMouse = function(e) {
 	var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
 
@@ -402,6 +447,7 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
+	//game area
 	var canvas = document.getElementById('canvasGameArea');
 	var cs = new CanvasState(canvas);
 	canvas.width = canvasSvg.clientWidth;
@@ -430,10 +476,30 @@ function init() {
 	var question = new ComboShape(10, 400, 225, 100,
 		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
+	question.scale(0.5);
 	cs.addShape(question);
 	//combo.draw(cs.ctx);
 
 	// debugging purposes only
 	c = cs;
+	
+	
+	
+	
+	//rules area
+	var canvasr = document.getElementById('canvasRules');
+	var csr = new CanvasState(canvasr);
+	canvasr.width = rulesPanelSvg.clientWidth;
+	canvasr.height = rulesPanelSvg.clientHeight;
+	csr.width = rulesPanelSvg.clientWidth;
+	csr.height = rulesPanelSvg.clientHeight;
 
+	var rule = new ComboShape(10, 10, 225, 300,
+			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+	);
+	rule.scale(0.5);
+	csr.addShape(rule);
+	cr = csr;
+
+	
 }

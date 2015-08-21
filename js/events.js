@@ -46,47 +46,35 @@ function update() {
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 }
 
-
 resetButton.addEventListener("click", function(){
-	c.shapes = null;
-	c.ctx = null;
-	c = null;
-	init();
+	c.shapes = [];
+	c.valid = false;
+	c.draw();
+	
 });
 
+var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-	console.log(j);
-	if(j==1){ 
-		return;
-	}
-	else{
-		j = 1+(1-j);
 		var ctx = c.ctx;
+		if (sizeFactor > 3) return;
 		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scale(j)
+			c.shapes[i].scaleDivide(0.7)
 		}
 		c.valid = false;
 		c.draw();
-	}
-	
-
+		sizeFactor++;
 });
-var j = 1;
+
 zoomOutButton.addEventListener("click", function(){
-	console.log(j);
-	if(j<0.6){ 
-		return;
-	}
-	else{
-		j = j -0.2;
-	}
-	var ctx = c.ctx;
+	if (sizeFactor < -3) return;
 	for(var i = 0; i<c.shapes.length; i++){
-		c.shapes[i].scale(j)
+		c.shapes[i].scale(0.7)
 	}
 	c.valid = false;
 	c.draw();
+	sizeFactor--;
 });
+
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
 	c.shapes.splice(c.shapes.indexOf(obj),1);
