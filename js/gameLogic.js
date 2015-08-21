@@ -1,11 +1,21 @@
 
 function canSnap(rule, expression){
-  /*
- if(rule.below instanceof Operator){
-  if( 
- }*/
+  if(rule instanceof Variable){
+    return true; 
+  }
+ if(rule instanceof Operator){
+  if(!(expression instanceof Operator)){
+    return false;
+  }
+  if(!canSnap(rule.left, expression.left)){
+    return false;
+  }
+  if(!canSnap(rule.right, expression.right)){
+    return false;
+  }
+  return rule.value === expression.value;
+ }
 }
-
 
 /**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.

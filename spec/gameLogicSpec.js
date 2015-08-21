@@ -80,3 +80,19 @@ describe("Multiplication", function() {
         expect(10*1).toBe(10);
     });
 });
+
+describe("Test contains", function() {
+    var V1 = ["A","B","C"];
+    it("[A,B,C] should contain A", function() {
+        expect(contains(V1,"A")).toBe(true);
+    });
+});
+
+describe("Test canSnap", function() {
+    var question = parse("A∧(B→C) ⊢ (A→B)→C");
+    var rule = parse("⊢A→B");
+
+    it("Rule should snap into question", function() {
+        expect(canSnap(rule,question)).toBe(true);
+    });
+});
