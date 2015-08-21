@@ -339,9 +339,9 @@ function createShape(logicArray){
 		if(right.value =="")
 			continue;
 		else if(right instanceof Operator)
-			logicShapes.push(buildShape(right,330,15,0.3));
+			logicShapes.push(buildShape(right,315,10,0.3));
 		else
-			logicShapes.push(new Shape(330,15,shapePoints[right.value]));
+			logicShapes.push(new Shape(315,10,shapePoints[right.value]));
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 	}
@@ -369,10 +369,10 @@ function buildShape(operator,x,y,scale){
 		logicShapes.push(new Shape(15,15,shapePoints[left.value]));
 
 	if(right.value !="" && right instanceof Operator)
-		logicShapes.push(buildShape(right,330,15,0.3));
+		logicShapes.push(buildShape(right,315,10,0.3));
 
 	else if(right.value !="")
-		logicShapes.push(new Shape(330,15,shapePoints[right.value]));
+		logicShapes.push(new Shape(315,10,shapePoints[right.value]));
 
 	var result = (new ComboShape(x,y,225,100,logicShapes));
     if(scale != 0) {
