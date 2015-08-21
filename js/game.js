@@ -2,7 +2,7 @@
 // For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c;
+var c, cr;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -245,13 +245,24 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	// double click for making new shapes
+	
+	//double click rule shapes 
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
-		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = cr.shapes;
+		for (var i = shapes.length-1; i >= 0 ; i--) {
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				console.log("dbclick");	
+				//ComboShape cs = shapes[i];
+				c.addShape(new ComboShape(10, 10, 225, 300,
+						[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+				));
+				return;
+			}
+		}
 	}, true);
-
-
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -281,6 +292,8 @@ CanvasState.prototype.draw = function() {
 		this.valid = true;
 	}
 }
+
+
 
 
 // Creates an object with x and y defined, set to the mouse position relative to the state's canvas
@@ -388,6 +401,7 @@ var shapePoints={
 
 //initilisation method called from html on load up
 function init() {
+	//game area
 	var canvas = document.getElementById('canvasGameArea');
 	var cs = new CanvasState(canvas);
 	canvas.width = canvasSvg.clientWidth;
@@ -407,11 +421,23 @@ function init() {
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
 	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
+	
+	//rules area
+	var canvasr = document.getElementById('canvasRules');
+	var csr = new CanvasState(canvasr);
+	canvasr.width = rulesPanelSvg.clientWidth;
+	canvasr.height = rulesPanelSvg.clientHeight;
+	csr.width = rulesPanelSvg.clientWidth;
+	csr.height = rulesPanelSvg.clientHeight;
+	
+	
 
 	var rule = new ComboShape(10, 10, 225, 300,
 		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
-	cs.addShape(rule);
+	rule.scale(0.5);
+	csr.addShape(rule);
+	cr = csr;
 
 	var question = new ComboShape(10, 400, 225, 100,
 		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
@@ -421,5 +447,4 @@ function init() {
 
 	// debugging purposes only
 	c = cs;
-
 }

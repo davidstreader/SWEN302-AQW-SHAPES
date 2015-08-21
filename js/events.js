@@ -55,7 +55,8 @@ resetButton.addEventListener("click", function(){
 });
 var zoomInFactor = 1;
 zoomInButton.addEventListener("click", function(){
-	if(zoomInFactor>1.6){ 
+	
+	if(zoomInFactor>1.6 || zoomInFactor<1){ 
 		return;
 	}
 	else{
@@ -66,15 +67,18 @@ zoomInButton.addEventListener("click", function(){
 		}
 		c.valid = false;
 		c.draw();
-		console.log("zoom in clicked: "+zoomInFactor);
-
 	}
-	
+	if(zoomOutFactor+0.2<1){
+		zoomOutFactor = zoomOutFactor +0.2;
+	}
+	console.log("zoom in :" + zoomInFactor+"   zoom out: "+ zoomOutFactor);
 
 });
 var zoomOutFactor = 1;
 zoomOutButton.addEventListener("click", function(){
-	if(zoomOutFactor<0.6){ 
+	
+	console.log(zoomOutFactor);
+	if(zoomOutFactor<0.6 || zoomOutFactor>1){ 
 		return;
 	}
 	else{
@@ -84,10 +88,13 @@ zoomOutButton.addEventListener("click", function(){
 	for(var i = 0; i<c.shapes.length; i++){
 		c.shapes[i].scale(zoomOutFactor)
 	}
-	console.log("zoom out clicked: "+zoomOutFactor);
-
 	c.valid = false;
 	c.draw();
+	if(zoomInFactor-0.2>1){
+		zoomInFactor = zoomInFactor - 0.2;
+	}
+	console.log("zoom in :" + zoomInFactor+"   zoom out: "+ zoomOutFactor);
+
 });
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
