@@ -1,8 +1,12 @@
 
 function canSnap(rule, expression){
- //var variables = getVariables(expression);
-
+  /*
+ if(rule.below instanceof Operator){
+  if( 
+ }*/
 }
+
+
 /**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.
  */

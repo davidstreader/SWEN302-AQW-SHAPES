@@ -29,7 +29,6 @@ describe("Test getVariable 02", function() {
         V1 = parse("(A∨B)∧(A∨C) ⊢ A∨B∧C");
         //console.log(V1);
         V2 = getVariables(V1);
-        console.log(V2);
         //console.log(V2);
         V3 = ["A","B","C"];
         for(var i = 0; i<V3.length; i++){
@@ -73,5 +72,11 @@ describe("Test contains", function() {
 
     it("[A,B,C] should contain A", function() {
         expect(contains(V1,"A")).toBe(true);
+    });
+});
+
+describe("Multiplication", function() {
+    it("10*1 should be 10", function() {
+        expect(10*1).toBe(10);
     });
 });
