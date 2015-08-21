@@ -1,8 +1,8 @@
-// Constructor for Shape objects to hold data for all drawn objects.
-// For now they will just be defined as rectangles.
+//Constructor for Shape objects to hold data for all drawn objects.
+//For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c;
+var c, cr;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -63,8 +63,32 @@ ComboShape.prototype.scale = function(scaleFactor){
 	this.collY = this.collY * scaleFactor;
 };
 
-// Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
-// Start from back to get the newest placed if theres overlap
+Shape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor = scaleFactor || 1;
+	for(var i=0; i<this.points.length; i++){
+		this.points[i].x = this.points[i].x / scaleFactor;
+		this.points[i].y = this.points[i].y / scaleFactor;
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+};
+
+ComboShape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor= scaleFactor || 1;
+	for(var i=0; i<this.shapeList.length; i++){
+		this.shapeList[i].scaleDivide(scaleFactor);
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+	this.collX = this.collX / scaleFactor;
+	this.collY = this.collY / scaleFactor;
+};
+
+
+
+
+//Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
+//Start from back to get the newest placed if theres overlap
 Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
@@ -225,15 +249,18 @@ function CanvasState(canvas) {
 	}, true);
 
 	canvas.addEventListener('mousemove', function(e) {
-		if (myState.dragging){
-			var mouse = myState.getMouse(e);
-			// We don't want to drag the object by its top-left corner, we want to drag it
-			// from where we clicked. Thats why we saved the offset and use it here
-			myState.selection.currX = mouse.x - myState.dragoffx;
-			myState.selection.currY = mouse.y - myState.dragoffy;
-			myState.valid = false; // redraw
+		if (myState == c){
+			if (myState.dragging){
+				var mouse = myState.getMouse(e);
+				// We don't want to drag the object by its top-left corner, we want to drag it
+				// from where we clicked. Thats why we saved the offset and use it here
+				myState.selection.currX = mouse.x - myState.dragoffx;
+				myState.selection.currY = mouse.y - myState.dragoffy;
+				myState.valid = false; // redraw
+			}
 		}
 	}, true);
+	
 	canvas.addEventListener('mouseup', function(e) {
 		myState.dragging = false;
 	}, true);
@@ -245,13 +272,24 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	// double click for making new shapes
+
+	//double click rule shapes 
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
-		myState.addShape(new Shape(mouse.x - 10, mouse.y - 10, shapePoints.AND,get_random_color()));
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = cr.shapes;
+		for (var i = shapes.length-1; i >= 0 ; i--) {
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				console.log("dbclick");	
+				//ComboShape cs = shapes[i];
+				c.addShape(new ComboShape(10, 10, 225, 300,
+						[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+				));
+				return;
+			}
+		}
 	}, true);
-
-
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -266,8 +304,8 @@ CanvasState.prototype.clear = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-// While draw is called as often as the INTERVAL variable demands,
-// It only ever does something if the canvas gets invalidated by our code
+//While draw is called as often as the INTERVAL variable demands,
+//It only ever does something if the canvas gets invalidated by our code
 CanvasState.prototype.draw = function() {
 	// if our state is invalid, redraw and validate!
 	if (!this.valid) {
@@ -283,8 +321,10 @@ CanvasState.prototype.draw = function() {
 }
 
 
-// Creates an object with x and y defined, set to the mouse position relative to the state's canvas
-// If you wanna be super-correct this can be tricky, we have to worry about padding and borders
+
+
+//Creates an object with x and y defined, set to the mouse position relative to the state's canvas
+//If you wanna be super-correct this can be tricky, we have to worry about padding and borders
 CanvasState.prototype.getMouse = function(e) {
 	var element = this.canvas, offsetX = 0, offsetY = 0, mx, my;
 
@@ -308,7 +348,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 
 function createShape(logicArray){
-   	for(var i =15; i < 16; i++){
+	for(var i =15; i < 16; i++){
 		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
@@ -325,7 +365,7 @@ function createShape(logicArray){
 		else if(left instanceof Operator)
 			logicShapes.push(buildShape(left,15,15,0.3));
 		else
-		 	logicShapes.push(new Shape(15,15,shapePoints[left.value]));
+			logicShapes.push(new Shape(15,15,shapePoints[left.value]));
 
 		if(right.value =="")
 			continue;
@@ -371,23 +411,24 @@ function buildShape(operator,x,y,scale){
 }
 
 var shapePoints={
-	AND 		:[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
-	OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
-	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
-	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	TURNSTILE 	:  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
-	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+		AND 		:[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
+		OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
+		IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
+		NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+		TURNSTILE 	:  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
+		RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+		QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
-	A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
-	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
-	F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
+		A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+		B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
+		C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+		T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
+		F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
 };
 
 //initilisation method called from html on load up
 function init() {
+	//game area
 	var canvas = document.getElementById('canvasGameArea');
 	var cs = new CanvasState(canvas);
 	canvas.width = canvasSvg.clientWidth;
@@ -408,18 +449,29 @@ function init() {
 	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
 
+	//rules area
+	var canvasr = document.getElementById('canvasRules');
+	var csr = new CanvasState(canvasr);
+	canvasr.width = rulesPanelSvg.clientWidth;
+	canvasr.height = rulesPanelSvg.clientHeight;
+	csr.width = rulesPanelSvg.clientWidth;
+	csr.height = rulesPanelSvg.clientHeight;
+
+
+
 	var rule = new ComboShape(10, 10, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
-	cs.addShape(rule);
+	rule.scale(0.5);
+	csr.addShape(rule);
+	cr = csr;
 
 	var question = new ComboShape(10, 400, 225, 100,
-		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
 	cs.addShape(question);
 	//combo.draw(cs.ctx);
 
 	// debugging purposes only
 	c = cs;
-
 }

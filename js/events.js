@@ -46,49 +46,35 @@ function update() {
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 }
 
-
 resetButton.addEventListener("click", function(){
 	c.shapes = null;
 	c.ctx = null;
 	c = null;
 	init();
 });
-var zoomInFactor = 1;
+
+var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-	if(zoomInFactor>1.6){ 
-		return;
-	}
-	else{
-		zoomInFactor = zoomInFactor+ 0.2;
 		var ctx = c.ctx;
+		if (sizeFactor > 3) return;
 		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scale(zoomInFactor)
+			c.shapes[i].scaleDivide(0.7)
 		}
 		c.valid = false;
 		c.draw();
-		console.log("zoom in clicked: "+zoomInFactor);
-
-	}
-	
-
+		sizeFactor++;
 });
-var zoomOutFactor = 1;
-zoomOutButton.addEventListener("click", function(){
-	if(zoomOutFactor<0.6){ 
-		return;
-	}
-	else{
-		zoomOutFactor = zoomOutFactor -0.2;
-	}
-	var ctx = c.ctx;
-	for(var i = 0; i<c.shapes.length; i++){
-		c.shapes[i].scale(zoomOutFactor)
-	}
-	console.log("zoom out clicked: "+zoomOutFactor);
 
+zoomOutButton.addEventListener("click", function(){
+	if (sizeFactor < -3) return;
+	for(var i = 0; i<c.shapes.length; i++){
+		c.shapes[i].scale(0.7)
+	}
 	c.valid = false;
 	c.draw();
+	sizeFactor--;
 });
+
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
 	c.shapes.splice(c.shapes.indexOf(obj),1);
