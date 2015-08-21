@@ -80,6 +80,10 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 };
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
+	if(offsetX != null){
+		offsetX += this.currX;
+		offsetY += this.currY;
+	}
 	offsetX = offsetX || this.currX;
 	offsetY = offsetY || this.currY;
 	for(var i=0; i < this.shapeList.length; i++) {
@@ -335,7 +339,7 @@ function createShape(logicArray){
 		if(right.value =="")
 			continue;
 		else if(right instanceof Operator)
-			logicShapes.push(buildShape(right,330+400,15+400,0.3));
+			logicShapes.push(buildShape(right,330,15,0.3));
 		else
 			logicShapes.push(new Shape(330,15,shapePoints[right.value]));
 
