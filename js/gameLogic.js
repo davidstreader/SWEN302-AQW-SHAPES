@@ -1,26 +1,34 @@
-
+var variables = [];
 function canSnap(rule, expression){
-  var variables = getVariables(expression);
-  
-}
+ //var variables = getVariables(expression);
 
+}
+function findVariables(expression){
+ getVariables(expression);
+ variables = removeDuplicates(variables);
+ variables.sort();
+}
 function getVariables(expression){
  if(expression instanceof Variable){
-  return expression.value; 
+  if(typeof expression.value === 'string'){
+    for(var i = 0; i < expression.value.length; i++){
+     variables.push(expression.value[i]);
+    }
+  }else variables.push(expression.value);
  }
  // else expression instance of Operator
- var variables = [];
- if(typeof expression.left !== undefined){
-   variables.push(getVariables(expression.left));
+ //var variables = [];
+ else if(typeof expression.left !== undefined){
+   getVariables(expression.left);
  }
- if(typeof expression.right !== undefined){
-  variables.push(getVariables(expression.right)); 
+ else if(typeof expression.right !== undefined){
+   getVariables(expression.right);
  }
  // remove duplicates
- variables = removeDuplicates(variables);
+// variables = removeDuplicates(variables);
  // sort
- variables.sort();
- return variables;
+//variables.sort();
+ //return variables;
 }
 
 function removeDuplicates(array){
