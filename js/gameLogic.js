@@ -1,34 +1,43 @@
-var variables = [];
+
 function canSnap(rule, expression){
  //var variables = getVariables(expression);
 
 }
-function findVariables(expression){
- getVariables(expression);
- variables = removeDuplicates(variables);
- variables.sort();
-}
+/**
+ * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.
+ */
 function getVariables(expression){
- if(expression instanceof Variable){
-  if(typeof expression.value === 'string'){
-    for(var i = 0; i < expression.value.length; i++){
-     variables.push(expression.value[i]);
-    }
-  }else variables.push(expression.value);
- }
- // else expression instance of Operator
- //var variables = [];
- else if(typeof expression.left !== undefined){
-   getVariables(expression.left);
- }
- else if(typeof expression.right !== undefined){
-   getVariables(expression.right);
- }
- // remove duplicates
-// variables = removeDuplicates(variables);
+ var varis = findVariables(expression); 
+  // remove duplicates
+ varis = removeDuplicates(varis);
  // sort
-//variables.sort();
- //return variables;
+ varis.sort();
+return varis;
+}
+
+/**
+ * Returns the complete list of the variables in the given expression with duplicates and unsorted.
+ */
+function findVariables(expression){
+   var variables = [];
+ if(expression instanceof Variable){
+  if(expression.value !== ""){
+    //for(var i = 0; i < expression.value.length; i++){
+     variables.push(expression.value);
+    //}
+  }
+  return variables;
+ }
+ 
+ // else expression instance of Operator
+ if(typeof expression.left !== undefined){
+   variables = variables.concat(getVariables(expression.left));
+ }
+ if(typeof expression.right !== undefined){
+   variables = variables.concat(getVariables(expression.right));
+ }
+
+ return variables;
 }
 
 function removeDuplicates(array){

@@ -5,7 +5,7 @@ describe("Test getVariable 01", function() {
     var check = true;
     beforeEach(function() {
         V1 = parse("A ∧ B");
-        V2 = findVariables(V1);
+        V2 = getVariables(V1);
        // console.log(V2);
         V3 = ["A","B"];
         for(var i = 0; i<V3.length; i++){
@@ -28,7 +28,7 @@ describe("Test getVariable 02", function() {
     beforeEach(function() {
         V1 = parse("(A∨B)∧(A∨C) ⊢ A∨B∧C");
         //console.log(V1);
-        V2 = findVariables(V1);
+        V2 = getVariables(V1);
         console.log(V2);
         //console.log(V2);
         V3 = ["A","B","C"];
