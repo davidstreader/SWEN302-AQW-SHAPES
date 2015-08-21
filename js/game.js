@@ -282,10 +282,15 @@ function CanvasState(canvas) {
 		for (var i = shapes.length-1; i >= 0 ; i--) {
 			if (shapes[i].contains(mx, my, cr.ctx)) {
 				console.log("dbclick");	
-				//ComboShape cs = shapes[i];
-				c.addShape(new ComboShape(10, 10, 225, 300,
-						[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-				));
+				var s = [];
+				for(var j = 0; j<shapes[i].shapeList.length; j++){
+					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+				}
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+				console.log(c.shapes[c.shapes.length-1] == shapes[i]);
+				console.log(c.shapes[c.shapes.length-1]);
+				console.log(shapes[i]);
+
 				return;
 			}
 		}
@@ -469,6 +474,7 @@ function init() {
 	var question = new ComboShape(10, 400, 225, 100,
 			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
+	question.scale(0.5);
 	cs.addShape(question);
 	//combo.draw(cs.ctx);
 
