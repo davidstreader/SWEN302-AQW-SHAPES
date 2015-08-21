@@ -1,6 +1,11 @@
 
 var questions;
-
+var rules;
+function loadRules(){
+    d3.json("js/rules.json", function (error, data){
+        rules = data;
+    });
+}
 function generateASTs() {
  questions = [];
  for(var i = 0;i<selectedFile.length;i++){

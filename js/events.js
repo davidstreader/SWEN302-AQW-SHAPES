@@ -26,7 +26,7 @@ inputFile.change(function () {
 				selectedFile = data;
 				generateASTs();
 				createShape(questions);
-
+				loadRules();
 			});
 			/*reader = new FileReader();
 
