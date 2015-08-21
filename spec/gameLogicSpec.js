@@ -89,10 +89,21 @@ describe("Test contains", function() {
 });
 
 describe("Test canSnap", function() {
-    var question = parse("A∧(B→C) ⊢ (A→B)→C");
-    var rule = parse("⊢A→B");
-
-    it("Rule should snap into question", function() {
+    it("⊢A→B should snap into A∧(B→C) ⊢ (A→B)→C", function() {
+	var question = parse("A∧(B→C) ⊢ (A→B)→C");
+	var rule = parse("⊢A→B");
         expect(canSnap(rule,question)).toBe(true);
+    });
+    
+    it("⊢A∧B should snap into A∨B→C ⊢ (A→C)∧(B→C)", function() {
+	var question = parse("A∨B→C ⊢ (A→C)∧(B→C)");
+	var rule = parse("⊢A∧B");
+        expect(canSnap(rule,question)).toBe(true);
+    });
+    
+    it("⊢A→B should not snap into A∨B→C ⊢ (A→C)∧(B→C)", function() {
+	var question = parse("A∨B→C ⊢ (A→C)∧(B→C)");
+	var rule = parse("⊢A→B");
+        expect(canSnap(rule,question)).toBe(false);
     });
 });
