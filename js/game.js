@@ -358,7 +358,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 
 function createShape(logicArray){
-   	for(var i =23; i < 24; i++){
+   	for(var i =15; i < 16; i++){
 		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
@@ -368,21 +368,21 @@ function createShape(logicArray){
 			continue;
 		else {
 			var sp = shapePoints[OpValue];
-			logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
+			logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
 		}
 		if(left.value =="")
 			continue;
 		else if(left instanceof Operator)
-			logicShapes.push(buildShape(left,15,15,0.3));
+			logicShapes.push(buildShape(left,15,115,0.3));
 		else
-		 	logicShapes.push(new Shape(15,15,shapePoints[left.value]));
+		 	logicShapes.push(new Shape(15,115,shapePoints[left.value]));
 
 		if(right.value =="")
 			continue;
 		else if(right instanceof Operator)
-			logicShapes.push(buildShape(right,315,10,0.3));
+			logicShapes.push(buildShape(right,315,115,0.3));
 		else
-			logicShapes.push(new Shape(315,10,shapePoints[right.value]));
+			logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes, logicArray[i]));
 	}
@@ -400,22 +400,22 @@ function buildShape(operator,x,y,scale){
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,225, shapePoints[OpValue]));
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
 	}
 
 	if(left.value !="" && left instanceof Operator)
-		logicShapes.push(buildShape(left,15,15,0.3));
+		logicShapes.push(buildShape(left,15,115,0.3));
 
 	else if(left.value != "")
-		logicShapes.push(new Shape(15,15,shapePoints[left.value]));
+		logicShapes.push(new Shape(15,115,shapePoints[left.value]));
 
 	if(right.value !="" && right instanceof Operator)
-		logicShapes.push(buildShape(right,315,10,0.3));
+		logicShapes.push(buildShape(right,315,115,0.3));
 
 	else if(right.value !="")
-		logicShapes.push(new Shape(315,10,shapePoints[right.value]));
+		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-	var result = (new ComboShape(x,y,225,100,logicShapes));
+	var result = (new ComboShape(x,y,225,15,logicShapes));
     if(scale != 0) {
         result.scale(scale);
         result.currX = x;
