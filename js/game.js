@@ -12,15 +12,13 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, ruleLeft, ruleRight
-) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes, operator) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-	this.ruleLeft = ruleLeft;
-	this.ruleRight = ruleRight;
+	this.operator = operator;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -386,7 +384,7 @@ function createShape(logicArray){
 		else
 			logicShapes.push(new Shape(315,10,shapePoints[right.value]));
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes));
+		c.addShape(new ComboShape(400,400,225,100,logicShapes, logicArray[i]));
 	}
 
 }
