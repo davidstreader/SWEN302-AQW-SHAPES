@@ -47,10 +47,10 @@ function update() {
 }
 
 resetButton.addEventListener("click", function(){
-	c.shapes = null;
-	c.ctx = null;
-	c = null;
-	init();
+	c.shapes = [];
+	c.valid = false;
+	c.draw();
+	
 });
 
 var sizeFactor = 0;

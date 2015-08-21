@@ -453,24 +453,6 @@ function init() {
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
 	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
 	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
-
-	//rules area
-	var canvasr = document.getElementById('canvasRules');
-	var csr = new CanvasState(canvasr);
-	canvasr.width = rulesPanelSvg.clientWidth;
-	canvasr.height = rulesPanelSvg.clientHeight;
-	csr.width = rulesPanelSvg.clientWidth;
-	csr.height = rulesPanelSvg.clientHeight;
-
-
-
-	var rule = new ComboShape(10, 10, 225, 300,
-			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-	);
-	rule.scale(0.5);
-	csr.addShape(rule);
-	cr = csr;
-
 	var question = new ComboShape(10, 400, 225, 100,
 			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
@@ -480,4 +462,24 @@ function init() {
 
 	// debugging purposes only
 	c = cs;
+	
+	
+	
+	
+	//rules area
+	var canvasr = document.getElementById('canvasRules');
+	var csr = new CanvasState(canvasr);
+	canvasr.width = rulesPanelSvg.clientWidth;
+	canvasr.height = rulesPanelSvg.clientHeight;
+	csr.width = rulesPanelSvg.clientWidth;
+	csr.height = rulesPanelSvg.clientHeight;
+
+	var rule = new ComboShape(10, 10, 225, 300,
+			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+	);
+	rule.scale(0.5);
+	csr.addShape(rule);
+	cr = csr;
+
+	
 }
