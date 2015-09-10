@@ -75,6 +75,28 @@ describe("Test contains", function() {
     });
 });
 
+describe("Test canSnap", function() {
+  var rule;
+  var expression;
+    it("B→C ⊢ (A∨B)→(A∨C) should snap into ⊢A→B", function() {
+      rule = parse("⊢A→B");
+      expression = parse("B→C ⊢ (A∨B)→(A∨C)");
+      expect(canSnap(rule,expression)).toBe(true);
+    });
+      
+    it("A ⊢ ¬¬A should snap into ⊢¬A", function() {
+      var rule = parse("⊢¬A");
+      var expression = parse("A ⊢ ¬¬A");
+      expect(canSnap(rule,expression)).toBe(true);
+    });
+      
+    it("⊢ (A→B→C)→(A→B)→A→C should not snap into ⊢A∨B", function() {
+      var rule = parse("⊢A∨B");
+      var expression = parse("⊢ (A→B→C)→(A→B)→A→C");
+      expect(canSnap(rule,expression)).toBe(true);
+    });
+});    
+    
 describe("Multiplication", function() {
     it("10*1 should be 10", function() {
         expect(10*1).toBe(10);

@@ -1,9 +1,26 @@
 
-function canSnap(rule, expression){
-  /*
- if(rule.below instanceof Operator){
-  if( 
- }*/
+function canSnap(ruleExp, expression){
+ if(ruleExp instanceof Operator){
+  if(expression instanceof Operator){
+    // check main operator
+    if(!ruleExp.value === expression.value){return false;}
+    // check left side can snap
+    if(!ruleExp instanceof Operator){
+     if(!canSnap(ruleExp.left,expression.left)){
+      return false; 
+     }
+    }
+    // check right side can snap
+    if(ruleExp.right instanceof Operator){
+     if(!canSnap(ruleExp.right,expression.right)){
+      return false; 
+     }
+    }
+    
+    return true;
+  }
+ }
+ 
 }
 
 
