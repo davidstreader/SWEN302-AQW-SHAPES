@@ -12,13 +12,15 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, operator) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes, ruleLeft, ruleRight
+) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-	this.operator = operator;
+	this.ruleLeft = ruleLeft;
+	this.ruleRight = ruleRight;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -292,10 +294,7 @@ function CanvasState(canvas) {
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
 				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-				console.log(c.shapes[c.shapes.length-1] == shapes[i]);
-				console.log(c.shapes[c.shapes.length-1]);
-				console.log(shapes[i]);
-
+				matchShapeSize();
 				return;
 			}
 		}
@@ -384,7 +383,7 @@ function createShape(logicArray){
 		else
 			logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes, logicArray[i]));
+		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 	}
 
 }

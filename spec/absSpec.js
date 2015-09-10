@@ -64,8 +64,6 @@ describe("Test Not", function() {
   	V2 = new Operator("NOT");
  	V2.left = new Variable("");
   	V2.right = new Variable("A");
-  	console.log(V1);
-  	console.log(V2);
   });
   it("V1 should be equals to V2", function() {
      expect(V1.equals(V2)).toBe(true);
