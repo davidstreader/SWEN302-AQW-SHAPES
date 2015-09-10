@@ -62,13 +62,24 @@ body {
 			<h2>Rules</h2>
 			<div id="rulesPanelSvg"
 				style="background-color: white; overflow-y: scroll;">
-				<canvas id="canvasRules"></canvas>
-			</div>
+				
+				<ul class="nav nav-tabs">
+    					<li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
+    					<li><a data-toggle="tab" href="#elimination">Elimination</a></li>
+  					</ul>
+				
+  					<div class="tab-content">
+    					<div id="introduction" class="tab-pane fade in active">
+							<canvas id="canvasRules"></canvas>
+    					</div>
+    					<div id="elimination" class="tab-pane fade">
+    						<canvas id="canvasElimination"></canvas>
+    					</div>
+ 					</div>
+ 			</div>
 			<p></p>
-			<button id="introductionButton" class="btn btn-primary btn-md">Introduction</button>
-			<button id="eliminationButton" class="btn btn-primary btn-md"
-				style="">Elimination</button>
 		</div>
+		
 	<div class="col-lg-9"
 		style="background-color: lavender;">
 		<h2>Game Area</h2>

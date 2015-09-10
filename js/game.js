@@ -279,8 +279,33 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-
-	//double click rule shapes 
+	
+	
+	
+	
+//	canvas.addEventListener('click', function(e) {
+//		var mouse = myState.getMouse(e);
+//		var mx = mouse.x;
+//		var my = mouse.y;
+//		var shapes = c.shapes;
+//		for (var i = shapes.length-1; i >= 0 ; i--) {
+//			if (shapes[i].contains(mx, my, cr.ctx)) {
+//				console.log("shape click");	
+//				var s = [];
+//				for(var j = 0; j < shapes[i].shapeList.length; j++){
+//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+//				}
+//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+//				matchShapeSize();
+//				return;
+//			}
+//		}
+//	}, true);
+//	
+	
+	
+	
+	//double click rule shape to create a same new rule shape on game area canvas
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
@@ -288,9 +313,8 @@ function CanvasState(canvas) {
 		var shapes = cr.shapes;
 		for (var i = shapes.length-1; i >= 0 ; i--) {
 			if (shapes[i].contains(mx, my, cr.ctx)) {
-				console.log("dbclick");	
 				var s = [];
-				for(var j = 0; j<shapes[i].shapeList.length; j++){
+				for(var j = 0; j < shapes[i].shapeList.length; j++){
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
 				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
