@@ -294,6 +294,7 @@ function CanvasState(canvas) {
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
 				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+				matchShapeSize();
 				return;
 			}
 		}
