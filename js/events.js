@@ -6,7 +6,7 @@ var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
 var imageBin = document.getElementById("imageBin");
 var canvasGameArea = document.getElementById("canvasGameArea");
-var canvasSvg = document.getElementById("canvasSvg");
+var canvasSvg = document.getElementById("gameAreaPanel");
 
 var inputFile = $("#uploadFile");
 var fileName = null;
@@ -26,7 +26,6 @@ inputFile.change(function () {
 				selectedFile = data;
 				generateASTs();
 				createShape(questions);
-
 			});
 			/*reader = new FileReader();
 
@@ -46,27 +45,35 @@ function update() {
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 }
 
-
 resetButton.addEventListener("click", function(){
-	c.shapes = null;
-	c.ctx = null;
-	c = null;
-	init();
-});
-
-zoomInButton.addEventListener("click", function(){
-	var ctx = c.ctx;
-	ctx.scale(1.2,1.2);
+	c.shapes = [];
 	c.valid = false;
 	c.draw();
-
+	
 });
+
+var sizeFactor = 0;
+zoomInButton.addEventListener("click", function(){
+		var ctx = c.ctx;
+		if (sizeFactor > 3) return;
+		for(var i = 0; i<c.shapes.length; i++){
+			c.shapes[i].scaleDivide(0.7)
+		}
+		c.valid = false;
+		c.draw();
+		sizeFactor++;
+});
+
 zoomOutButton.addEventListener("click", function(){
-	var ctx = c.ctx;
+	if (sizeFactor < -3) return;
+	for(var i = 0; i<c.shapes.length; i++){
+		c.shapes[i].scale(0.7)
+	}
 	c.valid = false;
-	ctx.scale(0.8,0.8);
-
+	c.draw();
+	sizeFactor--;
 });
+
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
 	c.shapes.splice(c.shapes.indexOf(obj),1);
