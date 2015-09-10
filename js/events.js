@@ -80,6 +80,8 @@ zoomOutButton.addEventListener("click", function(){
 	sizeFactor--;
 });
 
+
+
 imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
 	c.shapes.splice(c.shapes.indexOf(obj),1);
@@ -121,6 +123,24 @@ window.onresize = function(){
 function reset(){
 	console.log("reset");
 	c.shapes = [];
+	createShape(questions, 0);//add question to game area
 	c.valid = false;
 	c.draw();
+}
+
+function matchShapeSize() {
+	if(sizeFactor>0){
+		for(var i = 0; i<sizeFactor; i++){
+			c.shapes[c.shapes.length-1].scaleDivide(0.7);
+		}
+		c.valid = false;
+		c.draw();
+	}
+	else if(sizeFactor<0){
+		for(var j = 0;j<(0-sizeFactor); j++){
+			c.shapes[c.shapes.length-1].scale(0.7);
+		}
+		c.valid = false;
+		c.draw();
+	}
 }
