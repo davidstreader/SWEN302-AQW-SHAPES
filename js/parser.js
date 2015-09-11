@@ -9,7 +9,7 @@ function loadRules(){
             for(var j = 0; j <data[i].above.length; j++){
                 aboveArray.push(treeToString(parse(data[i].above[j])));
             }
-            var currentRule = {Name: data[i].type, above: aboveArray, below: treeToString(parse(data[i].below))};
+            var currentRule = {name: data[i].name, type: data[i].type, above: aboveArray, below: treeToString(parse(data[i].below))};
             rules.push(currentRule);
         }
         //rules = data;
