@@ -1,8 +1,8 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 
-//c is the canvas created for debugging purposes only
-var c, cr;
+//c ,cr , ce are the global canvas areas
+var c, cr, ce;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -113,9 +113,10 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
-    if(this.name != null)
-        context.fillText(this.name,this.currX+10,this.currY+85);
-
+    if(this.name != null) {
+        context.fillStyle = 'blue';
+        context.fillText(this.name, this.currX + 10, this.currY + 85);
+    }
 };
 
 ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
@@ -515,7 +516,17 @@ function init() {
 	csr.width = rulesPanelSvg.clientWidth;
 	csr.height = rulesPanelSvg.clientHeight;
 
-	var rule = new ComboShape(10, 10, 225, 300,
+    //rules area
+    var canvase = document.getElementById('canvasElimination');
+    var cse = new CanvasState(canvase);
+    canvase.width = rulesPanelSvg.clientWidth;
+    canvase.height = rulesPanelSvg.clientHeight;
+    cse.width = rulesPanelSvg.clientWidth;
+    cse.height = rulesPanelSvg.clientHeight;
+
+
+
+    var rule = new ComboShape(10, 10, 225, 300,
 			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
         ,"B IMPLIES A"
 	);
@@ -532,27 +543,44 @@ function init() {
 	rule.scale(0.5);
     rule2.scale(0.5);
     NotIntrodctuion.scale(0.5);
-	csr.addShape(rule);
-	csr.addShape(rule2);
-    csr.addShape(NotIntrodctuion);
+	//csr.addShape(rule);
+	//csr.addShape(rule2);
+   // csr.addShape(NotIntrodctuion);
 
 	cr = csr;
+    ce = cse;
 
-	
+	drawRules(rules);
 }
-//protorype draw method if parser gave array of above objects
+
 function drawRules(ruleArray){
     for(var i =0; i < ruleArray.length; i++){
         var logicshapes = [];
+        logicshapes.push(new Shape(10,10,shapePoints.RULE,"#00ff00"));
         var above = ruleArray[i].above;
         var below = ruleArray[i].below;
 
-        for(var j =0; j < above.length; j++){
-            var operator = above[j];
-            logicshapes.push(new Shape(j*100+10,10,shapePoints[operator.value]))
+        for(var j =0; j < above.length; j++) {
+            for (k = 0; k < above[j].length; k++) {
+                var operator = above[j];
+                if(above[j][k] =="")
+                    continue;
+                var shape = new Shape(k * 100 + 15, 20, shapePoints[ above[j][k] ]);
+                shape.scale((150/above[j].length)/90);
+                shape.currX+=(j*300);
+                logicshapes.push(shape);
+
+
+            }
+
         }
-        var result = new ComboShape(10,i*350+10,225,400,logicshapes,ruleArray.name);
+        var result = new ComboShape(10,i*350+10,225,400,logicshapes,ruleArray[i].name);
+
         result.scale(0.5);
-        cr.addShape(result);
+
+        if(ruleArray[i].type =="Introduction")
+            cr.addShape(result);
+        else
+            ce.addShape(result);
     }
 }
