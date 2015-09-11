@@ -1,28 +1,26 @@
-
-function canSnap(ruleExp, expression){
- if(ruleExp instanceof Operator){
-  if(expression instanceof Operator){
-    // check main operator
-    if(!ruleExp.value === expression.value){return false;}
-    // check left side can snap
-    if(!ruleExp instanceof Operator){
-     if(!canSnap(ruleExp.left,expression.left)){
-      return false; 
-     }
-    }
-    // check right side can snap
-    if(ruleExp.right instanceof Operator){
-     if(!canSnap(ruleExp.right,expression.right)){
-      return false; 
-     }
-    }
-    
+/**
+ * Checks if a rule can fit into an expression
+ */
+function canSnap(ruleExp, expression) {
+  if (ruleExp instanceof Variable) {
     return true;
   }
- }
- 
+  if (ruleExp instanceof Operator) {
+    if (!(expression instanceof Operator)) {
+      return false;
+    }
+    // check left side can snap
+    if (!canSnap(ruleExp.left, expression.left)) {
+      return false;
+    }
+    // check right side can snap
+    if (!canSnap(ruleExp.right, expression.right)) {
+      return false;
+    }
+    return ruleExp.value === expression.value;
+  }
+  return false;
 }
-
 
 /**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.

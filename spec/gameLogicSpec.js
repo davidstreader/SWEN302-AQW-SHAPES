@@ -73,6 +73,10 @@ describe("Test contains", function() {
     it("[A,B,C] should contain A", function() {
         expect(contains(V1,"A")).toBe(true);
     });
+    
+    it("[A,B,C] should not contain D", function() {
+        expect(contains(V1,"D")).toBe(false);
+    });
 });
 
 describe("Test canSnap", function() {
@@ -93,7 +97,25 @@ describe("Test canSnap", function() {
     it("⊢ (A→B→C)→(A→B)→A→C should not snap into ⊢A∨B", function() {
       var rule = parse("⊢A∨B");
       var expression = parse("⊢ (A→B→C)→(A→B)→A→C");
-      expect(canSnap(rule,expression)).toBe(true);
+      expect(canSnap(rule,expression)).toBe(false);
+      
+    });
+    it("⊢A→B should snap into A∧(B→C) ⊢ (A→B)→C", function() {
+	var question = parse("A∧(B→C) ⊢ (A→B)→C");
+	var rule = parse("⊢A→B");
+        expect(canSnap(rule,question)).toBe(true);
+    });
+    
+    it("⊢A∧B should snap into A∨B→C ⊢ (A→C)∧(B→C)", function() {
+	var question = parse("A∨B→C ⊢ (A→C)∧(B→C)");
+	var rule = parse("⊢A∧B");
+        expect(canSnap(rule,question)).toBe(true);
+    });
+    
+    it("⊢A→B should not snap into A∨B→C ⊢ (A→C)∧(B→C)", function() {
+	var question = parse("A∨B→C ⊢ (A→C)∧(B→C)");
+	var rule = parse("⊢A→B");
+        expect(canSnap(rule,question)).toBe(false);
     });
 });    
     
@@ -101,4 +123,15 @@ describe("Multiplication", function() {
     it("10*1 should be 10", function() {
         expect(10*1).toBe(10);
     });
+});
+
+describe("Test contains", function() {
+    var V1 = ["A","B","C"];
+    it("[A,B,C] should contain A", function() {
+        expect(contains(V1,"A")).toBe(true);
+    });
+});
+
+describe("Test canSnap", function() {
+    
 });
