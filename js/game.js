@@ -12,15 +12,14 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, ruleLeft, ruleRight
+function ComboShape(currX, currY, collisionX, collisionY, shapes, name
 ) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-	this.ruleLeft = ruleLeft;
-	this.ruleRight = ruleRight;
+    this.name = name;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -114,6 +113,8 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
+    if(this.name != null)
+        context.fillText(this.name,this.currX+10,this.currY+85);
 
 };
 
@@ -317,7 +318,7 @@ function CanvasState(canvas) {
 				for(var j = 0; j < shapes[i].shapeList.length; j++){
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
-				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name));
 				matchShapeSize();
 				return;
 			}
@@ -454,7 +455,7 @@ var shapePoints={
 	OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
 	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
 	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	TURNSTILE 	:  [{x:0, y:0}, {x:30, y:0}, {x:30, y:30}, {x:100, y:30}, {x:100, y:50}, {x:30, y:50}, {x:30, y:80}, {x:0, y:80}, {x:0, y:0}],
+	TURNSTILE 	:  [{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}],
     RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
     QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
@@ -516,15 +517,42 @@ function init() {
 
 	var rule = new ComboShape(10, 10, 225, 300,
 			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+        ,"B IMPLIES A"
 	);
-	var rule2 = new ComboShape(10, 10, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-	);
+	var rule2 = new ComboShape(10, 350, 225, 300,
+		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.TURNSTILE,"#00F"), new Shape(60,15,shapePoints.A,"#00F"), new Shape(310,15,shapePoints.TURNSTILE,"#00F"), new Shape(355,15,shapePoints.B,"#00F"),  new Shape(15,225,shapePoints.TURNSTILE,"#00F"),  new Shape(55,225,shapePoints.A,"#00F"),  new Shape(180,225,shapePoints.AND,"#00F"),  new Shape(330,205,shapePoints.B,"#00F")]
+	,"Above: Turnstyle A, Turnstyle B, Below: Turnstyle A And B"
+    );
+    var NotIntrodctuion  = new ComboShape(10, 700, 225, 300,
+        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(110,15,shapePoints.TURNSTILE,"#00F"), new Shape(5,15,shapePoints.A,"#00F"), new Shape(15,225,shapePoints.TURNSTILE,"#00F"), new Shape(180,225,shapePoints.NOT,"#00F"),  new Shape(315,225,shapePoints.A,"#00F")]
+        ,"Above: A Turnstyle Below: Turnstyle Negation A"
+    );
+
+
 	rule.scale(0.5);
+    rule2.scale(0.5);
+    NotIntrodctuion.scale(0.5);
 	csr.addShape(rule);
 	csr.addShape(rule2);
+    csr.addShape(NotIntrodctuion);
 
 	cr = csr;
 
 	
+}
+//protorype draw method if parser gave array of above objects
+function drawRules(ruleArray){
+    for(var i =0; i < ruleArray.length; i++){
+        var logicshapes = [];
+        var above = ruleArray[i].above;
+        var below = ruleArray[i].below;
+
+        for(var j =0; j < above.length; j++){
+            var operator = above[j];
+            logicshapes.push(new Shape(j*100+10,10,shapePoints[operator.value]))
+        }
+        var result = new ComboShape(10,i*350+10,225,400,logicshapes,ruleArray.name);
+        result.scale(0.5);
+        cr.addShape(result);
+    }
 }
