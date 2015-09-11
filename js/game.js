@@ -294,10 +294,7 @@ function CanvasState(canvas) {
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
 				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-				console.log(c.shapes[c.shapes.length-1] == shapes[i]);
-				console.log(c.shapes[c.shapes.length-1]);
-				console.log(shapes[i]);
-
+				matchShapeSize();
 				return;
 			}
 		}
@@ -358,9 +355,10 @@ CanvasState.prototype.getMouse = function(e) {
 	return {x: mx, y: my};
 }
 
-
-function createShape(logicArray){
-   	for(var i =23; i < 24; i++){
+var currentQuestionIndex = 0;
+function createShape(logicArray, j){
+	currentQuestionIndex = j;
+   	for(var i =j; i < j+1; i++){
 		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
@@ -387,6 +385,7 @@ function createShape(logicArray){
 			logicShapes.push(new Shape(315,10,shapePoints[right.value]));
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes));
+		c.shapes[c.shapes.length-1].scale(0.5);
 	}
 
 }

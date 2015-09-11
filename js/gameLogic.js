@@ -1,20 +1,25 @@
-
-function canSnap(rule, expression){
-  if(rule instanceof Variable){
-    return true; 
+/**
+ * Checks if a rule can fit into an expression
+ */
+function canSnap(ruleExp, expression) {
+  if (ruleExp instanceof Variable) {
+    return true;
   }
- if(rule instanceof Operator){
-  if(!(expression instanceof Operator)){
-    return false;
+  if (ruleExp instanceof Operator) {
+    if (!(expression instanceof Operator)) {
+      return false;
+    }
+    // check left side can snap
+    if (!canSnap(ruleExp.left, expression.left)) {
+      return false;
+    }
+    // check right side can snap
+    if (!canSnap(ruleExp.right, expression.right)) {
+      return false;
+    }
+    return ruleExp.value === expression.value;
   }
-  if(!canSnap(rule.left, expression.left)){
-    return false;
-  }
-  if(!canSnap(rule.right, expression.right)){
-    return false;
-  }
-  return rule.value === expression.value;
- }
+  return false;
 }
 
 /**
