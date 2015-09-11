@@ -2,7 +2,7 @@
 // For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c, cr;
+var c, cr, selectedShape;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -280,30 +280,20 @@ function CanvasState(canvas) {
 		return "#"+c()+c()+c();
 	}
 	
-	
-	
-	
-//	canvas.addEventListener('click', function(e) {
-//		var mouse = myState.getMouse(e);
-//		var mx = mouse.x;
-//		var my = mouse.y;
-//		var shapes = c.shapes;
-//		for (var i = shapes.length-1; i >= 0 ; i--) {
-//			if (shapes[i].contains(mx, my, cr.ctx)) {
-//				console.log("shape click");	
-//				var s = [];
-//				for(var j = 0; j < shapes[i].shapeList.length; j++){
-//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-//				}
-//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-//				matchShapeSize();
-//				return;
-//			}
-//		}
-//	}, true);
-//	
-	
-	
+	//Select the shape just clicked to to allow specific shape resize
+	canvas.addEventListener('click', function(e) {
+		var mouse = myState.getMouse(e);
+		var mx = mouse.x;
+		var my = mouse.y;
+		var shapes = c.shapes;
+		for (var i = shapes.length-1; i >= 0 ; i--) {
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				selectedShape = shapes[i];
+				return;
+			}
+		}
+		selectedShape = undefined;
+	}, true);
 	
 	//double click rule shape to create a same new rule shape on game area canvas
 	canvas.addEventListener('dblclick', function(e) {
@@ -410,6 +400,8 @@ function createShape(logicArray, j){
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes));
 		c.shapes[c.shapes.length-1].scale(0.5);
+		//TODO: if question add to questionShapes Array
+		//TODO: if rule add to ruleShapes Aray
 	}
 
 }
@@ -519,6 +511,10 @@ function init() {
 			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
 	rule.scale(0.5);
+	
+	
+	
+	
 	csr.addShape(rule);
 	cr = csr;
 

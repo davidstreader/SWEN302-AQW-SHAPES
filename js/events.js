@@ -58,23 +58,36 @@ resetButton.addEventListener("click", function(){
 	
 });
 
+//allow specific shape resize and whole canvas resize
 var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-		var ctx = c.ctx;
-		if (sizeFactor > 3) return;
+	if (sizeFactor > 3) return;
+		
+	if (selectedShape !== undefined){
+		selectedShape.scaleDivide(0.7);
+	} else {
 		for(var i = 0; i<c.shapes.length; i++){
 			c.shapes[i].scaleDivide(0.7)
 		}
-		c.valid = false;
-		c.draw();
-		sizeFactor++;
+	}
+		
+	c.valid = false;
+	c.draw();
+	sizeFactor++;
 });
 
+//allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
 	if (sizeFactor < -3) return;
-	for(var i = 0; i<c.shapes.length; i++){
-		c.shapes[i].scale(0.7)
+	
+	if (selectedShape !== undefined){
+		selectedShape.scale(0.7);
+	} else {
+		for(var i = 0; i<c.shapes.length; i++){
+			c.shapes[i].scale(0.7)
+		}
 	}
+	
 	c.valid = false;
 	c.draw();
 	sizeFactor--;
@@ -96,6 +109,8 @@ arrowLeft.addEventListener("click", function(){
 		}
 		reset();
 		createShape(questions, currentQuestionIndex);
+		// TODO: get from questionShapes array
+		// c.addShape(questions[currentQuestionIndex]);
 	}
 });
 
@@ -107,6 +122,9 @@ arrowRight.addEventListener("click", function(){
 		}
 		reset();
 		createShape(questions, currentQuestionIndex);
+		// TODO: get from questionShapes array
+		// c.addShape(questions[currentQuestionIndex]);
+
 	}
 });
 
@@ -123,7 +141,7 @@ window.onresize = function(){
 function reset(){
 	console.log("reset");
 	c.shapes = [];
-	createShape(questions, 0);//add question to game area
+	//createShape(questions, 0);//add question to game area
 	c.valid = false;
 	c.draw();
 }
