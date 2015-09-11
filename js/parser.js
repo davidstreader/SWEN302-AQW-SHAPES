@@ -7,9 +7,9 @@ function loadRules(){
         for(var i = 0; i < data.length; i++){
              var aboveArray  = [];
             for(var j = 0; j <data[i].above.length; j++){
-                aboveArray.push(parse(data[i].above[j]));
+                aboveArray.push(treeToString(parse(data[i].above[j])));
             }
-            var currentRule = {Name: data[i].type, above: aboveArray, below: parse(data[i].below)};
+            var currentRule = {Name: data[i].type, above: aboveArray, below: treeToString(parse(data[i].below))};
             rules.push(currentRule);
         }
         //rules = data;
@@ -125,6 +125,19 @@ function nextToken(str,i){
     index++;
   }
   return str.substring(index-length,index);
+}
+
+
+function treeToString(expression){
+  var list = [];
+  if(expression instanceof Operator){
+    list = list.concat(treeToString(expression.left));
+  }
+  list.push(expression.value);
+  if(expression instanceof Operator){
+    list = list.concat(treeToString(expression.right));
+  }
+  return list;
 }
 
 var Rule = function(above, below){
