@@ -29,8 +29,8 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
+		return(canSnap(this.logicTree,shape.logicTree));
 
-		return true;
 	}
 	return false;
 };
@@ -321,7 +321,7 @@ function CanvasState(canvas) {
 				for(var j = 0; j < shapes[i].shapeList.length; j++){
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
-				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name));
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name,shapes[i].logicTree));
 				matchShapeSize();
 				return;
 			}
@@ -443,7 +443,7 @@ function buildShape(operator,x,y,scale){
 	else if(right.value !="")
 		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-	var result = (new ComboShape(x,y,225,15,logicShapes));
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator));
     if(scale != 0) {
         result.scale(scale);
         result.currX = x;
