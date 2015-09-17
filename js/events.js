@@ -10,8 +10,8 @@ var canvasSvg = document.getElementById("gameAreaPanel");
 var arrowLeft = document.getElementById("leftButton");
 var arrowRight = document.getElementById("rightButton");
 
-document.getElementById("rulesPanelSvg").style.height = window.innerHeight+'px';
-document.getElementById("gameAreaPanel").style.height = window.innerHeight+'px';
+document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
+document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
 
 
 var inputFile = $("#uploadFile");
@@ -129,6 +129,9 @@ arrowRight.addEventListener("click", function(){
 });
 
 window.onresize = function(){
+	document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
+	document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
+	
 	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 	c.width = canvasGameArea.width;

@@ -287,7 +287,7 @@ function CanvasState(canvas) {
 		var my = mouse.y;
 		var shapes = c.shapes;
 		for (var i = shapes.length-1; i >= 0 ; i--) {
-			if (shapes[i].contains(mx, my, cr.ctx)) {
+			if (shapes[i].contains(mx, my, c.ctx)) {
 				selectedShape = shapes[i];
 				return;
 			}
@@ -295,24 +295,6 @@ function CanvasState(canvas) {
 		selectedShape = undefined;
 	}, true);
 	
-	//double click rule shape to create a same new rule shape on game area canvas
-	canvas.addEventListener('dblclick', function(e) {
-		var mouse = myState.getMouse(e);
-		var mx = mouse.x;
-		var my = mouse.y;
-		var shapes = cr.shapes;
-		for (var i = shapes.length-1; i >= 0 ; i--) {
-			if (shapes[i].contains(mx, my, cr.ctx)) {
-				var s = [];
-				for(var j = 0; j < shapes[i].shapeList.length; j++){
-					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-				matchShapeSize();
-				return;
-			}
-		}
-	}, true);
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -518,5 +500,23 @@ function init() {
 	csr.addShape(rule);
 	cr = csr;
 
-	
+	//click rule shape to create a same new rule shape on game area canvas
+	canvasr.addEventListener('click', function(e) {
+		var mouse = csr.getMouse(e);
+		var mx = mouse.x;
+		var my = mouse.y;
+		var sps = cr.shapes;
+		for (var i = sps.length-1; i >= 0 ; i--) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				console.log("1111")
+				var s = [];
+				for(var j = 0; j < sps[i].shapeList.length; j++){
+					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
+				}
+				c.addShape(new ComboShape(sps[i].currX, sps[i].currY, sps[i].collX, sps[i].collY, s));
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
 }
