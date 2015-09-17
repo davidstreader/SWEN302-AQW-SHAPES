@@ -17,6 +17,7 @@ document.getElementById("gameAreaPanel").style.height = window.innerHeight+'px';
 var inputFile = $("#uploadFile");
 var fileName = null;
 var selectedFile = [];
+var currentQuestionIndex = 0;
 
 inputFile.change(function () {
 	var file, reader, slashIndex;
@@ -90,23 +91,21 @@ imageBin.addEventListener("mouseover", function(){
 
 arrowLeft.addEventListener("click", function(){
 	if(questions!=null){
-		currentQuestionIndex = currentQuestionIndex-1;
+		currentQuestionIndex--;
 		if(currentQuestionIndex<0){
-			return;
+			currentQuestionIndex  = 0;
 		}
 		reset();
-		createShape(questions, currentQuestionIndex);
 	}
 });
 
 arrowRight.addEventListener("click", function(){
 	if(questions!=null){
-		currentQuestionIndex = currentQuestionIndex+1;
+		currentQuestionIndex ++;
 		if(currentQuestionIndex>questions.length-1){
-			return;
+			currentQuestionIndex = questions.length-1;
 		}
 		reset();
-		createShape(questions, currentQuestionIndex);
 	}
 });
 
@@ -123,7 +122,7 @@ window.onresize = function(){
 function reset(){
 	console.log("reset");
 	c.shapes = [];
-	createShape(questions, 0);//add question to game area
+	createShape(questions, currentQuestionIndex);//add question to game area
 	c.valid = false;
 	c.draw();
 }

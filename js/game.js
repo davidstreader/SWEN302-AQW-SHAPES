@@ -384,36 +384,37 @@ CanvasState.prototype.getMouse = function(e) {
 }
 
 
-function createShape(logicArray){
-   	for(var i =15; i < 16; i++){
+function createShape(logicArray,i){
+
 		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
 		var right = logicArray[i].right;
 
-		if(OpValue.value =="")
-			continue;
-		else {
+		if(OpValue.value!="")
+		{
 			var sp = shapePoints[OpValue];
 			logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
 		}
-		if(left.value =="")
-			continue;
-		else if(left instanceof Operator)
-			logicShapes.push(buildShape(left,15,115,0.3));
-		else
-		 	logicShapes.push(new Shape(15,115,shapePoints[left.value]));
+		if(left.value !="") {
 
-		if(right.value =="")
-			continue;
-		else if(right instanceof Operator)
-			logicShapes.push(buildShape(right,315,115,0.3));
-		else
-			logicShapes.push(new Shape(315,115,shapePoints[right.value]));
+			if (left instanceof Operator)
+				logicShapes.push(buildShape(left, 15, 115, 0.3));
+			else
+				logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+		}
+
+		if(right.value =="") {
+
+			if (right instanceof Operator)
+				logicShapes.push(buildShape(right, 315, 115, 0.3));
+			else
+				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
+		}
 
 		c.addShape(new ComboShape(400,400,225,100,logicShapes,logicArray[i]));
 		c.shapes[c.shapes.length-1].scale(0.5);
-	}
+
 
 }
 
@@ -478,31 +479,12 @@ function init() {
 	canvas.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
-	//cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
-	//cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
-	//cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
-	//cs.addShape(new Shape(115,15,shapePoints.OR,"#00F"));
-	//cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-	//cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-	//cs.addShape(new Shape(385,25,shapePoints.NOT,"#0FF"));
-	//cs.addShape(new Shape(15,125,shapePoints.TURNSTYLE,"#0F0"));
-	//
-	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
-	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
-	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
-	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
-
-/*	var rule = new ComboShape(10, 10, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-	);
-	cs.addShape(rule);*/
 
 	var question = new ComboShape(10, 400, 225, 100,
 		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
 	question.scale(0.5);
 	cs.addShape(question);
-	//combo.draw(cs.ctx);
 
 	// debugging purposes only
 	c = cs;
