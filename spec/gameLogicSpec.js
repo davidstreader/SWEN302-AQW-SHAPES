@@ -131,7 +131,3 @@ describe("Test contains", function() {
         expect(contains(V1,"A")).toBe(true);
     });
 });
-
-describe("Test canSnap", function() {
-    
-});

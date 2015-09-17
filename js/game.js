@@ -12,7 +12,7 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, name
+function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree
 ) {
 	this.shapeList = shapes;
 	this.currX = currX;
@@ -20,6 +20,7 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name
 	this.collX = collisionX;
 	this.collY = collisionY;
     this.name = name;
+	this.logicTree = logicTree;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -28,6 +29,7 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
+
 		return true;
 	}
 	return false;
@@ -409,7 +411,7 @@ function createShape(logicArray){
 		else
 			logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes));
+		c.addShape(new ComboShape(400,400,225,100,logicShapes,logicArray[i]));
 		c.shapes[c.shapes.length-1].scale(0.5);
 	}
 
@@ -591,7 +593,7 @@ function drawRules(ruleArray) {
 
         if (ruleArray[i].type == "Introduction") {
             countIntroductionRules++;
-            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name);
+            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
 
             result.scale(0.5);
 
@@ -599,7 +601,7 @@ function drawRules(ruleArray) {
         }
         else {
             countEliminationRules++;
-            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name);
+            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
 
             result.scale(0.5);
 
