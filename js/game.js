@@ -553,34 +553,57 @@ function init() {
 	drawRules(rules);
 }
 
-function drawRules(ruleArray){
-    for(var i =0; i < ruleArray.length; i++){
+function drawRules(ruleArray) {
+    var countIntroductionRules = 0;
+    var countEliminationRules = 0;
+    for (var i = 0; i < ruleArray.length; i++) {
         var logicshapes = [];
-        logicshapes.push(new Shape(10,10,shapePoints.RULE,"#00ff00"));
+        logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
         var above = ruleArray[i].above;
         var below = ruleArray[i].below;
 
-        for(var j =0; j < above.length; j++) {
+        for (var j = 0; j < above.length; j++) {
             for (k = 0; k < above[j].length; k++) {
                 var operator = above[j];
-                if(above[j][k] =="")
+                if (above[j][k] == "")
                     continue;
-                var shape = new Shape(k * 100 + 15, 20, shapePoints[ above[j][k] ]);
-                shape.scale((150/above[j].length)/90);
-                shape.currX+=(j*300);
+                var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
+                shape.scale((150 / above[j].length) / 90);
+                shape.currX += (j * 300);
                 logicshapes.push(shape);
 
 
             }
 
         }
-        var result = new ComboShape(10,i*350+10,225,400,logicshapes,ruleArray[i].name);
 
-        result.scale(0.5);
+        for (var j = 0; j < below.length; j++) {
+            if (below[j] == "")
+                continue;
+            var shape = new Shape(j * 100 + 225, 20, shapePoints[below[j]]);
+            shape.scale((150 / below.length) / 90);
+            shape.currX += (j * 300);
+            logicshapes.push(shape);
 
-        if(ruleArray[i].type =="Introduction")
+
+        }
+
+
+        if (ruleArray[i].type == "Introduction") {
+            countIntroductionRules++;
+            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name);
+
+            result.scale(0.5);
+
             cr.addShape(result);
-        else
+        }
+        else {
+            countEliminationRules++;
+            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name);
+
+            result.scale(0.5);
+
             ce.addShape(result);
+        }
     }
 }
