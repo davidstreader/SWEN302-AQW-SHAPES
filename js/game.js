@@ -580,9 +580,9 @@ function drawRules(ruleArray) {
         for (var j = 0; j < below.length; j++) {
             if (below[j] == "")
                 continue;
-            var shape = new Shape(j * 100 + 225, 20, shapePoints[below[j]]);
+            var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
             shape.scale((150 / below.length) / 90);
-            shape.currX += (j * 300);
+            shape.currX += (j * 10);
             logicshapes.push(shape);
 
 
