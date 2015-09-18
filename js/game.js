@@ -126,7 +126,7 @@ ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
 	for(var i=0; i<this.shapeList.length; i++){
 		newShapeList[i] = this.shapeList[i].applyDelta(deltaX, deltaY);
 	}//Note, doesn't recurse down to Shape. Just applies to comboShape.
-	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList);
+	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree);
 };
 
 Shape.prototype.applyDelta = function(deltaX, deltaY){
@@ -202,7 +202,7 @@ function CanvasState(canvas) {
 					var deltaY = shapes[j].collY - shapes[i].collY;
 					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
 					newShapes = shapes[j].shapeList.concat(s1.shapeList);
-					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes);
+					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree);
 					shapes = shapes.splice(j, 1);
 					myState.valid = false;
 					myState.draw();
@@ -404,7 +404,7 @@ function createShape(logicArray,i){
 				logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
 		}
 
-		if(right.value =="") {
+		if(right.value !="") {
 
 			if (right instanceof Operator)
 				logicShapes.push(buildShape(right, 315, 115, 0.3));
@@ -412,7 +412,7 @@ function createShape(logicArray,i){
 				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
 		}
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes,logicArray[i]));
+		c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
 		c.shapes[c.shapes.length-1].scale(0.5);
 
 
