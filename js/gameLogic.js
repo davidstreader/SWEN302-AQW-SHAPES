@@ -26,27 +26,6 @@ function canSnap(ruleExp, expression) {
 }
 
 /**
- * returns new expressions that goes on top after applying the rule.
- * @param ruleExp Abstract syntax tree of the rule
- * @param expression Abstract syntax tree of the expression
- */
-function getAbove(ruleExp, expression) {
-    if(!canSnap(ruleExp.belowTree,expression)){
-        console.error("Illegal Arguments")
-    }
-    var dict = [];
-    var variables = getVariables(ruleExp.belowTree);
-    for (var i = 0; i < variables.length; i++) {
-        var subtree = getSubtreeFromVariable(rule.belowTree, expression, variables[i]);
-        if (subtree === undefined) {
-            console.error("Illegal Arguments")
-        }
-        dict[variables[i]] = subtree;
-    }
-    //var
-}
-
-/**
  *
  * @param rule
  * @param expression
@@ -76,6 +55,44 @@ function getSubtreeFromVariables(rule, expression, variable) {
     }
     return undefined;
 }
+
+/**
+ * returns new expressions that goes on top after applying the rule.
+ * @param ruleExp Abstract syntax tree of the rule
+ * @param expression Abstract syntax tree of the expression
+ */
+function getAbove(ruleExp, expression) {
+    if (!canSnap(ruleExp.belowTree, expression)) {
+        console.error("Illegal Arguments")
+    }
+    var dict = [];
+    dict[""] = "";
+    var variables = getVariables(ruleExp.belowTree);
+    for (var i = 0; i < variables.length; i++) {
+        var subtree = getSubtreeFromVariables(ruleExp.belowTree, expression, variables[i]);
+        if (subtree === undefined) {
+            console.error("Illegal Arguments")
+        }
+        dict[variables[i]] = subtree;
+    }
+    var aboves = [];
+    for (var i = 0; i < ruleExp.above.length; i++) {
+        aboves.push(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict));
+    }
+    console.log(aboves);
+    return aboves;
+}
+
+function replaceVariablesWithSubtrees(currentNode, dict) {
+    if (currentNode instanceof Variable || currentNode === "") {
+        return dict[currentNode.value];
+    }
+    var node = new Operator(currentNode.value);
+    node.left = replaceVariablesWithSubtrees(currentNode.left, dict);
+    node.right = replaceVariablesWithSubtrees(currentNode.right, dict);
+    return node;
+}
+
 
 /**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.

@@ -149,3 +149,21 @@ describe("Test getSubtreeFromVariables", function () {
         expect(getSubtreeFromVariables(rule, expInvalid, "B")).toBe(undefined);
     });
 });
+
+describe("Test getAbove", function () {
+    var data = {"type": "Introduction", "name": "And Introduction", "above": ["⊢A", "⊢B"], "below": "⊢A∧B"};
+    var currentRule = generateRuleFromJSON(data);
+
+    var expression = parse("A∧B∨A∧C ⊢ A∧(B∨C)");
+
+    var above1 = parse("⊢A");
+    var above2 = parse("⊢(B∨C)");
+    var above = [above1, above2]
+    it("Above 1", function () {
+        expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
+    });
+
+    it("Above 2", function () {
+        expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
+    });
+});
