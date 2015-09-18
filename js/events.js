@@ -9,10 +9,9 @@ var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("gameAreaPanel");
 var arrowLeft = document.getElementById("leftButton");
 var arrowRight = document.getElementById("rightButton");
+var rulesPanelSvg = document.getElementById("rulesPanelSvg");
 
-document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
-document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
-
+reSizePanelHeight();
 
 var inputFile = $("#uploadFile");
 var fileName = null;
@@ -64,10 +63,10 @@ zoomInButton.addEventListener("click", function(){
 	if (sizeFactor > 3) return;
 		
 	if (selectedShape !== undefined){
-		selectedShape.scaleDivide(0.7);
+		selectedShape.scale(1/0.7);
 	} else {
 		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scaleDivide(0.7)
+			c.shapes[i].scale(1/0.7)
 		}
 	}
 		
@@ -128,10 +127,11 @@ arrowRight.addEventListener("click", function(){
 	}
 });
 
+
+
 window.onresize = function(){
-	document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
-	document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
-	
+reSizePanelHeight();	
+
 	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 	c.width = canvasGameArea.width;
@@ -152,7 +152,7 @@ function reset(){
 function matchShapeSize() {
 	if(sizeFactor>0){
 		for(var i = 0; i<sizeFactor; i++){
-			c.shapes[c.shapes.length-1].scaleDivide(0.7);
+			c.shapes[c.shapes.length-1].scale(1/0.7);
 		}
 		c.valid = false;
 		c.draw();
@@ -164,4 +164,11 @@ function matchShapeSize() {
 		c.valid = false;
 		c.draw();
 	}
+}
+
+function reSizePanelHeight(){
+	document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
+	document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
+	document.getElementById("introduction").style.height = window.innerHeight * 2+'px';
+	document.getElementById("elimination").style.height = window.innerHeight * 2+'px';
 }

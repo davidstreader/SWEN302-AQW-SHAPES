@@ -485,20 +485,21 @@ function init() {
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
-	canvasr.height = rulesPanelSvg.clientHeight;
+	canvasr.height = 1200;
 	csr.width = rulesPanelSvg.clientWidth;
-	csr.height = rulesPanelSvg.clientHeight;
 
 	var rule = new ComboShape(10, 10, 225, 300,
 			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 	);
-	rule.scale(0.5);
-	
-	
-	
-	
+	rule.scale(0.5);	
 	csr.addShape(rule);
 	cr = csr;
+	rulesPanelSvg.addEventListener("scroll", function(){
+		console.log("scrolling");
+		cr.valid = false;
+		cr.draw();
+		
+	});
 
 	//click rule shape to create a same new rule shape on game area canvas
 	canvasr.addEventListener('click', function(e) {
@@ -519,4 +520,4 @@ function init() {
 			}
 		}
 	}, true);
-}
+	}
