@@ -62,49 +62,47 @@
     </div>
 </div>
 
-<div class="col-lg-3"
-     style="background-color: lavender">
-    <h2>Rules</h2>
-
-    <div id="rulesPanelSvg"
-         style="background-color: white; overflow-y: scroll;">
-
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
-            <li><a data-toggle="tab" href="#elimination">Elimination</a></li>
-        </ul>
-
-        <div class="tab-content">
-            <div id="introduction" class="tab-pane fade in active">
-                <canvas id="canvasRules"></canvas>
-            </div>
-            <div id="elimination" class="tab-pane fade">
-                <canvas id="canvasElimination"></canvas>
-            </div>
-        </div>
-    </div>
-    <p></p>
-</div>
-
-<div class="col-lg-9"
-     style="background-color: lavender;">
-    <h2>Game Area</h2>
-
-    <div id="gameAreaPanel"
-         style="background-color: white">
-        <canvas id="canvasGameArea"></canvas>
-    </div>
-    <p></p>
-    <button type="button" id="imageBin" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-    <button id="leftButton" type="button" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-    </button>
-    <button id="rightButton" type="button" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-    </button>
-</div>
-<script src="js/events.js"></script>
-<script>update();</script>
+		<div class="col-lg-3"
+			style="background-color: lavender">
+			<h2>Rules</h2>
+			<div id="rulesPanelSvg"
+				style="background-color: white; overflow-y: scroll;">
+				
+				<ul class="nav nav-tabs">
+    				<li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
+    				<li><a data-toggle="tab" href="#elimination">Elimination</a></li>
+  				</ul>
+				
+  				<div class="tab-content">
+    				<div id="introduction" class="tab-pane fade in active">
+						<canvas id="canvasRules"></canvas>
+    				</div>
+    			<div id="elimination" class="tab-pane fade">
+    				<canvas id="canvasElimination"></canvas>
+    			</div>
+ 				</div>
+ 			</div>
+			<p></p>
+		</div>
+		
+	<div class="col-lg-9"
+		style="background-color: lavender;">
+		<h2>Game Area</h2>
+		<div id="gameAreaPanel"
+			style="background-color: white;" >
+			<canvas id="canvasGameArea"></canvas>
+		</div>
+					<p></p>
+				<button type="button" id="imageBin" class="btn btn-primary btn-md">
+		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+		<button id = "leftButton" type="button" class="btn btn-primary btn-md">
+			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+		</button>
+		<button id = "rightButton" type="button" class="btn btn-primary btn-md">
+			<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+		</button>
+	</div>
+	<script src="js/events.js"></script>
+	<script>update();</script>
 </body>
    

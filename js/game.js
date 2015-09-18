@@ -1,8 +1,8 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 
-//c ,cr , ce are the global canvas areas
-var c, cr, ce;
+//c is the canvas created for debugging purposes only
+var c, cr, selectedShape;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -284,49 +284,21 @@ function CanvasState(canvas) {
 		return "#"+c()+c()+c();
 	}
 	
-	
-	
-	
-//	canvas.addEventListener('click', function(e) {
-//		var mouse = myState.getMouse(e);
-//		var mx = mouse.x;
-//		var my = mouse.y;
-//		var shapes = c.shapes;
-//		for (var i = shapes.length-1; i >= 0 ; i--) {
-//			if (shapes[i].contains(mx, my, cr.ctx)) {
-//				console.log("shape click");	
-//				var s = [];
-//				for(var j = 0; j < shapes[i].shapeList.length; j++){
-//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-//				}
-//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-//				matchShapeSize();
-//				return;
-//			}
-//		}
-//	}, true);
-//	
-	
-	
-	
-	//double click rule shape to create a same new rule shape on game area canvas
-	canvas.addEventListener('dblclick', function(e) {
+	//Select the shape just clicked to to allow specific shape resize
+	canvas.addEventListener('click', function(e) {
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
 		var my = mouse.y;
-		var shapes = cr.shapes;
+		var shapes = c.shapes;
 		for (var i = shapes.length-1; i >= 0 ; i--) {
-			if (shapes[i].contains(mx, my, cr.ctx)) {
-				var s = [];
-				for(var j = 0; j < shapes[i].shapeList.length; j++){
-					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name,shapes[i].logicTree));
-				matchShapeSize();
+			if (shapes[i].contains(mx, my, c.ctx)) {
+				selectedShape = shapes[i];
 				return;
 			}
 		}
+		selectedShape = undefined;
 	}, true);
+	
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -496,7 +468,7 @@ function init() {
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
-	canvasr.height = rulesPanelSvg.clientHeight;
+	canvasr.height = 1200;
 	csr.width = rulesPanelSvg.clientWidth;
 	csr.height = rulesPanelSvg.clientHeight;
 
@@ -514,25 +486,15 @@ function init() {
 			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
         ,"B IMPLIES A"
 	);
-	var rule2 = new ComboShape(10, 350, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.TURNSTILE,"#00F"), new Shape(60,15,shapePoints.A,"#00F"), new Shape(310,15,shapePoints.TURNSTILE,"#00F"), new Shape(355,15,shapePoints.B,"#00F"),  new Shape(15,225,shapePoints.TURNSTILE,"#00F"),  new Shape(55,225,shapePoints.A,"#00F"),  new Shape(180,225,shapePoints.AND,"#00F"),  new Shape(330,205,shapePoints.B,"#00F")]
-	,"Above: Turnstyle A, Turnstyle B, Below: Turnstyle A And B"
-    );
-    var NotIntrodctuion  = new ComboShape(10, 700, 225, 300,
-        [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(110,15,shapePoints.TURNSTILE,"#00F"), new Shape(5,15,shapePoints.A,"#00F"), new Shape(15,225,shapePoints.TURNSTILE,"#00F"), new Shape(180,225,shapePoints.NOT,"#00F"),  new Shape(315,225,shapePoints.A,"#00F")]
-        ,"Above: A Turnstyle Below: Turnstyle Negation A"
-    );
-
-
-	rule.scale(0.5);
-    rule2.scale(0.5);
-    NotIntrodctuion.scale(0.5);
-	//csr.addShape(rule);
-	//csr.addShape(rule2);
-   // csr.addShape(NotIntrodctuion);
-
+	rule.scale(0.5);	
+	csr.addShape(rule);
 	cr = csr;
-    ce = cse;
+	rulesPanelSvg.addEventListener("scroll", function(){
+		console.log("scrolling");
+		cr.valid = false;
+		cr.draw();
+		
+	});
 
 	drawRules(rules);
 }
@@ -590,4 +552,23 @@ function drawRules(ruleArray) {
             ce.addShape(result);
         }
     }
-}
+}	//click rule shape to create a same new rule shape on game area canvas
+	canvasr.addEventListener('click', function(e) {
+		var mouse = csr.getMouse(e);
+		var mx = mouse.x;
+		var my = mouse.y;
+		var sps = cr.shapes;
+		for (var i = sps.length-1; i >= 0 ; i--) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				console.log("1111")
+				var s = [];
+				for(var j = 0; j < sps[i].shapeList.length; j++){
+					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
+				}
+				c.addShape(new ComboShape(sps[i].currX, sps[i].currY, sps[i].collX, sps[i].collY, s));
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
+	}
