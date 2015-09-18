@@ -31,6 +31,9 @@ function canSnap(ruleExp, expression) {
  * @param expression Abstract syntax tree of the expression
  */
 function getAbove(ruleExp, expression) {
+    if(!canSnap(ruleExp.belowTree,expression)){
+        console.error("Illegal Arguments")
+    }
     var dict = [];
     var variables = getVariables(ruleExp.belowTree);
     for (var i = 0; i < variables.length; i++) {
@@ -40,6 +43,7 @@ function getAbove(ruleExp, expression) {
         }
         dict[variables[i]] = subtree;
     }
+    //var
 }
 
 /**

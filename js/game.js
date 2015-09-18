@@ -333,11 +333,11 @@ function CanvasState(canvas) {
 CanvasState.prototype.addShape = function(shape) {
 	this.shapes.push(shape);
 	this.valid = false;
-}
+};
 
 CanvasState.prototype.clear = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
-}
+};
 
 //While draw is called as often as the INTERVAL variable demands,
 //It only ever does something if the canvas gets invalidated by our code
@@ -353,7 +353,7 @@ CanvasState.prototype.draw = function() {
 		}
 		this.valid = true;
 	}
-}
+};
 
 
 
@@ -379,7 +379,7 @@ CanvasState.prototype.getMouse = function(e) {
 	mx = e.pageX - offsetX;
 	my = e.pageY - offsetY;
 	return {x: mx, y: my};
-}
+};
 
 
 function createShape(logicArray){

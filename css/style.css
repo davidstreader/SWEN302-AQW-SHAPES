@@ -33,7 +33,7 @@ h1, h2, h3, h4, h5, h6 {
 #rulesPanel {
 	position: fixed;
 	top: 11.5%;
-	left: 0%;
+	left: 0;
 	width: 20%;
 	height: 100%;
 	background-color: gray;
@@ -50,8 +50,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 #menuBarPanel{
 	position: fixed;
-	top: 0%;
-	left: 0%;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 12%;
 	background-color: #FFFFCC;
@@ -110,15 +110,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #canvasSvg {
-	top: 0%;
-	left: 0%;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 70%;
 
 }
 #canvasGameArea{
-	top: 0%;
-	left: 0%;
+	top: 0;
+	left: 0;
 	width: 100%;
 	height: 100%;
     border-top: thick double #99FFCC;

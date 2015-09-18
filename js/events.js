@@ -119,7 +119,8 @@ window.onresize = function(){
 	c.valid = false;
 	c.draw();
 	window.location.reload();
-}
+};
+
 function reset(){
 	console.log("reset");
 	c.shapes = [];
