@@ -4,17 +4,22 @@
 //c ,cr , ce are the global canvas areas
 var c, cr, ce;
 var MAX_COLLISION_RADIUS = 70;
+var DEFAULT_FONT_SIZE = 48;
+
+function isString(s) {
+	return typeof(s) === 'string' || s instanceof String;
+}
 
 function Shape(currX, currY, points, color) {
-	if(points instanceof String){
+	if(isString(points)){
 		this.letter = points;
+		this.fontSize = DEFAULT_FONT_SIZE;
 	}else{
 		this.points = JSON.parse(JSON.stringify(points));
 	}
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
-	this.scaleFactor = 1;
 }
 
 function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree
@@ -26,7 +31,6 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTre
 	this.collY = collisionY;
     this.name = name;
 	this.logicTree = logicTree;
-	this.scaleFactor = 1;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -35,8 +39,8 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
+		return(canSnap(this.logicTree,shape.logicTree));
 
-		return true;
 	}
 	return false;
 };
@@ -54,57 +58,92 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 
 Shape.prototype.scale = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
-	this.scaleFactor = scaleFactor;
-	/*for (var i = 0; i < this.points.length; i++) {
-		this.points[i].x = this.points[i].x * scaleFactor;
-		this.points[i].y = this.points[i].y * scaleFactor;
+	if(this.letter != null){
+		this.fontSize = this.fontSize * scaleFactor;
+	}else {
+		for (var i = 0; i < this.points.length; i++) {
+			this.points[i].x = this.points[i].x * scaleFactor;
+			this.points[i].y = this.points[i].y * scaleFactor;
+		}
 	}
 	this.currX = this.currX * scaleFactor;
-	this.currY = this.currY * scaleFactor;*/
+	this.currY = this.currY * scaleFactor;
 };
 
 ComboShape.prototype.scale = function(scaleFactor){
 	scaleFactor= scaleFactor || 1;
-	this.scaleFactor = scaleFactor;
 	for(var i=0; i<this.shapeList.length; i++){
 		this.shapeList[i].scale(scaleFactor);
 	}
-	/*this.currX = this.currX * scaleFactor;
+	this.currX = this.currX * scaleFactor;
 	this.currY = this.currY * scaleFactor;
 	this.collX = this.collX * scaleFactor;
-	this.collY = this.collY * scaleFactor;*/
+	this.collY = this.collY * scaleFactor;
 };
+
+Shape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor = scaleFactor || 1;
+	if(this.letter != null){
+		this.fontSize = this.fontSize / scaleFactor;
+	}
+	else {
+		for (var i = 0; i < this.points.length; i++) {
+			this.points[i].x = this.points[i].x / scaleFactor;
+			this.points[i].y = this.points[i].y / scaleFactor;
+		}
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+};
+
+ComboShape.prototype.scaleDivide = function(scaleFactor){
+	scaleFactor= scaleFactor || 1;
+	for(var i=0; i<this.shapeList.length; i++){
+		this.shapeList[i].scaleDivide(scaleFactor);
+	}
+	this.currX = this.currX / scaleFactor;
+	this.currY = this.currY / scaleFactor;
+	this.collX = this.collX / scaleFactor;
+	this.collY = this.collY / scaleFactor;
+};
+
+
+
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
 Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
-	ctx.beginPath();
-	ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
-	for(var i=0; i<this.points.length; i++){
-		ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+	if(this.letter!=null){
+		return false;
+	}
+	else {
+		ctx.beginPath();
+		ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+		for (var i = 0; i < this.points.length; i++) {
+			ctx.lineTo(this.currX + offsetX + this.points[i].x, this.currY + offsetY + this.points[i].y);
+		}
 	}
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
-	var drawX = this.currX * this.scaleFactor;
-	var drawY = this.currY * this.scaleFactor;
 	if(offsetX != null){
-		offsetX += drawX;
-		offsetY += drawY;
+		offsetX += this.currX;
+		offsetY += this.currY;
 	}
-	offsetX = offsetX || drawX;
-	offsetY = offsetY || drawY;
-
+	offsetX = offsetX || this.currX;
+	offsetY = offsetY || this.currY;
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
     if(this.name != null) {
         context.fillStyle = 'blue';
-        context.fillText(this.name, this.drawX + 10, this.drawY + 85);
+		context.font = "10px serif";
+        context.fillText(this.name, this.currX + 10, this.currY + 85);
+		//context.font = DEFAULT_FONT_SIZE + "px serif";
     }
 };
 
@@ -113,7 +152,7 @@ ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
 	for(var i=0; i<this.shapeList.length; i++){
 		newShapeList[i] = this.shapeList[i].applyDelta(deltaX, deltaY);
 	}//Note, doesn't recurse down to Shape. Just applies to comboShape.
-	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList);
+	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree);
 };
 
 Shape.prototype.applyDelta = function(deltaX, deltaY){
@@ -123,25 +162,24 @@ Shape.prototype.applyDelta = function(deltaX, deltaY){
 Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
-	var toDrawPoints = [];
-
-	for (var j = 0; j < this.points.length; j++) {
-		var toAdd = {x: this.points[j].x * this.scaleFactor, y: this.points[j].y * this.scaleFactor};
-		toDrawPoints.push(toAdd);
+	if(this.letter != null){
+		context.fillStyle = 'blue';
+		context.font = Math.floor(this.fontSize) + "px " + "serif";
+		context.fillText(this.letter, this.currX + offsetX, this.currY + offsetY);
+		//context.font = DEFAULT_FONT_SIZE + "px " + "serif";
 	}
-	var drawX = this.currX * this.scaleFactor;
-	var drawY = this.currY * this.scaleFactor;
-
-	context.beginPath();
-	context.moveTo(drawX + offsetX + toDrawPoints[0].x, drawY + offsetY + toDrawPoints[0].y);
-	for(var i=0; i<this.points.length; i++){
-		context.lineTo(drawX + offsetX + toDrawPoints[i].x , drawY + offsetY + toDrawPoints[i].y);
+	else{
+		context.beginPath();
+		context.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+		for(var i=0; i<this.points.length; i++){
+			context.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+		}
+		context.fillStyle = this.color;
+		context.fill();
+		context.lineJoin = 'round';
+		context.stroke();
+		context.closePath();
 	}
-	context.fillStyle = this.color;
-	context.fill();
-	context.lineJoin = 'round';
-	context.stroke();
-	context.closePath();
 };
 
 function CanvasState(canvas) {
@@ -150,7 +188,6 @@ function CanvasState(canvas) {
 	this.width = canvas.width;
 	this.height = canvas.height;
 	this.ctx = canvas.getContext('2d');
-	this.ctx.font = "48px serif";
 	// This complicates things a little but but fixes mouse co-ordinate problems
 	// when there's a border or padding. See getMouse for more detail
 	var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
@@ -199,7 +236,7 @@ function CanvasState(canvas) {
 					var deltaY = shapes[j].collY - shapes[i].collY;
 					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
 					newShapes = shapes[j].shapeList.concat(s1.shapeList);
-					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes);
+					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree);
 					shapes = shapes.splice(j, 1);
 					myState.valid = false;
 					myState.draw();
@@ -268,7 +305,7 @@ function CanvasState(canvas) {
 			}
 		}
 	}, true);
-	
+
 	canvas.addEventListener('mouseup', function(e) {
 		myState.dragging = false;
 	}, true);
@@ -280,10 +317,10 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	
-	
-	
-	
+
+
+
+
 //	canvas.addEventListener('click', function(e) {
 //		var mouse = myState.getMouse(e);
 //		var mx = mouse.x;
@@ -291,7 +328,7 @@ function CanvasState(canvas) {
 //		var shapes = c.shapes;
 //		for (var i = shapes.length-1; i >= 0 ; i--) {
 //			if (shapes[i].contains(mx, my, cr.ctx)) {
-//				console.log("shape click");	
+//				console.log("shape click");
 //				var s = [];
 //				for(var j = 0; j < shapes[i].shapeList.length; j++){
 //					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
@@ -302,10 +339,10 @@ function CanvasState(canvas) {
 //			}
 //		}
 //	}, true);
-//	
-	
-	
-	
+//
+
+
+
 	//double click rule shape to create a same new rule shape on game area canvas
 	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
@@ -316,11 +353,14 @@ function CanvasState(canvas) {
 			if (shapes[i].contains(mx, my, cr.ctx)) {
 				var s = [];
 				for(var j = 0; j < shapes[i].shapeList.length; j++){
-					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+					if(shapes[i].shapeList[j].letter != null){
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].letter, shapes[i].shapeList[j].color);
+					}
+					else {
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].points, shapes[i].shapeList[j].color);
+					}
 				}
-				var  shape = new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name, shapes[i].logicTree);
-				shape.scale(shapes[j].scaleFactor);
-				c.addShape(shape);
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name,shapes[i].logicTree));
 				matchShapeSize();
 				return;
 			}
@@ -411,8 +451,9 @@ function createShape(logicArray,i){
 				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
 		}
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes,logicArray[i]));
+		c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
 		c.shapes[c.shapes.length-1].scale(0.5);
+
 
 }
 
@@ -461,7 +502,7 @@ var shapePoints={
     RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
     QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
-	A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
 	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
 	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
 	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
@@ -486,10 +527,10 @@ function init() {
 
 	// debugging purposes only
 	c = cs;
-	
-	
-	
-	
+
+
+
+
 	//rules area
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
@@ -514,7 +555,7 @@ function init() {
 	);
 	var rule2 = new ComboShape(10, 350, 225, 300,
 		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.TURNSTILE,"#00F"), new Shape(60,15,shapePoints.A,"#00F"), new Shape(310,15,shapePoints.TURNSTILE,"#00F"), new Shape(355,15,shapePoints.B,"#00F"),  new Shape(15,225,shapePoints.TURNSTILE,"#00F"),  new Shape(55,225,shapePoints.A,"#00F"),  new Shape(180,225,shapePoints.AND,"#00F"),  new Shape(330,205,shapePoints.B,"#00F")]
-	,"Above: Turnstyle A, Turnstyle B, Below: Turnstyle A And B"
+	," TESTING SHIT Above: Turnstyle A, Turnstyle B, Below: Turnstyle A And B"
     );
     var NotIntrodctuion  = new ComboShape(10, 700, 225, 300,
         [new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(110,15,shapePoints.TURNSTILE,"#00F"), new Shape(5,15,shapePoints.A,"#00F"), new Shape(15,225,shapePoints.TURNSTILE,"#00F"), new Shape(180,225,shapePoints.NOT,"#00F"),  new Shape(315,225,shapePoints.A,"#00F")]
