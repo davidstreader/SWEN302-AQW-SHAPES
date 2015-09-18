@@ -66,8 +66,9 @@ function getAbove(ruleExp, expression) {
         console.error("Illegal Arguments")
     }
     var dict = [];
-    dict[""] = "";
+    dict[""] = new Variable("");
     var variables = getVariables(ruleExp.belowTree);
+
     for (var i = 0; i < variables.length; i++) {
         var subtree = getSubtreeFromVariables(ruleExp.belowTree, expression, variables[i]);
         if (subtree === undefined) {
@@ -77,9 +78,9 @@ function getAbove(ruleExp, expression) {
     }
     var aboves = [];
     for (var i = 0; i < ruleExp.above.length; i++) {
+    //    console.log(verifyOV(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict)));
         aboves.push(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict));
     }
-    console.log(aboves);
     return aboves;
 }
 

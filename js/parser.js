@@ -10,7 +10,7 @@ function loadRules() {
     });
 }
 
-function generateRuleFromJSON(data){
+function generateRuleFromJSON(data) {
     var aboveArray = [];
     var aboveTreeArray = [];
     for (var i = 0; i < data.above.length; i++) {
@@ -206,14 +206,14 @@ Operator.prototype.equals = function (other) {
         if (this.value != other.value) {
             return false;
         }
-        if(this.left!=="") {
+        /*if (this.left !== "") {*/
             if (!this.left.equals(other.left)) {
                 return false;
             }
-        }
-        if(this.right===""){
+        /*}
+        if (this.right === "") {
             return false;
-        }
+        }*/
         return this.right.equals(other.right);
     }
 };
@@ -225,3 +225,13 @@ Variable.prototype.equals = function (other) {
         return this.value == other.value;
     }
 };
+
+function verifyOV(OV) {
+    if (OV instanceof Variable) {
+        return true;
+    }
+    if (OV instanceof Operator) {
+        return verifyOV(OV.left) && verifyOV(OV.right);
+    }
+    return false;
+}

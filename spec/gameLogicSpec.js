@@ -158,7 +158,7 @@ describe("Test getAbove", function () {
 
     var above1 = parse("⊢A");
     var above2 = parse("⊢(B∨C)");
-    var above = [above1, above2]
+    var above = [above1, above2];
     it("Above 1", function () {
         expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
     });
