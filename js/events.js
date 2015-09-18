@@ -9,10 +9,9 @@ var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("gameAreaPanel");
 var arrowLeft = document.getElementById("leftButton");
 var arrowRight = document.getElementById("rightButton");
+var rulesPanelSvg = document.getElementById("rulesPanelSvg");
 
-document.getElementById("rulesPanelSvg").style.height = window.innerHeight+'px';
-document.getElementById("gameAreaPanel").style.height = window.innerHeight+'px';
-
+reSizePanelHeight();
 
 var inputFile = $("#uploadFile");
 var fileName = null;
@@ -59,23 +58,36 @@ resetButton.addEventListener("click", function(){
 	
 });
 
+//allow specific shape resize and whole canvas resize
 var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-		var ctx = c.ctx;
-		if (sizeFactor > 3) return;
+	if (sizeFactor > 3) return;
+		
+	if (selectedShape !== undefined){
+		selectedShape.scale(1/0.7);
+	} else {
 		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scaleDivide(0.7)
+			c.shapes[i].scale(1/0.7)
 		}
-		c.valid = false;
-		c.draw();
-		sizeFactor++;
+	}
+		
+	c.valid = false;
+	c.draw();
+	sizeFactor++;
 });
 
+//allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
 	if (sizeFactor < -3) return;
-	for(var i = 0; i<c.shapes.length; i++){
-		c.shapes[i].scale(0.7)
+	
+	if (selectedShape !== undefined){
+		selectedShape.scale(0.7);
+	} else {
+		for(var i = 0; i<c.shapes.length; i++){
+			c.shapes[i].scale(0.7)
+		}
 	}
+	
 	c.valid = false;
 	c.draw();
 	sizeFactor--;
@@ -110,6 +122,8 @@ arrowRight.addEventListener("click", function(){
 });
 
 window.onresize = function(){
+reSizePanelHeight();	
+
 	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
 	c.width = canvasGameArea.width;
@@ -131,7 +145,7 @@ function reset(){
 function matchShapeSize() {
 	if(sizeFactor>0){
 		for(var i = 0; i<sizeFactor; i++){
-			c.shapes[c.shapes.length-1].scaleDivide(0.7);
+			c.shapes[c.shapes.length-1].scale(1/0.7);
 		}
 		c.valid = false;
 		c.draw();
@@ -143,4 +157,11 @@ function matchShapeSize() {
 		c.valid = false;
 		c.draw();
 	}
+}
+
+function reSizePanelHeight(){
+	document.getElementById("rulesPanelSvg").style.height = window.innerHeight * 0.75 +'px';
+	document.getElementById("gameAreaPanel").style.height = window.innerHeight * 0.75+'px';
+	document.getElementById("introduction").style.height = window.innerHeight * 2+'px';
+	document.getElementById("elimination").style.height = window.innerHeight * 2+'px';
 }
