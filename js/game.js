@@ -2,7 +2,7 @@
 // For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c, cr, selectedShape;
+var c, cr, ce, selectedShape;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -39,7 +39,6 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
 		if(currShape.contains(mouseX, mouseY, ctx, this.currX, this.currY)){
-			console.log("currshape contains point: " + mouseX + ", " + mouseY);
 			return true;
 		}
 	}
@@ -103,6 +102,21 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	}
 	return ctx.isPointInPath(mouseX,mouseY);
 };
+
+
+
+//Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
+//	offsetX = offsetX || 0;
+//	offsetY = offsetY || 0;
+//	ctx.beginPath();
+//	ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+//	for(var i=0; i<this.points.length; i++){
+//		ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+//	}
+//	return ctx.isPointInPath(mouseX,mouseY);
+//};
+//
+
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 	if(offsetX != null){
@@ -479,15 +493,42 @@ function init() {
     canvase.height = rulesPanelSvg.clientHeight;
     cse.width = rulesPanelSvg.clientWidth;
     cse.height = rulesPanelSvg.clientHeight;
+   //init mouse x and y
+    var mx = -1;
+	var my = -1;
+	//get mouse x and y position when scroll bar moved
+    $("#rulesPanelSvg").mousemove(function(e) {
+        var relativePosition = {
+          left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
+          top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
+        };
+        mx = relativePosition.left;
+        my = relativePosition.top
+    });
+  //click rule shape to create a same new rule shape on game area canvas
+	canvasr.addEventListener('click', function(e) {
+		var sps = cr.shapes;
+		for (var i = 0; i < sps.length; i++) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				var s = [];
+				for(var j = 0; j < sps[i].shapeList.length; j++){
+					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
+				}
+				c.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
+	
 
 
-
-    var rule = new ComboShape(10, 10, 225, 300,
-			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-        ,"B IMPLIES A"
-	);
-	rule.scale(0.5);	
-	csr.addShape(rule);
+//    var rule = new ComboShape(10, 10, 225, 300,
+//			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+//        ,"B IMPLIES A"
+//	);
+//	rule.scale(0.5);	
+//	csr.addShape(rule);
 	cr = csr;
 	rulesPanelSvg.addEventListener("scroll", function(){
 		console.log("scrolling");
@@ -552,23 +593,4 @@ function drawRules(ruleArray) {
             ce.addShape(result);
         }
     }
-}	//click rule shape to create a same new rule shape on game area canvas
-	canvasr.addEventListener('click', function(e) {
-		var mouse = csr.getMouse(e);
-		var mx = mouse.x;
-		var my = mouse.y;
-		var sps = cr.shapes;
-		for (var i = sps.length-1; i >= 0 ; i--) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				console.log("1111")
-				var s = [];
-				for(var j = 0; j < sps[i].shapeList.length; j++){
-					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(sps[i].currX, sps[i].currY, sps[i].collX, sps[i].collY, s));
-				matchShapeSize();
-				return;
-			}
-		}
-	}, true);
-	}
+}	

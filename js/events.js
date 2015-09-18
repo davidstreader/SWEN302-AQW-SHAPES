@@ -53,6 +53,8 @@ function update() {
 
 resetButton.addEventListener("click", function(){
 	c.shapes = [];
+	if(questions!=undefined)
+		createShape(questions, 0);
 	c.valid = false;
 	c.draw();
 	
@@ -164,3 +166,4 @@ function reSizePanelHeight(){
 	document.getElementById("introduction").style.height = window.innerHeight * 2+'px';
 	document.getElementById("elimination").style.height = window.innerHeight * 2+'px';
 }
+
