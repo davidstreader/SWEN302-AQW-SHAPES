@@ -1,8 +1,8 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 
-//c is the canvas created for debugging purposes only
-var c, cr, selectedShape;
+//c ,cr , ce are the global canvas areas
+var c, cr, ce;
 var MAX_COLLISION_RADIUS = 70;
 var DEFAULT_FONT_SIZE = 48;
 
@@ -29,7 +29,7 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTre
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-    this.name = name;
+	this.name = name;
 	this.logicTree = logicTree;
 }
 
@@ -139,12 +139,12 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
-    if(this.name != null) {
-        context.fillStyle = 'blue';
+	if(this.name != null) {
+		context.fillStyle = 'blue';
 		context.font = "10px serif";
-        context.fillText(this.name, this.currX + 10, this.currY + 85);
+		context.fillText(this.name, this.currX + 10, this.currY + 85);
 		//context.font = DEFAULT_FONT_SIZE + "px serif";
-    }
+	}
 };
 
 ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
@@ -317,22 +317,55 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	
-	//Select the shape just clicked to to allow specific shape resize
-	canvas.addEventListener('click', function(e) {
+
+
+
+
+//	canvas.addEventListener('click', function(e) {
+//		var mouse = myState.getMouse(e);
+//		var mx = mouse.x;
+//		var my = mouse.y;
+//		var shapes = c.shapes;
+//		for (var i = shapes.length-1; i >= 0 ; i--) {
+//			if (shapes[i].contains(mx, my, cr.ctx)) {
+//				console.log("shape click");
+//				var s = [];
+//				for(var j = 0; j < shapes[i].shapeList.length; j++){
+//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+//				}
+//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+//				matchShapeSize();
+//				return;
+//			}
+//		}
+//	}, true);
+//
+
+
+
+	//double click rule shape to create a same new rule shape on game area canvas
+	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
 		var my = mouse.y;
-		var shapes = c.shapes;
+		var shapes = cr.shapes;
 		for (var i = shapes.length-1; i >= 0 ; i--) {
-			if (shapes[i].contains(mx, my, c.ctx)) {
-				selectedShape = shapes[i];
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				var s = [];
+				for(var j = 0; j < shapes[i].shapeList.length; j++){
+					if(shapes[i].shapeList[j].letter != null){
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].letter, shapes[i].shapeList[j].color);
+					}
+					else {
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].points, shapes[i].shapeList[j].color);
+					}
+				}
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name,shapes[i].logicTree));
+				matchShapeSize();
 				return;
 			}
 		}
-		selectedShape = undefined;
 	}, true);
-	
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -341,11 +374,11 @@ function CanvasState(canvas) {
 CanvasState.prototype.addShape = function(shape) {
 	this.shapes.push(shape);
 	this.valid = false;
-};
+}
 
 CanvasState.prototype.clear = function() {
 	this.ctx.clearRect(0, 0, this.width, this.height);
-};
+}
 
 //While draw is called as often as the INTERVAL variable demands,
 //It only ever does something if the canvas gets invalidated by our code
@@ -361,7 +394,7 @@ CanvasState.prototype.draw = function() {
 		}
 		this.valid = true;
 	}
-};
+}
 
 
 
@@ -387,39 +420,39 @@ CanvasState.prototype.getMouse = function(e) {
 	mx = e.pageX - offsetX;
 	my = e.pageY - offsetY;
 	return {x: mx, y: my};
-};
+}
 
 
 function createShape(logicArray,i){
 
-		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
-		var OpValue = logicArray[i].value;
-		var left = logicArray[i].left;
-		var right = logicArray[i].right;
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
+	var OpValue = logicArray[i].value;
+	var left = logicArray[i].left;
+	var right = logicArray[i].right;
 
-		if(OpValue.value!="")
-		{
-			var sp = shapePoints[OpValue];
-			logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-		}
-		if(left.value !="") {
+	if(OpValue.value!="")
+	{
+		var sp = shapePoints[OpValue];
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+	if(left.value !="") {
 
-			if (left instanceof Operator)
-				logicShapes.push(buildShape(left, 15, 115, 0.3));
-			else
-				logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
-		}
+		if (left instanceof Operator)
+			logicShapes.push(buildShape(left, 15, 115, 0.3));
+		else
+			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+	}
 
-		if(right.value !="") {
+	if(right.value !="") {
 
-			if (right instanceof Operator)
-				logicShapes.push(buildShape(right, 315, 115, 0.3));
-			else
-				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
-		}
+		if (right instanceof Operator)
+			logicShapes.push(buildShape(right, 315, 115, 0.3));
+		else
+			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
+	}
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
-		c.shapes[c.shapes.length-1].scale(0.5);
+	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
+	c.shapes[c.shapes.length-1].scale(0.5);
 
 
 }
@@ -451,11 +484,11 @@ function buildShape(operator,x,y,scale){
 		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
 	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator));
-    if(scale != 0) {
-        result.scale(scale);
-        result.currX = x;
-        result.currY = y;
-    }
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
 
 	return result;
 }
@@ -466,8 +499,8 @@ var shapePoints={
 	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
 	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
 	TURNSTILE 	:  [{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}],
-    RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-    QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
 	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
@@ -502,107 +535,98 @@ function init() {
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
-	canvasr.height = 1200;
+	canvasr.height = rulesPanelSvg.clientHeight;
 	csr.width = rulesPanelSvg.clientWidth;
 	csr.height = rulesPanelSvg.clientHeight;
 
-    //rules area
-    var canvase = document.getElementById('canvasElimination');
-    var cse = new CanvasState(canvase);
-    canvase.width = rulesPanelSvg.clientWidth;
-    canvase.height = rulesPanelSvg.clientHeight;
-    cse.width = rulesPanelSvg.clientWidth;
-    cse.height = rulesPanelSvg.clientHeight;
+	//rules area
+	var canvase = document.getElementById('canvasElimination');
+	var cse = new CanvasState(canvase);
+	canvase.width = rulesPanelSvg.clientWidth;
+	canvase.height = rulesPanelSvg.clientHeight;
+	cse.width = rulesPanelSvg.clientWidth;
+	cse.height = rulesPanelSvg.clientHeight;
 
 
 
-    var rule = new ComboShape(10, 10, 225, 300,
-			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-        ,"B IMPLIES A"
+	var rule = new ComboShape(10, 10, 225, 300,
+		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
+		,"B IMPLIES A"
 	);
-	rule.scale(0.5);	
-	csr.addShape(rule);
+	var rule2 = new ComboShape(10, 350, 225, 300,
+		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.TURNSTILE,"#00F"), new Shape(60,15,shapePoints.A,"#00F"), new Shape(310,15,shapePoints.TURNSTILE,"#00F"), new Shape(355,15,shapePoints.B,"#00F"),  new Shape(15,225,shapePoints.TURNSTILE,"#00F"),  new Shape(55,225,shapePoints.A,"#00F"),  new Shape(180,225,shapePoints.AND,"#00F"),  new Shape(330,205,shapePoints.B,"#00F")]
+		," TESTING SHIT Above: Turnstyle A, Turnstyle B, Below: Turnstyle A And B"
+	);
+	var NotIntrodctuion  = new ComboShape(10, 700, 225, 300,
+		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(110,15,shapePoints.TURNSTILE,"#00F"), new Shape(5,15,shapePoints.A,"#00F"), new Shape(15,225,shapePoints.TURNSTILE,"#00F"), new Shape(180,225,shapePoints.NOT,"#00F"),  new Shape(315,225,shapePoints.A,"#00F")]
+		,"Above: A Turnstyle Below: Turnstyle Negation A"
+	);
+
+
+	rule.scale(0.5);
+	rule2.scale(0.5);
+	NotIntrodctuion.scale(0.5);
+	//csr.addShape(rule);
+	//csr.addShape(rule2);
+	// csr.addShape(NotIntrodctuion);
+
 	cr = csr;
-	rulesPanelSvg.addEventListener("scroll", function(){
-		console.log("scrolling");
-		cr.valid = false;
-		cr.draw();
-		
-	});
+	ce = cse;
 
 	drawRules(rules);
 }
 
 function drawRules(ruleArray) {
-    var countIntroductionRules = 0;
-    var countEliminationRules = 0;
-    for (var i = 0; i < ruleArray.length; i++) {
-        var logicshapes = [];
-        logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
-        var above = ruleArray[i].above;
-        var below = ruleArray[i].below;
+	var countIntroductionRules = 0;
+	var countEliminationRules = 0;
+	for (var i = 0; i < ruleArray.length; i++) {
+		var logicshapes = [];
+		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
+		var above = ruleArray[i].above;
+		var below = ruleArray[i].below;
 
-        for (var j = 0; j < above.length; j++) {
-            for (k = 0; k < above[j].length; k++) {
-                var operator = above[j];
-                if (above[j][k] == "")
-                    continue;
-                var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
-                shape.scale((150 / above[j].length) / 90);
-                shape.currX += (j * 300);
-                logicshapes.push(shape);
-
-
-            }
-
-        }
-
-        for (var j = 0; j < below.length; j++) {
-            if (below[j] == "")
-                continue;
-            var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
-            shape.scale((150 / below.length) / 90);
-            shape.currX += (j * 10);
-            logicshapes.push(shape);
+		for (var j = 0; j < above.length; j++) {
+			for (k = 0; k < above[j].length; k++) {
+				var operator = above[j];
+				if (above[j][k] == "")
+					continue;
+				var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
+				shape.scale((150 / above[j].length) / 90);
+				shape.currX += (j * 300);
+				logicshapes.push(shape);
 
 
-        }
-
-
-        if (ruleArray[i].type == "Introduction") {
-            countIntroductionRules++;
-            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
-
-            result.scale(0.5);
-
-            cr.addShape(result);
-        }
-        else {
-            countEliminationRules++;
-            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
-
-            result.scale(0.5);
-
-            ce.addShape(result);
-        }
-    }
-}	//click rule shape to create a same new rule shape on game area canvas
-	canvasr.addEventListener('click', function(e) {
-		var mouse = csr.getMouse(e);
-		var mx = mouse.x;
-		var my = mouse.y;
-		var sps = cr.shapes;
-		for (var i = sps.length-1; i >= 0 ; i--) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				console.log("1111")
-				var s = [];
-				for(var j = 0; j < sps[i].shapeList.length; j++){
-					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(sps[i].currX, sps[i].currY, sps[i].collX, sps[i].collY, s));
-				matchShapeSize();
-				return;
 			}
+
 		}
-	}, true);
+
+		for (var j = 0; j < below.length; j++) {
+			if (below[j] == "")
+				continue;
+			var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
+			shape.scale((150 / below.length) / 90);
+			shape.currX += (j * 10);
+			logicshapes.push(shape);
+
+
+		}
+
+
+		if (ruleArray[i].type == "Introduction") {
+			countIntroductionRules++;
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+
+			result.scale(0.5);
+
+			cr.addShape(result);
+		}
+		else {
+			countEliminationRules++;
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+
+			result.scale(0.5);
+
+			ce.addShape(result);
+		}
 	}
+}
