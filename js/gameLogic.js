@@ -59,7 +59,10 @@ function getSubtreeFromVariables(rule, expression, variable) {
     if (expression instanceof Variable) {
         return undefined;
     }
-    var left = getSubtreeFromVariables(rule.left, expression.left, variable)
+    if (expression.value !== rule.value) {
+        return undefined;
+    }
+    var left = getSubtreeFromVariables(rule.left, expression.left, variable);
     if (left !== undefined) {
         return left;
     }
