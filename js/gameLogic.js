@@ -1,5 +1,8 @@
 /**
  * Checks if a rule can fit into an expression
+ * @param ruleExp Abstract syntax tree of the rule
+ * @param expression Abstract syntax tree of the expression
+ * @returns {boolean} true if the rule can fit into the expression, false otherwise.
  */
 function canSnap(ruleExp, expression) {
     if (ruleExp instanceof Variable) {
@@ -23,7 +26,54 @@ function canSnap(ruleExp, expression) {
 }
 
 /**
+ * returns new expressions that goes on top after applying the rule.
+ * @param ruleExp Abstract syntax tree of the rule
+ * @param expression Abstract syntax tree of the expression
+ */
+function getAbove(ruleExp, expression) {
+    var dict = [];
+    var variables = getVariables(ruleExp.belowTree);
+    for (var i = 0; i < variables.length; i++) {
+        var subtree = getSubtreeFromVariable(rule.belowTree, expression, variables[i]);
+        if (subtree === undefined) {
+            console.error("Illegal Arguments")
+        }
+        dict[variables[i]] = subtree;
+    }
+}
+
+/**
+ *
+ * @param rule
+ * @param expression
+ * @param variable
+ * @returns {*}
+ */
+function getSubtreeFromVariables(rule, expression, variable) {
+    if (rule instanceof Variable) {
+        if (rule.value === variable) {
+            return expression;
+        }
+        else return undefined;
+    }
+    if (expression instanceof Variable) {
+        return undefined;
+    }
+    var left = getSubtreeFromVariables(rule.left, expression.left, variable)
+    if (left !== undefined) {
+        return left;
+    }
+    var right = getSubtreeFromVariables(rule.right, expression.right, variable);
+    if (right !== undefined) {
+        return right;
+    }
+    return undefined;
+}
+
+/**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.
+ * @param expression expression to find the variables from
+ * @returns {Array} of variables present in the expression given in alphabetical order
  */
 function getVariables(expression) {
     var variables = findVariables(expression);
@@ -36,6 +86,8 @@ function getVariables(expression) {
 
 /**
  * Returns the complete list of the variables in the given expression with duplicates and unsorted.
+ * @param expression expression to find the variables from
+ * @returns {Array} of variables present in the expression given
  */
 function findVariables(expression) {
     var variables = [];
@@ -59,6 +111,11 @@ function findVariables(expression) {
     return variables;
 }
 
+/**
+ * Removes duplicates from the array
+ * @param array
+ * @returns {Array} new array with duplicates removed.
+ */
 function removeDuplicates(array) {
     var out = [];
     for (var i = 0; i < array.length; i++) {
@@ -69,6 +126,12 @@ function removeDuplicates(array) {
     return out;
 }
 
+/**
+ * Checks if an object is present in the array
+ * @param array the array to check
+ * @param item the object to check for
+ * @returns {boolean} true if item is in the array, false otherwise
+ */
 function contains(array, item) {
     for (var i = 0; i < array.length; i++) {
         if (array[i] === item) {
