@@ -1,103 +1,110 @@
-   <!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html lang="en">
 
 <head>
-<title>Logic Game</title>
-<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<script src="lib/jquery-2.1.4.min.js"></script>
-<script src="lib/d3.min.js"></script>
-<link rel="stylesheet"	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<script	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="js/parser.js" charset="utf-8"></script>
-<script src="js/game.js"></script>
-<style>
-body {
-	background-color: lavender;
-}
-.btn{
-	width: 95px;
-}
-.btn-file {
-	position: relative;
-	overflow: hidden;
-}
+    <title>Logic Game</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <script src="lib/jquery-2.1.4.min.js"></script>
+    <script src="lib/d3.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="js/parser.js" charset="utf-8"></script>
+    <script src="js/gameLogic.js"></script>
+    <script src="js/game.js"></script>
+    <style>
+        body {
+            background-color: lavender;
+        }
 
-.btn-file input[type=file] {
-	position: absolute;
-	top: 0;
-	right: 0;
-	min-width: 100%;
-	min-height: 100%;
-	font-size: 100px;
-	text-align: right;
-	filter: alpha(opacity = 0);
-	opacity: 0;
-	outline: none;
-	background: white;
-	cursor: inherit;
-	display: block;
-}
-</style>
+        .btn {
+            width: 95px;
+        }
+
+        .btn-file {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+        }
+    </style>
 </head>
 
 <body onload="init()">
-		<p></p>
-		<div class="col-lg-12" style="background-color: lavender;">
-			<div id="menuBar" style="left: 0">
-				<button id="resetButton" class="btn btn-primary btn-md">Reset</button>
-				<button id="showHideButton" class="btn btn-primary btn-md">Show/Hide</button>
-				<button id="viewAnswerButton" class="btn btn-primary btn-md">View
-					Answer</button>
-				<button id="hintButton" class="btn btn-primary btn-md">Hint</button>
-				<button id="zoomInButton" class="btn btn-primary btn-md" style="">Zoom In</button>
-				<button id="zoomOutButton" class="btn btn-primary btn-md">Zoom Out</button>
-				<span class="btn btn-primary btn-file">Browse <input id="uploadFile"
-					type="file">
-				</span>
-			</div>
-		</div>
+<p></p>
 
-		<div class="col-lg-3"
-			style="background-color: lavender">
-			<h2>Rules</h2>
-			<div id="rulesPanelSvg"
-				style="background-color: white; overflow-y: scroll;">
-				
-				<ul class="nav nav-tabs">
-    					<li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
-    					<li><a data-toggle="tab" href="#elimination">Elimination</a></li>
-  					</ul>
-				
-  					<div class="tab-content">
-    					<div id="introduction" class="tab-pane fade in active">
-							<canvas id="canvasRules"></canvas>
-    					</div>
-    					<div id="elimination" class="tab-pane fade">
-    						<canvas id="canvasElimination"></canvas>
-    					</div>
- 					</div>
- 			</div>
-			<p></p>
-		</div>
-		
-	<div class="col-lg-9"
-		style="background-color: lavender;">
-		<h2>Game Area</h2>
-		<div id="gameAreaPanel"
-			style="background-color: white">
-			<canvas id="canvasGameArea"></canvas>
-		</div>
-					<p></p>
-				<button type="button" id="imageBin" class="btn btn-primary btn-md">
-		<span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-		<button id = "leftButton" type="button" class="btn btn-primary btn-md">
-			<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-		</button>
-		<button id = "rightButton" type="button" class="btn btn-primary btn-md">
-			<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-		</button>
-	</div>
-	<script src="js/events.js"></script>
-	<script>update();</script>
+<div class="col-lg-12" style="background-color: lavender;">
+    <div id="menuBar" style="left:0">
+        <button id="resetButton" class="btn btn-primary btn-md">Reset</button>
+        <button id="showHideButton" class="btn btn-primary btn-md">Show/Hide</button>
+        <button id="viewAnswerButton" class="btn btn-primary btn-md">View
+            Answer
+        </button>
+        <button id="hintButton" class="btn btn-primary btn-md">Hint</button>
+        <button id="zoomInButton" class="btn btn-primary btn-md" style="">Zoom In</button>
+        <button id="zoomOutButton" class="btn btn-primary btn-md">Zoom Out</button>
+				<span class="btn btn-primary btn-file">Browse <input id="uploadFile"
+                                                                     type="file">
+				</span>
+    </div>
+</div>
+
+<div class="col-lg-3"
+     style="background-color: lavender">
+    <h2>Rules</h2>
+
+    <div id="rulesPanelSvg"
+         style="background-color: white; overflow-y: scroll;">
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
+            <li><a data-toggle="tab" href="#elimination">Elimination</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="introduction" class="tab-pane fade in active">
+                <canvas id="canvasRules"></canvas>
+            </div>
+            <div id="elimination" class="tab-pane fade">
+                <canvas id="canvasElimination"></canvas>
+            </div>
+        </div>
+    </div>
+    <p></p>
+</div>
+
+<div class="col-lg-9"
+     style="background-color: lavender;">
+    <h2>Game Area</h2>
+
+    <div id="gameAreaPanel"
+         style="background-color: white">
+        <canvas id="canvasGameArea"></canvas>
+    </div>
+    <p></p>
+    <button type="button" id="imageBin" class="btn btn-primary btn-md">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+    <button id="leftButton" type="button" class="btn btn-primary btn-md">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    </button>
+    <button id="rightButton" type="button" class="btn btn-primary btn-md">
+        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+    </button>
+</div>
+<script src="js/events.js"></script>
+<script>update();</script>
 </body>
    

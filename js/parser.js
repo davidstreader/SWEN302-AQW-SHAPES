@@ -12,7 +12,8 @@ function loadRules() {
                 name: data[i].name,
                 type: data[i].type,
                 above: aboveArray,
-                below: treeToString(parse(data[i].below))
+                below: treeToString(parse(data[i].below)),
+                belowTree: parse(data[i].below)
             };
             rules.push(currentRule);
         }

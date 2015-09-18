@@ -6,13 +6,18 @@ var c, cr, ce;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
-	this.points = JSON.parse(JSON.stringify(points));
+	if(points instanceof String){
+		this.letter = points;
+	}else{
+		this.points = JSON.parse(JSON.stringify(points));
+	}
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
+	this.scaleFactor = 1;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, name
+function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree
 ) {
 	this.shapeList = shapes;
 	this.currX = currX;
@@ -20,6 +25,8 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name
 	this.collX = collisionX;
 	this.collY = collisionY;
     this.name = name;
+	this.logicTree = logicTree;
+	this.scaleFactor = 1;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -28,6 +35,7 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
+
 		return true;
 	}
 	return false;
@@ -46,48 +54,26 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 
 Shape.prototype.scale = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
-	for(var i=0; i<this.points.length; i++){
+	this.scaleFactor = scaleFactor;
+	/*for (var i = 0; i < this.points.length; i++) {
 		this.points[i].x = this.points[i].x * scaleFactor;
 		this.points[i].y = this.points[i].y * scaleFactor;
 	}
 	this.currX = this.currX * scaleFactor;
-	this.currY = this.currY * scaleFactor;
+	this.currY = this.currY * scaleFactor;*/
 };
 
 ComboShape.prototype.scale = function(scaleFactor){
 	scaleFactor= scaleFactor || 1;
+	this.scaleFactor = scaleFactor;
 	for(var i=0; i<this.shapeList.length; i++){
 		this.shapeList[i].scale(scaleFactor);
 	}
-	this.currX = this.currX * scaleFactor;
+	/*this.currX = this.currX * scaleFactor;
 	this.currY = this.currY * scaleFactor;
 	this.collX = this.collX * scaleFactor;
-	this.collY = this.collY * scaleFactor;
+	this.collY = this.collY * scaleFactor;*/
 };
-
-Shape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor = scaleFactor || 1;
-	for(var i=0; i<this.points.length; i++){
-		this.points[i].x = this.points[i].x / scaleFactor;
-		this.points[i].y = this.points[i].y / scaleFactor;
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
-};
-
-ComboShape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor= scaleFactor || 1;
-	for(var i=0; i<this.shapeList.length; i++){
-		this.shapeList[i].scaleDivide(scaleFactor);
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
-	this.collX = this.collX / scaleFactor;
-	this.collY = this.collY / scaleFactor;
-};
-
-
-
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
@@ -103,19 +89,22 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 };
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
+	var drawX = this.currX * this.scaleFactor;
+	var drawY = this.currY * this.scaleFactor;
 	if(offsetX != null){
-		offsetX += this.currX;
-		offsetY += this.currY;
+		offsetX += drawX;
+		offsetY += drawY;
 	}
-	offsetX = offsetX || this.currX;
-	offsetY = offsetY || this.currY;
+	offsetX = offsetX || drawX;
+	offsetY = offsetY || drawY;
+
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
     if(this.name != null) {
         context.fillStyle = 'blue';
-        context.fillText(this.name, this.currX + 10, this.currY + 85);
+        context.fillText(this.name, this.drawX + 10, this.drawY + 85);
     }
 };
 
@@ -134,10 +123,19 @@ Shape.prototype.applyDelta = function(deltaX, deltaY){
 Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
+	var toDrawPoints = [];
+
+	for (var j = 0; j < this.points.length; j++) {
+		var toAdd = {x: this.points[j].x * this.scaleFactor, y: this.points[j].y * this.scaleFactor};
+		toDrawPoints.push(toAdd);
+	}
+	var drawX = this.currX * this.scaleFactor;
+	var drawY = this.currY * this.scaleFactor;
+
 	context.beginPath();
-	context.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+	context.moveTo(drawX + offsetX + toDrawPoints[0].x, drawY + offsetY + toDrawPoints[0].y);
 	for(var i=0; i<this.points.length; i++){
-		context.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+		context.lineTo(drawX + offsetX + toDrawPoints[i].x , drawY + offsetY + toDrawPoints[i].y);
 	}
 	context.fillStyle = this.color;
 	context.fill();
@@ -152,6 +150,7 @@ function CanvasState(canvas) {
 	this.width = canvas.width;
 	this.height = canvas.height;
 	this.ctx = canvas.getContext('2d');
+	this.ctx.font = "48px serif";
 	// This complicates things a little but but fixes mouse co-ordinate problems
 	// when there's a border or padding. See getMouse for more detail
 	var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
@@ -319,7 +318,9 @@ function CanvasState(canvas) {
 				for(var j = 0; j < shapes[i].shapeList.length; j++){
 					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
 				}
-				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name));
+				var  shape = new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name, shapes[i].logicTree);
+				shape.scale(shapes[j].scaleFactor);
+				c.addShape(shape);
 				matchShapeSize();
 				return;
 			}
@@ -382,36 +383,36 @@ CanvasState.prototype.getMouse = function(e) {
 };
 
 
-function createShape(logicArray){
-   	for(var i =15; i < 16; i++){
+function createShape(logicArray,i){
+
 		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
 		var OpValue = logicArray[i].value;
 		var left = logicArray[i].left;
 		var right = logicArray[i].right;
 
-		if(OpValue.value =="")
-			continue;
-		else {
+		if(OpValue.value!="")
+		{
 			var sp = shapePoints[OpValue];
 			logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
 		}
-		if(left.value =="")
-			continue;
-		else if(left instanceof Operator)
-			logicShapes.push(buildShape(left,15,115,0.3));
-		else
-		 	logicShapes.push(new Shape(15,115,shapePoints[left.value]));
+		if(left.value !="") {
 
-		if(right.value =="")
-			continue;
-		else if(right instanceof Operator)
-			logicShapes.push(buildShape(right,315,115,0.3));
-		else
-			logicShapes.push(new Shape(315,115,shapePoints[right.value]));
+			if (left instanceof Operator)
+				logicShapes.push(buildShape(left, 15, 115, 0.3));
+			else
+				logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+		}
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes));
+		if(right.value !="") {
+
+			if (right instanceof Operator)
+				logicShapes.push(buildShape(right, 315, 115, 0.3));
+			else
+				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
+		}
+
+		c.addShape(new ComboShape(400,400,225,100,logicShapes,logicArray[i]));
 		c.shapes[c.shapes.length-1].scale(0.5);
-	}
 
 }
 
@@ -441,7 +442,7 @@ function buildShape(operator,x,y,scale){
 	else if(right.value !="")
 		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-	var result = (new ComboShape(x,y,225,15,logicShapes));
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator));
     if(scale != 0) {
         result.scale(scale);
         result.currX = x;
@@ -476,31 +477,12 @@ function init() {
 	canvas.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
-	//cs.addShape(new Shape(15,125,shapePoints.RULE,"#FFF"));
-	//cs.addShape(new Shape(15,125,shapePoints.QUESTION,"#FFF"));
-	//cs.addShape(new Shape(15,15,shapePoints.AND,"#F00"));
-	//cs.addShape(new Shape(115,15,shapePoints.OR,"#00F"));
-	//cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-	//cs.addShape(new Shape(235,25,shapePoints.IMPLIES,"#F0F"));
-	//cs.addShape(new Shape(385,25,shapePoints.NOT,"#0FF"));
-	//cs.addShape(new Shape(15,125,shapePoints.TURNSTYLE,"#0F0"));
-	//
-	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
-	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
-	//cs.addShape(new Shape(115,125,shapePoints.E,"#FF0"));
-	//cs.addShape(new Shape(235,125,shapePoints.F,"#000"));
-
-/*	var rule = new ComboShape(10, 10, 225, 300,
-		[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-	);
-	cs.addShape(rule);*/
 
 	var question = new ComboShape(10, 400, 225, 100,
 		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
 	question.scale(0.5);
 	cs.addShape(question);
-	//combo.draw(cs.ctx);
 
 	// debugging purposes only
 	c = cs;
@@ -553,34 +535,57 @@ function init() {
 	drawRules(rules);
 }
 
-function drawRules(ruleArray){
-    for(var i =0; i < ruleArray.length; i++){
+function drawRules(ruleArray) {
+    var countIntroductionRules = 0;
+    var countEliminationRules = 0;
+    for (var i = 0; i < ruleArray.length; i++) {
         var logicshapes = [];
-        logicshapes.push(new Shape(10,10,shapePoints.RULE,"#00ff00"));
+        logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
         var above = ruleArray[i].above;
         var below = ruleArray[i].below;
 
-        for(var j =0; j < above.length; j++) {
+        for (var j = 0; j < above.length; j++) {
             for (k = 0; k < above[j].length; k++) {
                 var operator = above[j];
-                if(above[j][k] =="")
+                if (above[j][k] == "")
                     continue;
-                var shape = new Shape(k * 100 + 15, 20, shapePoints[ above[j][k] ]);
-                shape.scale((150/above[j].length)/90);
-                shape.currX+=(j*300);
+                var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
+                shape.scale((150 / above[j].length) / 90);
+                shape.currX += (j * 300);
                 logicshapes.push(shape);
 
 
             }
 
         }
-        var result = new ComboShape(10,i*350+10,225,400,logicshapes,ruleArray[i].name);
 
-        result.scale(0.5);
+        for (var j = 0; j < below.length; j++) {
+            if (below[j] == "")
+                continue;
+            var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
+            shape.scale((150 / below.length) / 90);
+            shape.currX += (j * 10);
+            logicshapes.push(shape);
 
-        if(ruleArray[i].type =="Introduction")
+
+        }
+
+
+        if (ruleArray[i].type == "Introduction") {
+            countIntroductionRules++;
+            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+
+            result.scale(0.5);
+
             cr.addShape(result);
-        else
+        }
+        else {
+            countEliminationRules++;
+            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+
+            result.scale(0.5);
+
             ce.addShape(result);
+        }
     }
 }
