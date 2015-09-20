@@ -63,8 +63,7 @@ resetButton.addEventListener("click", function(){
 //allow specific shape resize and whole canvas resize
 var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-	if (sizeFactor > 3) return;
-		
+	//if (sizeFactor > 3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(1/0.7);
 	} else {
@@ -80,8 +79,7 @@ zoomInButton.addEventListener("click", function(){
 
 //allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
-	if (sizeFactor < -3) return;
-	
+	//if (sizeFactor < -3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(0.7);
 	} else {

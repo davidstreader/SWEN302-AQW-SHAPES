@@ -2,7 +2,7 @@
 // For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c, cr, ce, selectedShape;
+var c, cr, ce, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
@@ -60,8 +60,9 @@ ComboShape.prototype.scale = function(scaleFactor){
 	for(var i=0; i<this.shapeList.length; i++){
 		this.shapeList[i].scale(scaleFactor);
 	}
-	this.currX = this.currX * scaleFactor;
-	this.currY = this.currY * scaleFactor;
+	//scale not change the current x y position
+	//this.currX = this.currX * scaleFactor;
+	//this.currY = this.currY * scaleFactor;
 	this.collX = this.collX * scaleFactor;
 	this.collY = this.collY * scaleFactor;
 };
@@ -455,7 +456,6 @@ var shapePoints={
 	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
 	F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
 };
-
 //initilisation method called from html on load up
 function init() {
 	//game area
@@ -472,13 +472,11 @@ function init() {
 	question.scale(0.5);
 	cs.addShape(question);
 
-	// debugging purposes only
-	c = cs;
 	
 	
 	
 	
-	//rules area
+	//rules area introduction
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
@@ -486,13 +484,14 @@ function init() {
 	csr.width = rulesPanelSvg.clientWidth;
 	csr.height = rulesPanelSvg.clientHeight;
 
-    //rules area
+    //rules area elimination
     var canvase = document.getElementById('canvasElimination');
     var cse = new CanvasState(canvase);
     canvase.width = rulesPanelSvg.clientWidth;
     canvase.height = rulesPanelSvg.clientHeight;
     cse.width = rulesPanelSvg.clientWidth;
     cse.height = rulesPanelSvg.clientHeight;
+    
    //init mouse x and y
     var mx = -1;
 	var my = -1;
@@ -506,10 +505,12 @@ function init() {
         my = relativePosition.top
     });
   //click rule shape to create a same new rule shape on game area canvas
+	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
 		var sps = cr.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
+				selectedRuleShape = sps[i];
 				var s = [];
 				for(var j = 0; j < sps[i].shapeList.length; j++){
 					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
@@ -520,9 +521,26 @@ function init() {
 			}
 		}
 	}, true);
+	//elimination canvas click listener
+	canvase.addEventListener('click', function(e) {
+		var sps = cr.shapes;
+		for (var i = 0; i < sps.length; i++) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				selectedRuleShape = sps[i];
+				var s = [];
+				for(var j = 0; j < sps[i].shapeList.length; j++){
+					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
+				}
+				ce.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
 	
-
-
+	// debugging purposes only
+	c = cs;
+	ce = cse;
 //    var rule = new ComboShape(10, 10, 225, 300,
 //			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
 //        ,"B IMPLIES A"
@@ -530,12 +548,12 @@ function init() {
 //	rule.scale(0.5);	
 //	csr.addShape(rule);
 	cr = csr;
-	rulesPanelSvg.addEventListener("scroll", function(){
-		console.log("scrolling");
-		cr.valid = false;
-		cr.draw();
-		
-	});
+//	rulesPanelSvg.addEventListener("scroll", function(){
+//		console.log("scrolling");
+//		cr.valid = false;
+//		cr.draw();
+//		
+//	});
 
 	drawRules(rules);
 }
@@ -578,7 +596,7 @@ function drawRules(ruleArray) {
 
         if (ruleArray[i].type == "Introduction") {
             countIntroductionRules++;
-            var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+            var result = new ComboShape(10, (i - countEliminationRules) * 200 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
 
             result.scale(0.5);
 
@@ -586,7 +604,7 @@ function drawRules(ruleArray) {
         }
         else {
             countEliminationRules++;
-            var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+            var result = new ComboShape(10, (i - countIntroductionRules) * 200 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
 
             result.scale(0.5);
 
