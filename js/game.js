@@ -21,7 +21,7 @@ function Shape(currX, currY, points, color) {
 	this.color = color;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree
+function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree ,isQuestion
 ) {
 	this.shapeList = shapes;
 	this.currX = currX;
@@ -30,6 +30,7 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTre
 	this.collY = collisionY;
 	this.name = name;
 	this.logicTree = logicTree;
+	this.isQuestion = isQuestion;
 }
 
 ComboShape.prototype.collidingWith = function(shape){
@@ -167,11 +168,30 @@ ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
 	for(var i=0; i<this.shapeList.length; i++){
 		newShapeList[i] = this.shapeList[i].applyDelta(deltaX, deltaY);
 	}//Note, doesn't recurse down to Shape. Just applies to comboShape.
-	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree);
+	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree, this.isQuestion);
 };
 
+
+ComboShape.prototype.clone = function(){
+	var s = [];
+	for(var j = 0; j < this.shapeList.length; j++){
+		if(this.shapeList[j].letter == null) {
+			s[j] = new Shape(this.shapeList[j].currX, this.shapeList[j].currY, this.shapeList[j].points, this.shapeList[j].color);
+		}
+		else {
+			s[j] = new Shape(this.shapeList[j].currX, this.shapeList[j].currY, this.shapeList[j].letter, this.shapeList[j].color);
+		}
+
+	}
+	return new ComboShape(10, 10, this.collX, this.collY, s, this.name ,this.logicTree, this.isQuestion); //Not deep cloned
+};
+
+
 Shape.prototype.applyDelta = function(deltaX, deltaY){
-	return new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
+	if(this.letter == null)
+		return new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
+	else
+		return new Shape(this.currX + deltaX, this.currY + deltaY, this.letter, this.color);
 };
 
 Shape.prototype.draw = function(context, offsetX, offsetY){
@@ -251,7 +271,7 @@ function CanvasState(canvas) {
 					var deltaY = shapes[j].collY - shapes[i].collY;
 					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
 					newShapes = shapes[j].shapeList.concat(s1.shapeList);
-					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree);
+					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree, true);
 					shapes = shapes.splice(j, 1);
 					myState.valid = false;
 					myState.draw();
@@ -334,29 +354,9 @@ function CanvasState(canvas) {
 	}
 
 
-
-
-//	canvas.addEventListener('click', function(e) {
-//		var mouse = myState.getMouse(e);
-//		var mx = mouse.x;
-//		var my = mouse.y;
-//		var shapes = c.shapes;
-//		for (var i = shapes.length-1; i >= 0 ; i--) {
-//			if (shapes[i].contains(mx, my, cr.ctx)) {
-//				console.log("shape click");
-//				var s = [];
-//				for(var j = 0; j < shapes[i].shapeList.length; j++){
-//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-//				}
-//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-//				matchShapeSize();
-//				return;
-//			}
-//		}
-//	}, true);
-//
 	//Select the shape just clicked to to allow specific shape resize
 		canvas.addEventListener('click', function(e) {
+			selectedShape = undefined;
 			var mouse = myState.getMouse(e);
 			var mx = mouse.x;
 			var my = mouse.y;
@@ -364,10 +364,8 @@ function CanvasState(canvas) {
 			for (var i = shapes.length-1; i >= 0 ; i--) {
 				if (shapes[i].contains(mx, my, cr.ctx)) {
 					selectedShape = shapes[i];
-				return;
 				}
 			}
-			selectedShape = undefined;
 		}, true);
 
 	
@@ -456,7 +454,7 @@ function createShape(logicArray,i){
 			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
 	}
 
-	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
+	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 
 
@@ -488,7 +486,7 @@ function buildShape(operator,x,y,scale){
 	else if(right.value !="")
 		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
-	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator));
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
 	if(scale != 0) {
 		result.scale(scale);
 		result.currX = x;
@@ -575,28 +573,19 @@ function init() {
 		var sps = csr.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
-				selectedRuleShape = sps[i];
-				var s = [];
-				for(var j = 0; j < sps[i].shapeList.length; j++){
-					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
+				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
 		}
 	}, true);
+
 	//elimination canvas click listener
 	canvase.addEventListener('click', function(e) {
 		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
-				selectedRuleShape = sps[i];
-				var s = [];
-				for(var j = 0; j < sps[i].shapeList.length; j++){
-					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
-				}
-				c.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
+				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
@@ -661,7 +650,7 @@ function drawRules(ruleArray) {
 
 		if (ruleArray[i].type == "Introduction") {
 			countIntroductionRules++;
-			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
@@ -669,7 +658,7 @@ function drawRules(ruleArray) {
 		}
 		else {
 			countEliminationRules++;
-			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
