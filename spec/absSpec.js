@@ -159,6 +159,23 @@ describe("Test Order of Precedence 03", function () {
         expect(V1.equals(V2)).toBe(true);
     });
 });
+
+describe("Test parser", function(){
+    var v1 = parse("⊢ ((A→B)→A)→A");
+    var v2 = new Operator("TURNSTILE");
+    v2.left= new Variable("");
+    v2.right = new Operator("IMPLIES");
+    v2.right.right = new Variable("A");
+    v2.right.left = new Operator("IMPLIES");
+    v2.right.left.right = new Variable("A");
+    v2.right.left.left = new Operator("IMPLIES");
+    v2.right.left.left.left = new Variable("A");
+    v2.right.left.left.right = new Variable("B");
+    it("V1 should be equals to V2",function(){
+        expect(v1.equals(v2)).toBe(true);
+    })
+
+});
 /*case '⊢': return 0;
  case '→': return 1;
  case '∨': return 2;
