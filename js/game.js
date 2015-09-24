@@ -4,7 +4,11 @@
 //c is the canvas created for debugging purposes only
 var c, cr, ce, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
+var DEFAULT_FONT_SIZE = 48;
 
+function isString(s) {
+	return typeof(s) === 'string' || s instanceof String;
+}
 function Shape(currX, currY, points, color) {
 	if(isString(points)){
 		this.letter = points;
