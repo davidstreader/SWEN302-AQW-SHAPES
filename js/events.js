@@ -33,13 +33,6 @@ inputFile.change(function () {
 				generateASTs();
 				createShape(questions, 0);
 			});
-			/*reader = new FileReader();
-
-			reader.onload = function (event) {
-				var result = event.target.result;
-				selectedFile = result;
-			};
-			reader.readAsText(file);*/
 		} else {
 			alert("json file only!")
 		}
@@ -52,17 +45,14 @@ function update() {
 }
 
 resetButton.addEventListener("click", function(){
-	c.shapes = [];
-	c.valid = false;
-	c.draw();
+	reset();
 	
 });
 
 //allow specific shape resize and whole canvas resize
 var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-	if (sizeFactor > 3) return;
-		
+	//if (sizeFactor > 3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(1/0.7);
 	} else {
@@ -78,8 +68,6 @@ zoomInButton.addEventListener("click", function(){
 
 //allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
-	if (sizeFactor < -3) return;
-	
 	if (selectedShape !== undefined){
 		selectedShape.scale(0.7);
 	} else {
@@ -102,7 +90,10 @@ imageBin.addEventListener("mouseover", function(){
 });
 
 arrowLeft.addEventListener("click", function(){
-	if(questions!=null){
+	if(questions==null){
+		window.alert("Input questions before play!");
+	}
+	else{
 		currentQuestionIndex--;
 		if(currentQuestionIndex<0){
 			currentQuestionIndex  = 0;
@@ -112,7 +103,10 @@ arrowLeft.addEventListener("click", function(){
 });
 
 arrowRight.addEventListener("click", function(){
-	if(questions!=null){
+	if(questions==null){
+		window.alert("Input questions before play!");
+	}
+	else{
 		currentQuestionIndex ++;
 		if(currentQuestionIndex>questions.length-1){
 			currentQuestionIndex = questions.length-1;
@@ -135,9 +129,14 @@ reSizePanelHeight();
 };
 
 function reset(){
-	console.log("reset");
 	c.shapes = [];
-	createShape(questions, currentQuestionIndex);//add question to game area
+	if(questions!=undefined){
+		createShape(questions, currentQuestionIndex);
+	}
+	else{
+		window.alert("Input questions before play!");
+	}
+		
 	c.valid = false;
 	c.draw();
 }
@@ -165,3 +164,4 @@ function reSizePanelHeight(){
 	document.getElementById("introduction").style.height = window.innerHeight * 2+'px';
 	document.getElementById("elimination").style.height = window.innerHeight * 2+'px';
 }
+
