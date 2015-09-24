@@ -52,11 +52,7 @@ function update() {
 }
 
 resetButton.addEventListener("click", function(){
-	c.shapes = [];
-	if(questions!=undefined)
-		createShape(questions, 0);
-	c.valid = false;
-	c.draw();
+	reset();
 	
 });
 
@@ -102,7 +98,10 @@ imageBin.addEventListener("mouseover", function(){
 });
 
 arrowLeft.addEventListener("click", function(){
-	if(questions!=null){
+	if(questions==null){
+		window.alert("Input questions before play!");
+	}
+	else{
 		currentQuestionIndex--;
 		if(currentQuestionIndex<0){
 			currentQuestionIndex  = 0;
@@ -112,7 +111,10 @@ arrowLeft.addEventListener("click", function(){
 });
 
 arrowRight.addEventListener("click", function(){
-	if(questions!=null){
+	if(questions==null){
+		window.alert("Input questions before play!");
+	}
+	else{
 		currentQuestionIndex ++;
 		if(currentQuestionIndex>questions.length-1){
 			currentQuestionIndex = questions.length-1;
@@ -134,9 +136,14 @@ reSizePanelHeight();
 	window.location.reload();
 }
 function reset(){
-	console.log("reset");
 	c.shapes = [];
-	createShape(questions, currentQuestionIndex);//add question to game area
+	if(questions!=undefined){
+		createShape(questions, currentQuestionIndex);
+	}
+	else{
+		window.alert("Input questions before play!");
+	}
+		
 	c.valid = false;
 	c.draw();
 }

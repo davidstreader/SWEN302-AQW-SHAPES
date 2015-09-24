@@ -61,8 +61,8 @@ ComboShape.prototype.scale = function(scaleFactor){
 		this.shapeList[i].scale(scaleFactor);
 	}
 	//scale not change the current x y position
-	//this.currX = this.currX * scaleFactor;
-	//this.currY = this.currY * scaleFactor;
+	this.currX = this.currX * scaleFactor;
+	this.currY = this.currY * scaleFactor;
 	this.collX = this.collX * scaleFactor;
 	this.collY = this.collY * scaleFactor;
 };
@@ -488,7 +488,7 @@ function init() {
     var canvase = document.getElementById('canvasElimination');
     var cse = new CanvasState(canvase);
     canvase.width = rulesPanelSvg.clientWidth;
-    canvase.height = rulesPanelSvg.clientHeight;
+    canvase.height = 1200;
     cse.width = rulesPanelSvg.clientWidth;
     cse.height = rulesPanelSvg.clientHeight;
     
@@ -507,7 +507,7 @@ function init() {
   //click rule shape to create a same new rule shape on game area canvas
 	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
-		var sps = cr.shapes;
+		var sps = csr.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
 				selectedRuleShape = sps[i];
@@ -523,7 +523,7 @@ function init() {
 	}, true);
 	//elimination canvas click listener
 	canvase.addEventListener('click', function(e) {
-		var sps = cr.shapes;
+		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
 				selectedRuleShape = sps[i];
@@ -531,7 +531,7 @@ function init() {
 				for(var j = 0; j < sps[i].shapeList.length; j++){
 					s[j] = new Shape(sps[i].shapeList[j].currX,sps[i].shapeList[j].currY,sps[i].shapeList[j].points,sps[i].shapeList[j].color);
 				}
-				ce.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
+				c.addShape(new ComboShape(10, 10, sps[i].collX, sps[i].collY, s));
 				matchShapeSize();
 				return;
 			}
@@ -559,56 +559,56 @@ function init() {
 }
 
 function drawRules(ruleArray) {
-    var countIntroductionRules = 0;
-    var countEliminationRules = 0;
-    for (var i = 0; i < ruleArray.length; i++) {
-        var logicshapes = [];
-        logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
-        var above = ruleArray[i].above;
-        var below = ruleArray[i].below;
+	var countIntroductionRules = 0;
+	var countEliminationRules = 0;
+	for (var i = 0; i < ruleArray.length; i++) {
+		var logicshapes = [];
+		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
+		var above = ruleArray[i].above;
+		var below = ruleArray[i].below;
 
-        for (var j = 0; j < above.length; j++) {
-            for (k = 0; k < above[j].length; k++) {
-                var operator = above[j];
-                if (above[j][k] == "")
-                    continue;
-                var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
-                shape.scale((150 / above[j].length) / 90);
-                shape.currX += (j * 300);
-                logicshapes.push(shape);
-
-
-            }
-
-        }
-
-        for (var j = 0; j < below.length; j++) {
-            if (below[j] == "")
-                continue;
-            var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
-            shape.scale((150 / below.length) / 90);
-            shape.currX += (j * 10);
-            logicshapes.push(shape);
+		for (var j = 0; j < above.length; j++) {
+			for (k = 0; k < above[j].length; k++) {
+				var operator = above[j];
+				if (above[j][k] == "")
+					continue;
+				var shape = new Shape(k * 100 + 15, 20, shapePoints[above[j][k]]);
+				shape.scale((150 / above[j].length) / 90);
+				shape.currX += (j * 300);
+				logicshapes.push(shape);
 
 
-        }
+			}
+
+		}
+
+		for (var j = 0; j < below.length; j++) {
+			if (below[j] == "")
+				continue;
+			var shape = new Shape(j * 100 + 800, 800, shapePoints[below[j]]);
+			shape.scale((150 / below.length) / 90);
+			shape.currX += (j * 10);
+			logicshapes.push(shape);
 
 
-        if (ruleArray[i].type == "Introduction") {
-            countIntroductionRules++;
-            var result = new ComboShape(10, (i - countEliminationRules) * 200 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+		}
 
-            result.scale(0.5);
 
-            cr.addShape(result);
-        }
-        else {
-            countEliminationRules++;
-            var result = new ComboShape(10, (i - countIntroductionRules) * 200 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+		if (ruleArray[i].type == "Introduction") {
+			countIntroductionRules++;
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
 
-            result.scale(0.5);
+			result.scale(0.5);
 
-            ce.addShape(result);
-        }
-    }
-}	
+			cr.addShape(result);
+		}
+		else {
+			countEliminationRules++;
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree);
+
+			result.scale(0.5);
+
+			ce.addShape(result);
+		}
+	}
+}
