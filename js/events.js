@@ -33,13 +33,6 @@ inputFile.change(function () {
 				generateASTs();
 				createShape(questions, 0);
 			});
-			/*reader = new FileReader();
-
-			reader.onload = function (event) {
-				var result = event.target.result;
-				selectedFile = result;
-			};
-			reader.readAsText(file);*/
 		} else {
 			alert("json file only!")
 		}
@@ -75,7 +68,6 @@ zoomInButton.addEventListener("click", function(){
 
 //allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
-	//if (sizeFactor < -3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(0.7);
 	} else {
