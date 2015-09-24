@@ -100,6 +100,9 @@ function eval(str) {
             if (str.charAt(i) == '(') {
                 count++;
             }
+            if(str.charAt(i)==')' && count>0){
+                count--;
+            }
         }
         if (count == 0) {
             return eval(str.substring(1, str.length - 1));

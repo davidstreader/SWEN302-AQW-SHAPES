@@ -83,10 +83,11 @@ zoomOutButton.addEventListener("click", function(){
 
 
 
-imageBin.addEventListener("mouseover", function(){
+imageBin.addEventListener("click", function(){
 	var obj = c.shapes[c.shapes.length-1];
 	c.shapes.splice(c.shapes.indexOf(obj),1);
-	console.log("mouseover should remove rules on game area not rule panle")
+	c.valid = false;
+	c.draw();
 });
 
 arrowLeft.addEventListener("click", function(){
