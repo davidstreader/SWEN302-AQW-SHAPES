@@ -126,7 +126,8 @@ reSizePanelHeight();
 	c.valid = false;
 	c.draw();
 	window.location.reload();
-}
+};
+
 function reset(){
 	c.shapes = [];
 	if(questions!=undefined){

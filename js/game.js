@@ -6,7 +6,12 @@ var c, cr, ce, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
 
 function Shape(currX, currY, points, color) {
-	this.points = JSON.parse(JSON.stringify(points));
+	if(isString(points)){
+		this.letter = points;
+		this.fontSize = DEFAULT_FONT_SIZE;
+	}else{
+		this.points = JSON.parse(JSON.stringify(points));
+	}
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
@@ -19,7 +24,7 @@ function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTre
 	this.currY = currY;
 	this.collX = collisionX;
 	this.collY = collisionY;
-    this.name = name;
+	this.name = name;
 	this.logicTree = logicTree;
 }
 
@@ -39,6 +44,7 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
 		if(currShape.contains(mouseX, mouseY, ctx, this.currX, this.currY)){
+			console.log("currshape contains point: " + mouseX + ", " + mouseY);
 			return true;
 		}
 	}
@@ -47,9 +53,13 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 
 Shape.prototype.scale = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
-	for(var i=0; i<this.points.length; i++){
-		this.points[i].x = this.points[i].x * scaleFactor;
-		this.points[i].y = this.points[i].y * scaleFactor;
+	if(this.letter != null){
+		this.fontSize = this.fontSize * scaleFactor;
+	}else {
+		for (var i = 0; i < this.points.length; i++) {
+			this.points[i].x = this.points[i].x * scaleFactor;
+			this.points[i].y = this.points[i].y * scaleFactor;
+		}
 	}
 	this.currX = this.currX * scaleFactor;
 	this.currY = this.currY * scaleFactor;
@@ -69,9 +79,14 @@ ComboShape.prototype.scale = function(scaleFactor){
 
 Shape.prototype.scaleDivide = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
-	for(var i=0; i<this.points.length; i++){
-		this.points[i].x = this.points[i].x / scaleFactor;
-		this.points[i].y = this.points[i].y / scaleFactor;
+	if(this.letter != null){
+		this.fontSize = this.fontSize / scaleFactor;
+	}
+	else {
+		for (var i = 0; i < this.points.length; i++) {
+			this.points[i].x = this.points[i].x / scaleFactor;
+			this.points[i].y = this.points[i].y / scaleFactor;
+		}
 	}
 	this.currX = this.currX / scaleFactor;
 	this.currY = this.currY / scaleFactor;
@@ -96,10 +111,15 @@ ComboShape.prototype.scaleDivide = function(scaleFactor){
 Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
-	ctx.beginPath();
-	ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
-	for(var i=0; i<this.points.length; i++){
-		ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+	if(this.letter!=null){
+		return false;
+	}
+	else {
+		ctx.beginPath();
+		ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+		for (var i = 0; i < this.points.length; i++) {
+			ctx.lineTo(this.currX + offsetX + this.points[i].x, this.currY + offsetY + this.points[i].y);
+		}
 	}
 	return ctx.isPointInPath(mouseX,mouseY);
 };
@@ -130,10 +150,12 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		var currShape = this.shapeList[i];
 		currShape.draw(context, offsetX, offsetY);
 	}
-    if(this.name != null) {
-        context.fillStyle = 'blue';
-        context.fillText(this.name, this.currX + 10, this.currY + 85);
-    }
+	if(this.name != null) {
+		context.fillStyle = 'blue';
+		context.font = "10px serif";
+		context.fillText(this.name, this.currX + 10, this.currY + 85);
+		//context.font = DEFAULT_FONT_SIZE + "px serif";
+	}
 };
 
 ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
@@ -151,16 +173,24 @@ Shape.prototype.applyDelta = function(deltaX, deltaY){
 Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
-	context.beginPath();
-	context.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
-	for(var i=0; i<this.points.length; i++){
-		context.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+	if(this.letter != null){
+		context.fillStyle = 'blue';
+		context.font = Math.floor(this.fontSize) + "px " + "serif";
+		context.fillText(this.letter, this.currX + offsetX, this.currY + offsetY);
+		//context.font = DEFAULT_FONT_SIZE + "px " + "serif";
 	}
-	context.fillStyle = this.color;
-	context.fill();
-	context.lineJoin = 'round';
-	context.stroke();
-	context.closePath();
+	else{
+		context.beginPath();
+		context.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+		for(var i=0; i<this.points.length; i++){
+			context.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+		}
+		context.fillStyle = this.color;
+		context.fill();
+		context.lineJoin = 'round';
+		context.stroke();
+		context.closePath();
+	}
 };
 
 function CanvasState(canvas) {
@@ -286,7 +316,7 @@ function CanvasState(canvas) {
 			}
 		}
 	}, true);
-	
+
 	canvas.addEventListener('mouseup', function(e) {
 		myState.dragging = false;
 	}, true);
@@ -298,22 +328,55 @@ function CanvasState(canvas) {
 		}
 		return "#"+c()+c()+c();
 	}
-	
-	//Select the shape just clicked to to allow specific shape resize
-	canvas.addEventListener('click', function(e) {
+
+
+
+
+//	canvas.addEventListener('click', function(e) {
+//		var mouse = myState.getMouse(e);
+//		var mx = mouse.x;
+//		var my = mouse.y;
+//		var shapes = c.shapes;
+//		for (var i = shapes.length-1; i >= 0 ; i--) {
+//			if (shapes[i].contains(mx, my, cr.ctx)) {
+//				console.log("shape click");
+//				var s = [];
+//				for(var j = 0; j < shapes[i].shapeList.length; j++){
+//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
+//				}
+//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
+//				matchShapeSize();
+//				return;
+//			}
+//		}
+//	}, true);
+//
+
+
+
+	//double click rule shape to create a same new rule shape on game area canvas
+	canvas.addEventListener('dblclick', function(e) {
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
 		var my = mouse.y;
-		var shapes = c.shapes;
+		var shapes = cr.shapes;
 		for (var i = shapes.length-1; i >= 0 ; i--) {
-			if (shapes[i].contains(mx, my, c.ctx)) {
-				selectedShape = shapes[i];
+			if (shapes[i].contains(mx, my, cr.ctx)) {
+				var s = [];
+				for(var j = 0; j < shapes[i].shapeList.length; j++){
+					if(shapes[i].shapeList[j].letter != null){
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].letter, shapes[i].shapeList[j].color);
+					}
+					else {
+						s[j] = new Shape(shapes[i].shapeList[j].currX, shapes[i].shapeList[j].currY, shapes[i].shapeList[j].points, shapes[i].shapeList[j].color);
+					}
+				}
+				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s,shapes[i].name,shapes[i].logicTree));
+				matchShapeSize();
 				return;
 			}
 		}
-		selectedShape = undefined;
 	}, true);
-	
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -373,34 +436,34 @@ CanvasState.prototype.getMouse = function(e) {
 
 function createShape(logicArray,i){
 
-		var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
-		var OpValue = logicArray[i].value;
-		var left = logicArray[i].left;
-		var right = logicArray[i].right;
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
+	var OpValue = logicArray[i].value;
+	var left = logicArray[i].left;
+	var right = logicArray[i].right;
 
-		if(OpValue.value!="")
-		{
-			var sp = shapePoints[OpValue];
-			logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-		}
-		if(left.value !="") {
+	if(OpValue.value!="")
+	{
+		var sp = shapePoints[OpValue];
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+	if(left.value !="") {
 
-			if (left instanceof Operator)
-				logicShapes.push(buildShape(left, 15, 115, 0.3));
-			else
-				logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
-		}
+		if (left instanceof Operator)
+			logicShapes.push(buildShape(left, 15, 115, 0.3));
+		else
+			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+	}
 
-		if(right.value !="") {
+	if(right.value !="") {
 
-			if (right instanceof Operator)
-				logicShapes.push(buildShape(right, 315, 115, 0.3));
-			else
-				logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
-		}
+		if (right instanceof Operator)
+			logicShapes.push(buildShape(right, 315, 115, 0.3));
+		else
+			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
+	}
 
-		c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
-		c.shapes[c.shapes.length-1].scale(0.5);
+	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i]));
+	c.shapes[c.shapes.length-1].scale(0.5);
 
 
 }
@@ -432,11 +495,11 @@ function buildShape(operator,x,y,scale){
 		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
 
 	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator));
-    if(scale != 0) {
-        result.scale(scale);
-        result.currX = x;
-        result.currY = y;
-    }
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
 
 	return result;
 }
@@ -447,10 +510,10 @@ var shapePoints={
 	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
 	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
 	TURNSTILE 	:  [{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}],
-    RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-    QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
-	A :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
+	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
 	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
 	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
 	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
@@ -472,6 +535,13 @@ function init() {
 	question.scale(0.5);
 	cs.addShape(question);
 
+	// debugging purposes only
+	c = cs;
+
+
+
+
+	//rules area
 	
 	
 	

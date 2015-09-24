@@ -4,22 +4,30 @@ loadRules();
 function loadRules() {
     d3.json("js/rules.json", function (error, data) {
         for (var i = 0; i < data.length; i++) {
-            var aboveArray = [];
-            for (var j = 0; j < data[i].above.length; j++) {
-                aboveArray.push(treeToString(parse(data[i].above[j])));
-            }
-            var currentRule = {
-                name: data[i].name,
-                type: data[i].type,
-                above: aboveArray,
-                below: treeToString(parse(data[i].below)),
-                belowTree: parse(data[i].below)
-            };
-            rules.push(currentRule);
+            rules.push(generateRuleFromJSON(data[i]));
         }
         //rules = data;
     });
 }
+
+function generateRuleFromJSON(data) {
+    var aboveArray = [];
+    var aboveTreeArray = [];
+    for (var i = 0; i < data.above.length; i++) {
+        aboveTreeArray.push(parse(data.above[i]));
+        aboveArray.push(treeToString(aboveTreeArray[i]));
+    }
+    var currentRule = {
+        name: data.name,
+        type: data.type,
+        above: aboveArray,
+        below: treeToString(parse(data.below)),
+        belowTree: parse(data.below),
+        aboveTree: aboveTreeArray
+    };
+    return currentRule;
+}
+
 function generateASTs() {
     questions = [];
     for (var i = 0; i < selectedFile.length; i++) {
@@ -198,9 +206,14 @@ Operator.prototype.equals = function (other) {
         if (this.value != other.value) {
             return false;
         }
-        if (!this.left.equals(other.left)) {
+        /*if (this.left !== "") {*/
+            if (!this.left.equals(other.left)) {
+                return false;
+            }
+        /*}
+        if (this.right === "") {
             return false;
-        }
+        }*/
         return this.right.equals(other.right);
     }
 };
@@ -212,3 +225,13 @@ Variable.prototype.equals = function (other) {
         return this.value == other.value;
     }
 };
+
+function verifyOV(OV) {
+    if (OV instanceof Variable) {
+        return true;
+    }
+    if (OV instanceof Operator) {
+        return verifyOV(OV.left) && verifyOV(OV.right);
+    }
+    return false;
+}
