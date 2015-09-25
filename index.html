@@ -50,7 +50,9 @@
     <div id="menuBar" style="left:0">
         <button id="resetButton" class="btn btn-primary btn-md">Reset</button>
         <button id="showHideButton" class="btn btn-primary btn-md">Show/Hide</button>
-        <button id="viewAnswerButton" class="btn btn-primary btn-md">Auto-solve</button>
+      <!--   <button id="viewAnswerButton" class="btn btn-primary btn-md">View
+            Answer
+        </button> --> 
         <button id="hintButton" class="btn btn-primary btn-md">Hint</button>
         <button id="zoomInButton" class="btn btn-primary btn-md" style="">Zoom In</button>
         <button id="zoomOutButton" class="btn btn-primary btn-md">Zoom Out</button>
@@ -62,18 +64,18 @@
      style="background-color: lavender">
     <h2>Rules</h2>
 
-    <div id="rulesPanelSvg" style="background-color: white; overflow-y: scroll;">
+    <div id="rulesPanelSvg" >
 
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#introduction">Introduction</a></li>
             <li><a data-toggle="tab" href="#elimination">Elimination</a></li>
         </ul>
 
-        <div id="tab-content" class="tab-content">
-            <div id="introduction" class="tab-pane fade in active">
+        <div id="tab-content" class="tab-content" >
+            <div id="introduction" class="tab-pane fade in active" style="background-color: white; overflow-y: scroll;">
                 <canvas id="canvasRules"></canvas>
             </div>
-            <div id="elimination" class="tab-pane fade">
+            <div id="elimination" class="tab-pane fade"style="background-color: white; overflow-y: scroll;">
                 <canvas id="canvasElimination"></canvas>
             </div>
         </div>
@@ -85,19 +87,21 @@
      style="background-color: lavender;">
     <h2>Game Area</h2>
 
+    <button type="button" id="imageBin" class="btn btn-primary btn-md" style = "height: 32px;">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+    <button id="leftButton" type="button" class="btn btn-primary btn-md"style = "height: 32px;">
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+    </button>
+    <button id="rightButton" type="button" class="btn btn-primary btn-md"style = "height: 32px;">
+        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+    </button>
+    <p></p>
     <div id="gameAreaPanel"
          style="background-color: white;">
         <canvas id="canvasGameArea"></canvas>
     </div>
     <p></p>
-    <button type="button" id="imageBin" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-    <button id="leftButton" type="button" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
-    </button>
-    <button id="rightButton" type="button" class="btn btn-primary btn-md">
-        <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
-    </button>
+
 </div>
 <script src="js/events.js"></script>
 <script>update();</script>
