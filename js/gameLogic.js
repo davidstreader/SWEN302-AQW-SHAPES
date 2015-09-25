@@ -78,12 +78,18 @@ function getAbove(ruleExp, expression) {
     }
     var aboves = [];
     for (var i = 0; i < ruleExp.above.length; i++) {
-    //    console.log(verifyOV(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict)));
+        //    console.log(verifyOV(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict)));
         aboves.push(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict));
     }
     return aboves;
 }
 
+/**
+ * Goes through given tree and updates variables with subtrees as given by the mapping. This is used by getAbove function where the new expressions are made.
+ * @param currentNode the tree to update
+ * @param dict mapping from variable to subtrees
+ * @returns {*} root of the tree with updated variables.
+ */
 function replaceVariablesWithSubtrees(currentNode, dict) {
     if (currentNode instanceof Variable || currentNode === "") {
         return dict[currentNode.value];
@@ -93,7 +99,6 @@ function replaceVariablesWithSubtrees(currentNode, dict) {
     node.right = replaceVariablesWithSubtrees(currentNode.right, dict);
     return node;
 }
-
 
 /**
  * Adapter for the findVariables expression. Returns a list of unique variables present in the expression in alphabetical order.
