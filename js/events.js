@@ -17,6 +17,9 @@ var inputFile = $("#uploadFile");
 var fileName = null;
 var selectedFile = [];
 var currentQuestionIndex = 0;
+var rulesIntroPanelHeight = 0;
+var rulesElimPanelHeight = 0;
+
 
 inputFile.change(function () {
 	var file, reader, slashIndex;
@@ -52,7 +55,7 @@ resetButton.addEventListener("click", function(){
 //allow specific shape resize and whole canvas resize
 var sizeFactor = 0;
 zoomInButton.addEventListener("click", function(){
-	//if (sizeFactor > 3) return;
+//	if (sizeFactor > 3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(1/0.7);
 	} else {
@@ -63,11 +66,12 @@ zoomInButton.addEventListener("click", function(){
 		
 	c.valid = false;
 	c.draw();
-	sizeFactor++;
+//	sizeFactor++;
 });
 
 //allow specific shape resize and whole canvas resize
 zoomOutButton.addEventListener("click", function(){
+//	if (sizeFactor < -3) return;
 	if (selectedShape !== undefined){
 		selectedShape.scale(0.7);
 	} else {
@@ -78,15 +82,17 @@ zoomOutButton.addEventListener("click", function(){
 	
 	c.valid = false;
 	c.draw();
-	sizeFactor--;
+//	sizeFactor--;
 });
 
+imageBin.addEventListener("click", function(){
 
-
-imageBin.addEventListener("mouseover", function(){
 	var obj = c.shapes[c.shapes.length-1];
-	c.shapes.splice(c.shapes.indexOf(obj),1);
-	console.log("mouseover should remove rules on game area not rule panle")
+	if(!obj.isQuestion) {
+		c.shapes.splice(c.shapes.indexOf(obj), 1);
+		c.valid = false;
+		c.draw();
+	}
 });
 
 arrowLeft.addEventListener("click", function(){
@@ -125,7 +131,6 @@ reSizePanelHeight();
 	c.clear();
 	c.valid = false;
 	c.draw();
-	window.location.reload();
 };
 
 function reset(){

@@ -38,7 +38,9 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
-		return(canSnap(this.logicTree,shape.logicTree) && shape.isQuestion != this.isQuestion);
+		console.log(this);
+		console.log(shape);
+		return(canSnap(this.logicTree,shape.logicTree) && (shape.isQuestion != this.isQuestion));
 
 	}
 	return false;
@@ -84,33 +86,12 @@ ComboShape.prototype.scale = function(scaleFactor){
 };
 
 Shape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor = scaleFactor || 1;
-	if(this.letter != null){
-		this.fontSize = this.fontSize / scaleFactor;
-	}
-	else {
-		for (var i = 0; i < this.points.length; i++) {
-			this.points[i].x = this.points[i].x / scaleFactor;
-			this.points[i].y = this.points[i].y / scaleFactor;
-		}
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
+	return this.scale(1.0/scaleFactor);
 };
 
 ComboShape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor= scaleFactor || 1;
-	for(var i=0; i<this.shapeList.length; i++){
-		this.shapeList[i].scaleDivide(scaleFactor);
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
-	this.collX = this.collX / scaleFactor;
-	this.collY = this.collY / scaleFactor;
+	return this.scale(1.0/scaleFactor);
 };
-
-
-
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
@@ -130,8 +111,6 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
-
-
 //Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 //	offsetX = offsetX || 0;
 //	offsetY = offsetY || 0;
@@ -143,7 +122,6 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 //	return ctx.isPointInPath(mouseX,mouseY);
 //};
 //
-
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 	if(offsetX != null){
@@ -172,7 +150,6 @@ ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
 	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree, this.isQuestion);
 };
 
-
 ComboShape.prototype.clone = function(){
 	var s = [];
 	for(var j = 0; j < this.shapeList.length; j++){
@@ -187,7 +164,6 @@ ComboShape.prototype.clone = function(){
 	}
 	return new ComboShape(10, 10, this.collX, this.collY, s, this.name ,this.logicTree, this.isQuestion); //Not deep cloned
 };
-
 
 Shape.prototype.applyDelta = function(deltaX, deltaY){
 	var toRet = null;
@@ -271,7 +247,7 @@ function CanvasState(canvas) {
 		var shapes = myState.shapes;
 		for(var i=0; i<shapes.length; i++){
 			for(var j=0; j<shapes.length; j++) {
-				if(shapes[i]===shapes[j]){break;}
+				if(shapes[i]===shapes[j]){continue;}
 				if (shapes[i].collidingWith(shapes[j])) {
 					console.log(i + " " + j);
 					var newShapes = [];
@@ -532,16 +508,19 @@ function init() {
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
 	canvasr.height = 1200;
-	csr.width = rulesPanelSvg.clientWidth;
-	csr.height = rulesPanelSvg.clientHeight;
+	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
+	console.log("@@@@" + $("#canvasRules").parent().height());
+//	csr.width = rulesPanelSvg.clientWidth;
+//	csr.height = rulesPanelSvg.clientHeight;
 
     //rules area elimination
     var canvase = document.getElementById('canvasElimination');
     var cse = new CanvasState(canvase);
     canvase.width = rulesPanelSvg.clientWidth;
     canvase.height = 1200;
-    cse.width = rulesPanelSvg.clientWidth;
-    cse.height = rulesPanelSvg.clientHeight;
+    $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
+//    cse.width = rulesPanelSvg.clientWidth;
+//    cse.height = rulesPanelSvg.clientHeight;
     
    //init mouse x and y
     var mx = -1;
@@ -558,6 +537,7 @@ function init() {
   //click rule shape to create a same new rule shape on game area canvas
 	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
+		console.log("111")
 		var sps = csr.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
@@ -583,23 +563,18 @@ function init() {
 	// debugging purposes only
 	c = cs;
 	ce = cse;
-//    var rule = new ComboShape(10, 10, 225, 300,
-//			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-//        ,"B IMPLIES A"
-//	);
-//	rule.scale(0.5);	
-//	csr.addShape(rule);
 	cr = csr;
-//	rulesPanelSvg.addEventListener("scroll", function(){
-//		console.log("scrolling");
-//		cr.valid = false;
-//		cr.draw();
-//		
-//	});
 
 	drawRules(rules);
+	setCanvasHeight(canvasr,canvase);
 }
+function setCanvasHeight(canvasr, canvase){
+	
+	canvasr.height = rulesIntroPanelHeight;
+	canvase.height = rulesElimPanelHeight;
 
+
+}
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
@@ -641,7 +616,7 @@ function drawRules(ruleArray) {
 			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
-
+			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
 			cr.addShape(result);
 		}
 		else {
@@ -649,8 +624,9 @@ function drawRules(ruleArray) {
 			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
-
+			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
 			ce.addShape(result);
 		}
 	}
+
 }
