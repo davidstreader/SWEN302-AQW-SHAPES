@@ -86,10 +86,13 @@ zoomOutButton.addEventListener("click", function(){
 });
 
 imageBin.addEventListener("click", function(){
+
 	var obj = c.shapes[c.shapes.length-1];
-	c.shapes.splice(c.shapes.indexOf(obj),1);
-	c.valid = false;
-	c.draw();
+	if(!obj.isQuestion) {
+		c.shapes.splice(c.shapes.indexOf(obj), 1);
+		c.valid = false;
+		c.draw();
+	}
 });
 
 arrowLeft.addEventListener("click", function(){
@@ -128,7 +131,6 @@ reSizePanelHeight();
 	c.clear();
 	c.valid = false;
 	c.draw();
-	window.location.reload();
 };
 
 function reset(){
