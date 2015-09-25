@@ -190,10 +190,15 @@ ComboShape.prototype.clone = function(){
 
 
 Shape.prototype.applyDelta = function(deltaX, deltaY){
-	if(this.letter == null)
-		return new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
-	else
-		return new Shape(this.currX + deltaX, this.currY + deltaY, this.letter, this.color);
+	var toRet = null;
+	if(this.letter == null) {
+		 toRet = new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
+	}
+	else {
+		toRet =  new Shape(this.currX + deltaX, this.currY + deltaY, this.letter, this.color);
+		toRet.fontSize = this.fontSize;
+	}
+	return toRet;
 };
 
 Shape.prototype.draw = function(context, offsetX, offsetY){
@@ -348,40 +353,6 @@ function CanvasState(canvas) {
 		myState.dragging = false;
 	}, true);
 
-	//Fun function to return random color
-	function get_random_color() {
-		function c() {
-			return Math.floor(Math.random()*256).toString(16)
-		}
-		return "#"+c()+c()+c();
-	}
-
-
-
-
-//	canvas.addEventListener('click', function(e) {
-//		var mouse = myState.getMouse(e);
-//		var mx = mouse.x;
-//		var my = mouse.y;
-//		var shapes = c.shapes;
-//		for (var i = shapes.length-1; i >= 0 ; i--) {
-//			if (shapes[i].contains(mx, my, cr.ctx)) {
-//				console.log("shape click");
-//				var s = [];
-//				for(var j = 0; j < shapes[i].shapeList.length; j++){
-//					s[j] = new Shape(shapes[i].shapeList[j].currX,shapes[i].shapeList[j].currY,shapes[i].shapeList[j].points,shapes[i].shapeList[j].color);
-//				}
-//				c.addShape(new ComboShape(shapes[i].currX, shapes[i].currY, shapes[i].collX, shapes[i].collY, s));
-//				matchShapeSize();
-//				return;
-//			}
-//		}
-//	}, true);
-//
-
-
-
-
 	// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
@@ -441,7 +412,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 function createShape(logicArray,i){
 
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#000")];
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FF69B4")];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
@@ -480,7 +451,7 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#000"));
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#FF69B4"));
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
