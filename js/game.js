@@ -376,8 +376,13 @@ CanvasState.prototype.draw = function() {
 		var shapes = this.shapes;
 		this.clear();
 		// draw all shapes
+		ctx.strokeStyle = '#000';
 		for (var i = 0; i < shapes.length; i++) {
-			shapes[i].draw(ctx);
+			if(i == shapes.length - 1){
+				ctx.strokeStyle = '#ff0000';
+			}
+				shapes[i].draw(ctx);
+
 		}
 		this.valid = true;
 	}
@@ -633,7 +638,7 @@ function drawRules(ruleArray) {
 
 		if (ruleArray[i].type == "Introduction") {
 			countIntroductionRules++;
-			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 0, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
@@ -641,7 +646,7 @@ function drawRules(ruleArray) {
 		}
 		else {
 			countEliminationRules++;
-			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 0, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
