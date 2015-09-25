@@ -638,7 +638,7 @@ function drawRules(ruleArray) {
 
 		if (ruleArray[i].type == "Introduction") {
 			countIntroductionRules++;
-			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 0, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
@@ -646,7 +646,7 @@ function drawRules(ruleArray) {
 		}
 		else {
 			countEliminationRules++;
-			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 0, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
 
 			result.scale(0.5);
 
