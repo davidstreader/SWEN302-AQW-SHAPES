@@ -543,16 +543,19 @@ function init() {
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
 	canvasr.height = 1200;
-	csr.width = rulesPanelSvg.clientWidth;
-	csr.height = rulesPanelSvg.clientHeight;
+	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
+	console.log("@@@@" + $("#canvasRules").parent().height());
+//	csr.width = rulesPanelSvg.clientWidth;
+//	csr.height = rulesPanelSvg.clientHeight;
 
     //rules area elimination
     var canvase = document.getElementById('canvasElimination');
     var cse = new CanvasState(canvase);
     canvase.width = rulesPanelSvg.clientWidth;
     canvase.height = 1200;
-    cse.width = rulesPanelSvg.clientWidth;
-    cse.height = rulesPanelSvg.clientHeight;
+    $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
+//    cse.width = rulesPanelSvg.clientWidth;
+//    cse.height = rulesPanelSvg.clientHeight;
     
    //init mouse x and y
     var mx = -1;
@@ -595,23 +598,18 @@ function init() {
 	// debugging purposes only
 	c = cs;
 	ce = cse;
-//    var rule = new ComboShape(10, 10, 225, 300,
-//			[new Shape(10,10,shapePoints.RULE,"#FFF"), new Shape(15,15,shapePoints.B,"#00F"), new Shape(330,15,shapePoints.A,"#00F"), new Shape(180,225,shapePoints.IMPLIES,"#00F")]
-//        ,"B IMPLIES A"
-//	);
-//	rule.scale(0.5);	
-//	csr.addShape(rule);
 	cr = csr;
-//	rulesPanelSvg.addEventListener("scroll", function(){
-//		console.log("scrolling");
-//		cr.valid = false;
-//		cr.draw();
-//		
-//	});
 
 	drawRules(rules);
+	setCanvasHeight(canvasr,canvase);
 }
+function setCanvasHeight(canvasr, canvase){
+	
+	canvasr.height = rulesIntroPanelHeight;
+	canvase.height = rulesElimPanelHeight;
 
+
+}
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
@@ -651,18 +649,17 @@ function drawRules(ruleArray) {
 		if (ruleArray[i].type == "Introduction") {
 			countIntroductionRules++;
 			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
-
 			result.scale(0.5);
-
+			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
 			cr.addShape(result);
 		}
 		else {
 			countEliminationRules++;
 			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 400, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
-
 			result.scale(0.5);
-
+			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
 			ce.addShape(result);
 		}
 	}
+
 }
