@@ -39,7 +39,9 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
-		return(canSnap(this.logicTree,shape.logicTree) && shape.isQuestion != this.isQuestion);
+		console.log(this);
+		console.log(shape);
+		return(canSnap(this.logicTree,shape.logicTree) && (shape.isQuestion != this.isQuestion));
 
 	}
 	return false;
@@ -239,7 +241,7 @@ function CanvasState(canvas) {
 		var shapes = myState.shapes;
 		for(var i=0; i<shapes.length; i++){
 			for(var j=0; j<shapes.length; j++) {
-				if(shapes[i]===shapes[j]){break;}
+				if(shapes[i]===shapes[j]){continue;}
 				if (shapes[i].collidingWith(shapes[j])) {
 					console.log(i + " " + j);
 					var newShapes = [];
