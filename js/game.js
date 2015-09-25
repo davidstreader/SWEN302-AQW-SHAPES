@@ -19,10 +19,10 @@ function Shape(currX, currY, points, color) {
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
+	this.textScaleFactor = 1;
 }
 
-function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree ,isQuestion
-) {
+function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree ,isQuestion) {
 	this.shapeList = shapes;
 	this.currX = currX;
 	this.currY = currY;
@@ -39,7 +39,7 @@ ComboShape.prototype.collidingWith = function(shape){
 	var hypot = Math.sqrt((lenX * lenX) + (lenY * lenY));
 	if(hypot<MAX_COLLISION_RADIUS){
 		console.log("Collision detected, hypotenuse length: " + hypot);
-		return(canSnap(this.logicTree,shape.logicTree));
+		return(canSnap(this.logicTree,shape.logicTree) && shape.isQuestion != this.isQuestion);
 
 	}
 	return false;
@@ -58,6 +58,7 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 
 Shape.prototype.scale = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
+	this.textScaleFactor = scaleFactor;
 	if(this.letter != null){
 		this.fontSize = this.fontSize * scaleFactor;
 	}else {
@@ -180,8 +181,8 @@ ComboShape.prototype.clone = function(){
 		}
 		else {
 			s[j] = new Shape(this.shapeList[j].currX, this.shapeList[j].currY, this.shapeList[j].letter, this.shapeList[j].color);
+			s[j].scale(this.shapeList[j].textScaleFactor);
 		}
-
 	}
 	return new ComboShape(10, 10, this.collX, this.collY, s, this.name ,this.logicTree, this.isQuestion); //Not deep cloned
 };
@@ -200,6 +201,7 @@ Shape.prototype.draw = function(context, offsetX, offsetY){
 	if(this.letter != null){
 		context.fillStyle = 'blue';
 		context.font = Math.floor(this.fontSize) + "px " + "serif";
+		context.textBaseline = 'top';
 		context.fillText(this.letter, this.currX + offsetX, this.currY + offsetY);
 		//context.font = DEFAULT_FONT_SIZE + "px " + "serif";
 	}
@@ -460,7 +462,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 function createShape(logicArray,i){
 
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FFF")];
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#000")];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
@@ -499,7 +501,7 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#FFF"));
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#000"));
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
@@ -648,7 +650,7 @@ function drawRules(ruleArray) {
 	var countEliminationRules = 0;
 	for (var i = 0; i < ruleArray.length; i++) {
 		var logicshapes = [];
-		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#00ff00"));
+		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#AAA"));
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
