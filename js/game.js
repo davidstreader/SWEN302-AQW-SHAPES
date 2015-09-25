@@ -19,7 +19,6 @@ function Shape(currX, currY, points, color) {
 	this.currX = currX;
 	this.currY = currY;
 	this.color = color;
-	this.textScaleFactor = 1;
 }
 
 function ComboShape(currX, currY, collisionX, collisionY, shapes, name, logicTree ,isQuestion) {
@@ -58,7 +57,6 @@ ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
 
 Shape.prototype.scale = function(scaleFactor){
 	scaleFactor = scaleFactor || 1;
-	this.textScaleFactor = scaleFactor;
 	if(this.letter != null){
 		this.fontSize = this.fontSize * scaleFactor;
 	}else {
@@ -70,6 +68,8 @@ Shape.prototype.scale = function(scaleFactor){
 	this.currX = this.currX * scaleFactor;
 	this.currY = this.currY * scaleFactor;
 };
+
+
 
 ComboShape.prototype.scale = function(scaleFactor){
 	scaleFactor= scaleFactor || 1;
@@ -181,7 +181,8 @@ ComboShape.prototype.clone = function(){
 		}
 		else {
 			s[j] = new Shape(this.shapeList[j].currX, this.shapeList[j].currY, this.shapeList[j].letter, this.shapeList[j].color);
-			s[j].scale(this.shapeList[j].textScaleFactor);
+			s[j].fontSize = this.shapeList[j].fontSize;
+			//s[j].scale(this.shapeList[j].textScaleFactor);
 		}
 	}
 	return new ComboShape(10, 10, this.collX, this.collY, s, this.name ,this.logicTree, this.isQuestion); //Not deep cloned
