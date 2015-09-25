@@ -83,33 +83,12 @@ ComboShape.prototype.scale = function(scaleFactor){
 };
 
 Shape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor = scaleFactor || 1;
-	if(this.letter != null){
-		this.fontSize = this.fontSize / scaleFactor;
-	}
-	else {
-		for (var i = 0; i < this.points.length; i++) {
-			this.points[i].x = this.points[i].x / scaleFactor;
-			this.points[i].y = this.points[i].y / scaleFactor;
-		}
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
+	return this.scale(1.0/scaleFactor);
 };
 
 ComboShape.prototype.scaleDivide = function(scaleFactor){
-	scaleFactor= scaleFactor || 1;
-	for(var i=0; i<this.shapeList.length; i++){
-		this.shapeList[i].scaleDivide(scaleFactor);
-	}
-	this.currX = this.currX / scaleFactor;
-	this.currY = this.currY / scaleFactor;
-	this.collX = this.collX / scaleFactor;
-	this.collY = this.collY / scaleFactor;
+	return this.scale(1.0/scaleFactor);
 };
-
-
-
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
@@ -129,8 +108,6 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
-
-
 //Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 //	offsetX = offsetX || 0;
 //	offsetY = offsetY || 0;
@@ -142,7 +119,6 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 //	return ctx.isPointInPath(mouseX,mouseY);
 //};
 //
-
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 	if(offsetX != null){
@@ -171,7 +147,6 @@ ComboShape.prototype.applyDelta = function(deltaX, deltaY) {
 	return new ComboShape(this.currX, this.currY, this.collX, this.collY, newShapeList, this.logicTree, this.isQuestion);
 };
 
-
 ComboShape.prototype.clone = function(){
 	var s = [];
 	for(var j = 0; j < this.shapeList.length; j++){
@@ -185,7 +160,6 @@ ComboShape.prototype.clone = function(){
 	}
 	return new ComboShape(10, 10, this.collX, this.collY, s, this.name ,this.logicTree, this.isQuestion); //Not deep cloned
 };
-
 
 Shape.prototype.applyDelta = function(deltaX, deltaY){
 	if(this.letter == null)
@@ -353,9 +327,6 @@ function CanvasState(canvas) {
 		return "#"+c()+c()+c();
 	}
 
-
-
-
 //	canvas.addEventListener('click', function(e) {
 //		var mouse = myState.getMouse(e);
 //		var mx = mouse.x;
@@ -375,8 +346,6 @@ function CanvasState(canvas) {
 //		}
 //	}, true);
 //
-
-
 
 	//double click rule shape to create a same new rule shape on game area canvas
 	canvas.addEventListener('dblclick', function(e) {
