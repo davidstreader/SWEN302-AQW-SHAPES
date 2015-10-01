@@ -4,7 +4,9 @@
 //c is the canvas created for debugging purposes only
 var c, cr, ce, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
-var DEFAULT_FONT_SIZE = 48;
+var DEFAULT_FONT_SIZE = 80;
+var RULES_BACKGROUND_COLOUR = "#FFDEDE";
+var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
 
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
@@ -85,13 +87,6 @@ ComboShape.prototype.scale = function(scaleFactor){
 	this.collY = this.collY * scaleFactor;
 };
 
-Shape.prototype.scaleDivide = function(scaleFactor){
-	return this.scale(1.0/scaleFactor);
-};
-
-ComboShape.prototype.scaleDivide = function(scaleFactor){
-	return this.scale(1.0/scaleFactor);
-};
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
@@ -135,7 +130,7 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		currShape.draw(context, offsetX, offsetY);
 	}
 	if(this.name != null) {
-		context.fillStyle = 'blue';
+		context.fillStyle = 'black';
 		context.font = "10px serif";
 		context.fillText(this.name, this.currX + 10, this.currY + 85);
 		//context.font = DEFAULT_FONT_SIZE + "px serif";
@@ -181,7 +176,7 @@ Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter != null){
-		context.fillStyle = 'blue';
+		context.fillStyle = 'black';
 		context.font = Math.floor(this.fontSize) + "px " + "serif";
 		context.textBaseline = 'top';
 		context.fillText(this.letter, this.currX + offsetX, this.currY + offsetY);
@@ -267,6 +262,7 @@ function CanvasState(canvas) {
 
 	// Up, down, and move are for dragging
 	canvas.addEventListener('mousedown', function(e) {
+		selectedShape = undefined;
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
 		var my = mouse.y;
@@ -279,14 +275,17 @@ function CanvasState(canvas) {
 				myState.shapes = shapes; // sign the new reranged shapes to myState
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
+				selectedShape = shapes[shapes.length-1];
 				myState.dragoffx = mx - mySel.currX;
 				myState.dragoffy = my - mySel.currY;
 				myState.dragging = true;
 				myState.selection = mySel;
 				myState.valid = false;
+
 				return;
 			}
 		}
+
 		// havent returned means we have failed to select anything.
 		// If there was an object selected, we deselect it
 		if (myState.selection) {
@@ -354,13 +353,18 @@ CanvasState.prototype.draw = function() {
 		// draw all shapes
 		ctx.strokeStyle = '#000';
 		for (var i = 0; i < shapes.length; i++) {
+			if(selectedShape!=undefined){
+
 			if(i == shapes.length - 1){
 				ctx.strokeStyle = '#ff0000';
 			}
+			}
 				shapes[i].draw(ctx);
 
+		
 		}
 		this.valid = true;
+		
 	}
 }
 
@@ -391,14 +395,143 @@ CanvasState.prototype.getMouse = function(e) {
 }
 
 
+
+var shapePoints={
+	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+	OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
+	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
+	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
+	RULE 		: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:100}],
+	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+
+	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
+	C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
+	F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
+};
+//initilisation method called from html on load up
+
+function init() {
+	//game area
+	var canvas = document.getElementById('canvasGameArea');
+	var cs = new CanvasState(canvas);
+	canvas.width = canvasSvg.clientWidth;
+	canvas.height = canvasSvg.clientHeight;
+	cs.width = canvasSvg.clientWidth;
+	cs.height = canvasSvg.clientHeight;
+
+	var question = new ComboShape(10, 400, 225, 100,
+		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+	);
+	question.scale(0.5);
+	cs.addShape(question);
+
+	// debugging purposes only
+	c = cs;
+
+
+
+
+	//rules area
+	
+	
+	var mx = -1;
+	var my = -1;
+	
+	//rules area introduction
+	var canvasr = document.getElementById('canvasRules');
+	var csr = new CanvasState(canvasr);
+	canvasr.width = rulesPanelSvg.clientWidth;
+	canvasr.height = 1200;
+	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
+	console.log("@@@@" + $("#canvasRules").parent().height());
+
+    //rules area elimination
+    var canvase = document.getElementById('canvasElimination');
+    var cse = new CanvasState(canvase);
+    canvase.width = rulesPanelSvg.clientWidth;
+    canvase.height = 1200;
+    $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
+    
+    
+	//get mouse x and y position when scroll bar moved
+    document.getElementById('canvasElimination').addEventListener('click', function(e) {
+    	mx = -1;
+    	my = -1;
+        var relativePosition = {
+          left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
+          top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
+        };
+        mx = relativePosition.left;
+        my = relativePosition.top
+	}, true);
+    
+	//get mouse x and y position when scroll bar moved
+    document.getElementById('canvasRules').addEventListener('click', function(e) {
+    	mx = -1;
+    	my = -1;
+        var relativePosition = {
+          left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
+          top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
+        };
+        mx = relativePosition.left;
+        my = relativePosition.top
+	}, true);
+    
+  //click rule shape to create a same new rule shape on game area canvas
+	//introduction canvas click listener
+	canvasr.addEventListener('click', function(e) {
+		var sps = csr.shapes;
+		selectedShape = undefined;
+		for (var i = 0; i < sps.length; i++) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				c.addShape(sps[i].clone());
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
+
+	//elimination canvas click listener
+	canvase.addEventListener('click', function(e) {
+		selectedShape = undefined;
+		var sps = cse.shapes;
+		for (var i = 0; i < sps.length; i++) {
+			if (sps[i].contains(mx, my, cr.ctx)) {
+				c.addShape(sps[i].clone());
+				matchShapeSize();
+				return;
+			}
+		}
+	}, true);
+	
+	// debugging purposes only
+	c = cs;
+	ce = cse;
+	cr = csr;
+
+	drawRules(rules);
+	setCanvasHeight(canvasr,canvase);
+}
+function setCanvasHeight(canvasr, canvase){
+	
+	canvasr.height = rulesIntroPanelHeight;
+	canvase.height = rulesElimPanelHeight;
+
+
+}
+
+
 function createShape(logicArray,i){
 
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FF69B4")];
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR),new Shape(460,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
 
-	if(OpValue.value!="")
+	if(OpValue.value!="" && OpValue!= "TURNSTILE")
 	{
 		var sp = shapePoints[OpValue];
 		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
@@ -414,15 +547,13 @@ function createShape(logicArray,i){
 	if(right.value !="") {
 
 		if (right instanceof Operator)
-			logicShapes.push(buildShape(right, 315, 115, 0.3));
+			logicShapes.push(buildShape(right, 460, 115, 0.3));
 		else
-			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
+			logicShapes.push(new Shape(460, 115, shapePoints[right.value]));
 	}
 
 	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
-
-
 }
 
 
@@ -432,7 +563,7 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#FF69B4"));
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
@@ -461,126 +592,12 @@ function buildShape(operator,x,y,scale){
 	return result;
 }
 
-var shapePoints={
-	AND 		:[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
-	OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
-	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
-	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	TURNSTILE 	:  [{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}],
-	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
-
-	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
-	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
-	F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
-};
-//initilisation method called from html on load up
-function init() {
-	//game area
-	var canvas = document.getElementById('canvasGameArea');
-	var cs = new CanvasState(canvas);
-	canvas.width = canvasSvg.clientWidth;
-	canvas.height = canvasSvg.clientHeight;
-	cs.width = canvasSvg.clientWidth;
-	cs.height = canvasSvg.clientHeight;
-
-	var question = new ComboShape(10, 400, 225, 100,
-		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	);
-	question.scale(0.5);
-	cs.addShape(question);
-
-	// debugging purposes only
-	c = cs;
-
-
-
-
-	//rules area
-	
-	
-	
-	
-	//rules area introduction
-	var canvasr = document.getElementById('canvasRules');
-	var csr = new CanvasState(canvasr);
-	canvasr.width = rulesPanelSvg.clientWidth;
-	canvasr.height = 1200;
-	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
-	console.log("@@@@" + $("#canvasRules").parent().height());
-//	csr.width = rulesPanelSvg.clientWidth;
-//	csr.height = rulesPanelSvg.clientHeight;
-
-    //rules area elimination
-    var canvase = document.getElementById('canvasElimination');
-    var cse = new CanvasState(canvase);
-    canvase.width = rulesPanelSvg.clientWidth;
-    canvase.height = 1200;
-    $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
-//    cse.width = rulesPanelSvg.clientWidth;
-//    cse.height = rulesPanelSvg.clientHeight;
-    
-   //init mouse x and y
-    var mx = -1;
-	var my = -1;
-	//get mouse x and y position when scroll bar moved
-    $("#rulesPanelSvg").mousemove(function(e) {
-        var relativePosition = {
-          left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
-          top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
-        };
-        mx = relativePosition.left;
-        my = relativePosition.top
-    });
-  //click rule shape to create a same new rule shape on game area canvas
-	//introduction canvas click listener
-	canvasr.addEventListener('click', function(e) {
-		console.log("111")
-		var sps = csr.shapes;
-		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				c.addShape(sps[i].clone());
-				matchShapeSize();
-				return;
-			}
-		}
-	}, true);
-
-	//elimination canvas click listener
-	canvase.addEventListener('click', function(e) {
-		var sps = cse.shapes;
-		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				c.addShape(sps[i].clone());
-				matchShapeSize();
-				return;
-			}
-		}
-	}, true);
-	
-	// debugging purposes only
-	c = cs;
-	ce = cse;
-	cr = csr;
-
-	drawRules(rules);
-	setCanvasHeight(canvasr,canvase);
-}
-function setCanvasHeight(canvasr, canvase){
-	
-	canvasr.height = rulesIntroPanelHeight;
-	canvase.height = rulesElimPanelHeight;
-
-
-}
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
 	for (var i = 0; i < ruleArray.length; i++) {
 		var logicshapes = [];
-		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#AAA"));
+		logicshapes.push(new Shape(10, 10, shapePoints.RULE, RULES_BACKGROUND_COLOUR));
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
