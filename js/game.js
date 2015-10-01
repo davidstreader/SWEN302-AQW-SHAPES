@@ -395,75 +395,6 @@ CanvasState.prototype.getMouse = function(e) {
 }
 
 
-function createShape(logicArray,i){
-
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
-	var OpValue = logicArray[i].value;
-	var left = logicArray[i].left;
-	var right = logicArray[i].right;
-
-	if(OpValue.value!="")
-	{
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-	}
-	if(left.value !="") {
-
-		if (left instanceof Operator)
-			logicShapes.push(buildShape(left, 15, 115, 0.3));
-		else
-			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
-	}
-
-	if(right.value !="") {
-
-		if (right instanceof Operator)
-			logicShapes.push(buildShape(right, 315, 115, 0.3));
-		else
-			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
-	}
-
-	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
-	c.shapes[c.shapes.length-1].scale(0.5);
-
-
-}
-
-
-
-function buildShape(operator,x,y,scale){
-	var logicShapes =[];
-	var OpValue = operator.value;
-	var left = operator.left;
-	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
-
-	if(OpValue !=""){
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-	}
-
-	if(left.value !="" && left instanceof Operator)
-		logicShapes.push(buildShape(left,15,115,0.3));
-
-	else if(left.value != "")
-		logicShapes.push(new Shape(15,115,shapePoints[left.value]));
-
-	if(right.value !="" && right instanceof Operator)
-		logicShapes.push(buildShape(right,315,115,0.3));
-
-	else if(right.value !="")
-		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
-
-	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
-	if(scale != 0) {
-		result.scale(scale);
-		result.currX = x;
-		result.currY = y;
-	}
-
-	return result;
-}
 
 var shapePoints={
 	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
@@ -471,7 +402,7 @@ var shapePoints={
 	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
 	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
 	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
-	RULE 		: [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+	RULE 		: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:100}],
 	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
@@ -591,6 +522,76 @@ function setCanvasHeight(canvasr, canvase){
 
 
 }
+
+
+function createShape(logicArray,i){
+
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR),new Shape(460,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
+	var OpValue = logicArray[i].value;
+	var left = logicArray[i].left;
+	var right = logicArray[i].right;
+
+	if(OpValue.value!="" && OpValue!= "TURNSTILE")
+	{
+		var sp = shapePoints[OpValue];
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+	if(left.value !="") {
+
+		if (left instanceof Operator)
+			logicShapes.push(buildShape(left, 15, 115, 0.3));
+		else
+			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+	}
+
+	if(right.value !="") {
+
+		if (right instanceof Operator)
+			logicShapes.push(buildShape(right, 460, 115, 0.3));
+		else
+			logicShapes.push(new Shape(460, 115, shapePoints[right.value]));
+	}
+
+	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
+	c.shapes[c.shapes.length-1].scale(0.5);
+}
+
+
+
+function buildShape(operator,x,y,scale){
+	var logicShapes =[];
+	var OpValue = operator.value;
+	var left = operator.left;
+	var right = operator.right;
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+
+	if(OpValue !=""){
+		var sp = shapePoints[OpValue];
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+
+	if(left.value !="" && left instanceof Operator)
+		logicShapes.push(buildShape(left,15,115,0.3));
+
+	else if(left.value != "")
+		logicShapes.push(new Shape(15,115,shapePoints[left.value]));
+
+	if(right.value !="" && right instanceof Operator)
+		logicShapes.push(buildShape(right,315,115,0.3));
+
+	else if(right.value !="")
+		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
+
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
+
+	return result;
+}
+
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
