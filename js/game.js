@@ -481,6 +481,7 @@ var shapePoints={
 	F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
 };
 //initilisation method called from html on load up
+
 function init() {
 	//game area
 	var canvas = document.getElementById('canvasGameArea');
@@ -505,7 +506,8 @@ function init() {
 	//rules area
 	
 	
-	
+	var mx = -1;
+	var my = -1;
 	
 	//rules area introduction
 	var canvasr = document.getElementById('canvasRules');
@@ -522,18 +524,31 @@ function init() {
     canvase.height = 1200;
     $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
     
-   //init mouse x and y
-    var mx = -1;
-	var my = -1;
+    
 	//get mouse x and y position when scroll bar moved
-    $("#rulesPanelSvg").mousemove(function(e) {
+    document.getElementById('canvasElimination').addEventListener('click', function(e) {
+    	mx = -1;
+    	my = -1;
+        var relativePosition = {
+          left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
+          top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
+        };
+        mx = relativePosition.left;
+        my = relativePosition.top
+	}, true);
+    
+	//get mouse x and y position when scroll bar moved
+    document.getElementById('canvasRules').addEventListener('click', function(e) {
+    	mx = -1;
+    	my = -1;
         var relativePosition = {
           left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
           top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
         };
         mx = relativePosition.left;
         my = relativePosition.top
-    });
+	}, true);
+    
   //click rule shape to create a same new rule shape on game area canvas
 	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
