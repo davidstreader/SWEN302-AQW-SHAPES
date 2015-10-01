@@ -40,6 +40,7 @@ inputFile.change(function () {
 			alert("json file only!")
 		}
 	}
+	reset();
 });
 
 function update() {
@@ -66,7 +67,7 @@ zoomInButton.addEventListener("click", function(){
 		
 	c.valid = false;
 	c.draw();
-//	sizeFactor++;
+	sizeFactor++;
 });
 
 //allow specific shape resize and whole canvas resize
@@ -82,7 +83,7 @@ zoomOutButton.addEventListener("click", function(){
 	
 	c.valid = false;
 	c.draw();
-//	sizeFactor--;
+	sizeFactor--;
 });
 
 imageBin.addEventListener("click", function(){
