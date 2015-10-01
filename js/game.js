@@ -87,13 +87,6 @@ ComboShape.prototype.scale = function(scaleFactor){
 	this.collY = this.collY * scaleFactor;
 };
 
-Shape.prototype.scaleDivide = function(scaleFactor){
-	return this.scale(1.0/scaleFactor);
-};
-
-ComboShape.prototype.scaleDivide = function(scaleFactor){
-	return this.scale(1.0/scaleFactor);
-};
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
@@ -269,6 +262,7 @@ function CanvasState(canvas) {
 
 	// Up, down, and move are for dragging
 	canvas.addEventListener('mousedown', function(e) {
+		selectedShape = undefined;
 		var mouse = myState.getMouse(e);
 		var mx = mouse.x;
 		var my = mouse.y;
@@ -281,14 +275,17 @@ function CanvasState(canvas) {
 				myState.shapes = shapes; // sign the new reranged shapes to myState
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
+				selectedShape = shapes[shapes.length-1];
 				myState.dragoffx = mx - mySel.currX;
 				myState.dragoffy = my - mySel.currY;
 				myState.dragging = true;
 				myState.selection = mySel;
 				myState.valid = false;
+
 				return;
 			}
 		}
+
 		// havent returned means we have failed to select anything.
 		// If there was an object selected, we deselect it
 		if (myState.selection) {
@@ -356,13 +353,18 @@ CanvasState.prototype.draw = function() {
 		// draw all shapes
 		ctx.strokeStyle = '#000';
 		for (var i = 0; i < shapes.length; i++) {
+			if(selectedShape!=undefined){
+
 			if(i == shapes.length - 1){
 				ctx.strokeStyle = '#ff0000';
 			}
+			}
 				shapes[i].draw(ctx);
 
+		
 		}
 		this.valid = true;
+		
 	}
 }
 
@@ -512,8 +514,6 @@ function init() {
 	canvasr.height = 1200;
 	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
 	console.log("@@@@" + $("#canvasRules").parent().height());
-//	csr.width = rulesPanelSvg.clientWidth;
-//	csr.height = rulesPanelSvg.clientHeight;
 
     //rules area elimination
     var canvase = document.getElementById('canvasElimination');
@@ -521,8 +521,6 @@ function init() {
     canvase.width = rulesPanelSvg.clientWidth;
     canvase.height = 1200;
     $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
-//    cse.width = rulesPanelSvg.clientWidth;
-//    cse.height = rulesPanelSvg.clientHeight;
     
    //init mouse x and y
     var mx = -1;
@@ -539,8 +537,8 @@ function init() {
   //click rule shape to create a same new rule shape on game area canvas
 	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
-		console.log("111")
 		var sps = csr.shapes;
+		selectedShape = undefined;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
 				c.addShape(sps[i].clone());
@@ -552,6 +550,7 @@ function init() {
 
 	//elimination canvas click listener
 	canvase.addEventListener('click', function(e) {
+		selectedShape = undefined;
 		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, cr.ctx)) {
