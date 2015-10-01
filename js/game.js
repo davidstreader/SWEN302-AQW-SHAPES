@@ -4,7 +4,9 @@
 //c is the canvas created for debugging purposes only
 var c, cr, ce, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
-var DEFAULT_FONT_SIZE = 48;
+var DEFAULT_FONT_SIZE = 80;
+var RULES_BACKGROUND_COLOUR = "#FFDEDE";
+var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
 
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
@@ -128,7 +130,7 @@ ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 		currShape.draw(context, offsetX, offsetY);
 	}
 	if(this.name != null) {
-		context.fillStyle = 'blue';
+		context.fillStyle = 'black';
 		context.font = "10px serif";
 		context.fillText(this.name, this.currX + 10, this.currY + 85);
 		//context.font = DEFAULT_FONT_SIZE + "px serif";
@@ -174,7 +176,7 @@ Shape.prototype.draw = function(context, offsetX, offsetY){
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter != null){
-		context.fillStyle = 'blue';
+		context.fillStyle = 'black';
 		context.font = Math.floor(this.fontSize) + "px " + "serif";
 		context.textBaseline = 'top';
 		context.fillText(this.letter, this.currX + offsetX, this.currY + offsetY);
@@ -395,7 +397,7 @@ CanvasState.prototype.getMouse = function(e) {
 
 function createShape(logicArray,i){
 
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,"#FF69B4")];
+	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
@@ -434,7 +436,7 @@ function buildShape(operator,x,y,scale){
 	var OpValue = operator.value;
 	var left = operator.left;
 	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,"#FF69B4"));
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
 
 	if(OpValue !=""){
 		var sp = shapePoints[OpValue];
@@ -464,19 +466,19 @@ function buildShape(operator,x,y,scale){
 }
 
 var shapePoints={
-	AND 		:[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}],
-	OR 			: [{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}],
-	IMPLIES		: [{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}],
-	NOT 		:  [{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	TURNSTILE 	:  [{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}],
-	RULE 		:  [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+	OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
+	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
+	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
+	RULE 		: [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
 	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-	B :  [{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}],
-	C :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}],
-	T :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}], //same as A
-	F :  [{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]  //same as A
+	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
+	C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
+	F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
 };
 //initilisation method called from html on load up
 function init() {
@@ -579,7 +581,7 @@ function drawRules(ruleArray) {
 	var countEliminationRules = 0;
 	for (var i = 0; i < ruleArray.length; i++) {
 		var logicshapes = [];
-		logicshapes.push(new Shape(10, 10, shapePoints.RULE, "#AAA"));
+		logicshapes.push(new Shape(10, 10, shapePoints.RULE, RULES_BACKGROUND_COLOUR));
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
