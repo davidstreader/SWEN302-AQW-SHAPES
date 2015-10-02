@@ -1,16 +1,16 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 
-//c is the canvas created for debugging purposes only
-var c, cr, ce, selectedShape, selectedRuleShape;
+//canverCreatedForDebuggingPurposesOnly is the canvas created for debugging purposes only
+var canverCreatedForDebuggingPurposesOnly, canvasIntroductionRulesPanel, canvasEliminationRulesPanel, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
 var DEFAULT_FONT_SIZE = 80;
 var RULES_BACKGROUND_COLOUR = "#FFDEDE";
 var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
 var LOWER_LEVEL_PADDING = 115;
 var LEFT_SIDE_PADDING = 15;
-
 var RIGHT_SIDE_PADDING = 315;
+
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
 }
@@ -315,7 +315,7 @@ function CanvasState(canvas) {
 	}, true);
 
 	canvas.addEventListener('mousemove', function(e) {
-		if (myState == c){
+		if (myState == canverCreatedForDebuggingPurposesOnly){
 			if (myState.dragging){
 				var mouse = myState.getMouse(e);
 				// We don't want to drag the object by its top-left corner, we want to drag it
@@ -397,7 +397,9 @@ CanvasState.prototype.getMouse = function(e) {
 	return {x: mx, y: my};
 }
 
-
+var SHAPE_X = 450;
+var QSN_Y = 200;
+var RULE_Y = 300;
 
 var shapePoints={
 	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
@@ -405,8 +407,17 @@ var shapePoints={
 	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
 	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
 	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
-	RULE 		: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:100}],
-	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+	RULE: [{x: 0, y: RULE_Y / 3}, {x: SHAPE_X / 3, y: RULE_Y / 3}, {x: SHAPE_X / 3, y: 0},
+		{x: SHAPE_X * 2 / 3, y: 0}, {x: SHAPE_X * 2 / 3, y: RULE_Y / 3}, {x: SHAPE_X, y: RULE_Y / 3}, {x: SHAPE_X,y: RULE_Y},
+		{x: SHAPE_X * 2 / 3, y: 300}, {x: SHAPE_X * 2 / 3, y: 200}, {x: SHAPE_X / 3, y: 200},
+		{x: SHAPE_X / 3, y: 300}, {x: 0, y: 300}, {x: 0, y: 100}],
+	QUESTION: [{x: 0, y: QSN_Y / 2}, {x: SHAPE_X / 3, y: QSN_Y / 2}, {x: SHAPE_X / 3, y: 0}, {
+		x: SHAPE_X * 2 / 3,
+		y: 0
+	}, {x: SHAPE_X * 2 / 3, y: QSN_Y / 2}, {x: SHAPE_X, y: QSN_Y / 2}, {x: SHAPE_X, y: QSN_Y}, {
+		x: 0,
+		y: QSN_Y
+	}, {x: 0, y: QSN_Y/2}],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
 	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
@@ -432,7 +443,7 @@ function init() {
 	cs.addShape(question);
 
 	// debugging purposes only
-	c = cs;
+	canverCreatedForDebuggingPurposesOnly = cs;
 
 
 
@@ -489,8 +500,8 @@ function init() {
 		var sps = csr.shapes;
 		selectedShape = undefined;
 		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				c.addShape(sps[i].clone());
+			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
+				canverCreatedForDebuggingPurposesOnly.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
@@ -502,8 +513,8 @@ function init() {
 		selectedShape = undefined;
 		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
-				c.addShape(sps[i].clone());
+			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
+				canverCreatedForDebuggingPurposesOnly.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
@@ -511,19 +522,16 @@ function init() {
 	}, true);
 	
 	// debugging purposes only
-	c = cs;
-	ce = cse;
-	cr = csr;
+	canverCreatedForDebuggingPurposesOnly = cs;
+	canvasEliminationRulesPanel = cse;
+	canvasIntroductionRulesPanel = csr;
 
 	drawRules(rules);
 	setCanvasHeight(canvasr,canvase);
 }
 function setCanvasHeight(canvasr, canvase){
-	
 	canvasr.height = rulesIntroPanelHeight;
 	canvase.height = rulesElimPanelHeight;
-
-
 }
 
 
@@ -539,8 +547,8 @@ function createShape(logicArray,i){
     logicShapes.push(leftShape);
     logicShapes.push(rightShape);
 
-	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
-	c.shapes[c.shapes.length-1].scale(0.5);
+	canverCreatedForDebuggingPurposesOnly.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
+	canverCreatedForDebuggingPurposesOnly.shapes[canverCreatedForDebuggingPurposesOnly.shapes.length-1].scale(0.5);
 }
 
 function createShape2(operator,x,y,dickTree,i) {
@@ -627,10 +635,7 @@ function drawRules(ruleArray) {
 				shape.scale((150 / above[j].length) / 90);
 				shape.currX += (j * 300);
 				logicshapes.push(shape);
-
-
 			}
-
 		}
 
 		for (var j = 0; j < below.length; j++) {
@@ -640,9 +645,6 @@ function drawRules(ruleArray) {
 			shape.scale((150 / below.length) / 90);
 			shape.currX += (j * 10);
 			logicshapes.push(shape);
-
-
-
 		}
 
 		if (ruleArray[i].type == "Introduction") {
@@ -651,7 +653,7 @@ function drawRules(ruleArray) {
 
 			result.scale(0.5);
 			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
-			cr.addShape(result);
+			canvasIntroductionRulesPanel.addShape(result);
 		}
 		else {
 			countEliminationRules++;
@@ -659,7 +661,7 @@ function drawRules(ruleArray) {
 
 			result.scale(0.5);
 			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
-			ce.addShape(result);
+			canvasEliminationRulesPanel.addShape(result);
 		}
 	}
 

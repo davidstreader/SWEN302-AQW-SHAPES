@@ -61,13 +61,13 @@ zoomInButton.addEventListener("click", function(){
 	if (selectedShape !== undefined){
 		selectedShape.scale(1/0.7);
 	} else {
-		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scale(1/0.7)
+		for(var i = 0; i<canverCreatedForDebuggingPurposesOnly.shapes.length; i++){
+			canverCreatedForDebuggingPurposesOnly.shapes[i].scale(1/0.7)
 		}
 	}
 		
-	c.valid = false;
-	c.draw();
+	canverCreatedForDebuggingPurposesOnly.valid = false;
+	canverCreatedForDebuggingPurposesOnly.draw();
 	sizeFactor++;
 });
 
@@ -77,23 +77,23 @@ zoomOutButton.addEventListener("click", function(){
 	if (selectedShape !== undefined){
 		selectedShape.scale(0.7);
 	} else {
-		for(var i = 0; i<c.shapes.length; i++){
-			c.shapes[i].scale(0.7)
+		for(var i = 0; i<canverCreatedForDebuggingPurposesOnly.shapes.length; i++){
+			canverCreatedForDebuggingPurposesOnly.shapes[i].scale(0.7)
 		}
 	}
 	
-	c.valid = false;
-	c.draw();
+	canverCreatedForDebuggingPurposesOnly.valid = false;
+	canverCreatedForDebuggingPurposesOnly.draw();
 	sizeFactor--;
 });
 
 imageBin.addEventListener("click", function(){
 
-	var obj = c.shapes[c.shapes.length-1];
+	var obj = canverCreatedForDebuggingPurposesOnly.shapes[canverCreatedForDebuggingPurposesOnly.shapes.length-1];
 	if(!obj.isQuestion) {
-		c.shapes.splice(c.shapes.indexOf(obj), 1);
-		c.valid = false;
-		c.draw();
+		canverCreatedForDebuggingPurposesOnly.shapes.splice(canverCreatedForDebuggingPurposesOnly.shapes.indexOf(obj), 1);
+		canverCreatedForDebuggingPurposesOnly.valid = false;
+		canverCreatedForDebuggingPurposesOnly.draw();
 	}
 });
 
@@ -128,15 +128,15 @@ reSizePanelHeight();
 
 	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
 	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
-	c.width = canvasGameArea.width;
-	c.height = canvasGameArea.height;
-	c.clear();
-	c.valid = false;
-	c.draw();
+	canverCreatedForDebuggingPurposesOnly.width = canvasGameArea.width;
+	canverCreatedForDebuggingPurposesOnly.height = canvasGameArea.height;
+	canverCreatedForDebuggingPurposesOnly.clear();
+	canverCreatedForDebuggingPurposesOnly.valid = false;
+	canverCreatedForDebuggingPurposesOnly.draw();
 };
 
 function reset(){
-	c.shapes = [];
+	canverCreatedForDebuggingPurposesOnly.shapes = [];
 	if(questions!=undefined){
 		createShape(questions, currentQuestionIndex);
 	}
@@ -144,24 +144,24 @@ function reset(){
 		window.alert("Input questions before play!");
 	}
 		
-	c.valid = false;
-	c.draw();
+	canverCreatedForDebuggingPurposesOnly.valid = false;
+	canverCreatedForDebuggingPurposesOnly.draw();
 }
 
 function matchShapeSize() {
 	if(sizeFactor>0){
 		for(var i = 0; i<sizeFactor; i++){
-			c.shapes[c.shapes.length-1].scale(1/0.7);
+			canverCreatedForDebuggingPurposesOnly.shapes[canverCreatedForDebuggingPurposesOnly.shapes.length-1].scale(1/0.7);
 		}
-		c.valid = false;
-		c.draw();
+		canverCreatedForDebuggingPurposesOnly.valid = false;
+		canverCreatedForDebuggingPurposesOnly.draw();
 	}
 	else if(sizeFactor<0){
 		for(var j = 0;j<(0-sizeFactor); j++){
-			c.shapes[c.shapes.length-1].scale(0.7);
+			canverCreatedForDebuggingPurposesOnly.shapes[canverCreatedForDebuggingPurposesOnly.shapes.length-1].scale(0.7);
 		}
-		c.valid = false;
-		c.draw();
+		canverCreatedForDebuggingPurposesOnly.valid = false;
+		canverCreatedForDebuggingPurposesOnly.draw();
 	}
 }
 
