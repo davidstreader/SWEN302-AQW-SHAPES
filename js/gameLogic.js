@@ -58,28 +58,36 @@ function getSubtreeFromVariables(rule, expression, variable) {
 
 /**
  * returns new expressions that goes on top after applying the rule.
- * @param ruleExp Abstract syntax tree of the rule
+ * @param rule Abstract syntax tree of the rule
  * @param expression Abstract syntax tree of the expression
  */
-function getAbove(ruleExp, expression) {
-    if (!canSnap(ruleExp.belowTree, expression)) {
+function getAbove(rule, expression) {
+    if (!canSnap(rule.belowTree, expression)) {
         console.error("Illegal Arguments")
     }
     var dict = [];
-    dict[""] = new Variable("");
-    var variables = getVariables(ruleExp.belowTree);
+    /*dict[""] = new Variable("");*/
+    var variables = getVariables(rule.belowTree);
 
     for (var i = 0; i < variables.length; i++) {
-        var subtree = getSubtreeFromVariables(ruleExp.belowTree, expression, variables[i]);
+        var subtree = getSubtreeFromVariables(rule.belowTree, expression, variables[i]);
         if (subtree === undefined) {
             console.error("Illegal Arguments")
         }
         dict[variables[i]] = subtree;
     }
     var aboves = [];
-    for (var i = 0; i < ruleExp.above.length; i++) {
+
+    for (var i = 0; i < rule.above.length; i++) {
         //    console.log(verifyOV(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict)));
-        aboves.push(replaceVariablesWithSubtrees(ruleExp.aboveTree[i], dict));
+        if (rule.belowTree.left.value === "") {
+            for (var j = 0; j < rule.aboveTree.length; j++) {
+                if (rule.aboveTree[j].left.value !== "") {
+                    aboves.push(expression.left);
+                }
+            }
+        }
+        aboves.push(replaceVariablesWithSubtrees(rule.aboveTree[i], dict));
     }
     return aboves;
 }
@@ -91,7 +99,7 @@ function getAbove(ruleExp, expression) {
  * @returns {*} root of the tree with updated variables.
  */
 function replaceVariablesWithSubtrees(currentNode, dict) {
-    if (currentNode instanceof Variable || currentNode === "") {
+    if (currentNode instanceof Variable /*|| currentNode === ""*/) {
         return dict[currentNode.value];
     }
     var node = new Operator(currentNode.value);
@@ -122,11 +130,11 @@ function getVariables(expression) {
 function findVariables(expression) {
     var variables = [];
     if (expression instanceof Variable) {
-        if (expression.value !== "") {
-            //for(var i = 0; i < expression.value.length; i++){
-            variables.push(expression.value);
-            //}
-        }
+        //if (expression.value !== "") {
+        //for(var i = 0; i < expression.value.length; i++){
+        variables.push(expression.value);
+        //}
+        //}
         return variables;
     }
 
