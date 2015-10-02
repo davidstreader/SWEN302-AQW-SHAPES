@@ -51,10 +51,12 @@ ComboShape.prototype.collidingWith = function(shape){
 	return false;
 };
 
-ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
+ComboShape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY){
+    offsetX = offsetX || 0;
+    offsetY = offsetY || 0;
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
-		if(currShape.contains(mouseX, mouseY, ctx, this.currX, this.currY)){
+		if(currShape.contains(mouseX, mouseY, ctx, this.currX + offsetX, this.currY + offsetY)){
 			console.log("currshape contains point: " + mouseX + ", " + mouseY);
 			return true;
 		}
@@ -105,7 +107,11 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 		for (var i = 0; i < this.points.length; i++) {
 			ctx.lineTo(this.currX + offsetX + this.points[i].x, this.currY + offsetY + this.points[i].y);
 		}
+        ctx.closePath();
 	}
+    if(ctx.isPointInPath(mouseX, mouseY)){
+        console.log("Shape says mous in path");
+    }
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
@@ -547,8 +553,8 @@ function createShape(logicArray,i){
     logicShapes.push(leftShape);
     logicShapes.push(rightShape);
 
-	canverCreatedForDebuggingPurposesOnly.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
-	canverCreatedForDebuggingPurposesOnly.shapes[canverCreatedForDebuggingPurposesOnly.shapes.length-1].scale(0.5);
+	c.addShape(new ComboShape(400,400,225,100,logicShapes,"Question "+i,logicArray[i],true));
+	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
 function createShape2(operator,x,y,dickTree,i) {
