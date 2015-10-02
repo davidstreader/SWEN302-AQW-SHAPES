@@ -1,8 +1,8 @@
 // Constructor for Shape objects to hold data for all drawn objects.
 // For now they will just be defined as rectangles.
 
-//canverCreatedForDebuggingPurposesOnly is the canvas created for debugging purposes only
-var canverCreatedForDebuggingPurposesOnly, canvasIntroductionRulesPanel, canvasEliminationRulesPanel, selectedShape, selectedRuleShape;
+//c is the canvas created for debugging purposes only
+var c, canvasIntroductionRulesPanel, canvasEliminationRulesPanel, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
 var DEFAULT_FONT_SIZE = 80;
 var RULES_BACKGROUND_COLOUR = "#FFDEDE";
@@ -321,7 +321,7 @@ function CanvasState(canvas) {
 	}, true);
 
 	canvas.addEventListener('mousemove', function(e) {
-		if (myState == canverCreatedForDebuggingPurposesOnly){
+		if (myState == c){
 			if (myState.dragging){
 				var mouse = myState.getMouse(e);
 				// We don't want to drag the object by its top-left corner, we want to drag it
@@ -449,7 +449,7 @@ function init() {
 	cs.addShape(question);
 
 	// debugging purposes only
-	canverCreatedForDebuggingPurposesOnly = cs;
+	c = cs;
 
 
 
@@ -507,7 +507,7 @@ function init() {
 		selectedShape = undefined;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
-				canverCreatedForDebuggingPurposesOnly.addShape(sps[i].clone());
+				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
@@ -520,7 +520,7 @@ function init() {
 		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
-				canverCreatedForDebuggingPurposesOnly.addShape(sps[i].clone());
+				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
 			}
@@ -528,7 +528,7 @@ function init() {
 	}, true);
 	
 	// debugging purposes only
-	canverCreatedForDebuggingPurposesOnly = cs;
+	c = cs;
 	canvasEliminationRulesPanel = cse;
 	canvasIntroductionRulesPanel = csr;
 
