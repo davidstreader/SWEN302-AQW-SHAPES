@@ -1,5 +1,5 @@
-// Constructor for Shape objects to hold data for all drawn objects.
-// For now they will just be defined as rectangles.
+//Constructor for Shape objects to hold data for all drawn objects.
+//For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
 var c, cr, ce, selectedShape, selectedRuleShape;
@@ -107,16 +107,16 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 };
 
 //Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
-//	offsetX = offsetX || 0;
-//	offsetY = offsetY || 0;
-//	ctx.beginPath();
-//	ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
-//	for(var i=0; i<this.points.length; i++){
-//		ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
-//	}
-//	return ctx.isPointInPath(mouseX,mouseY);
+//offsetX = offsetX || 0;
+//offsetY = offsetY || 0;
+//ctx.beginPath();
+//ctx.moveTo(this.currX + offsetX + this.points[0].x, this.currY + offsetY + this.points[0].y);
+//for(var i=0; i<this.points.length; i++){
+//ctx.lineTo(this.currX + offsetX + this.points[i].x , this.currY + offsetY + this.points[i].y);
+//}
+//return ctx.isPointInPath(mouseX,mouseY);
 //};
-//
+
 
 ComboShape.prototype.draw = function(context, offsetX, offsetY) {
 	if(offsetX != null){
@@ -163,7 +163,7 @@ ComboShape.prototype.clone = function(){
 Shape.prototype.applyDelta = function(deltaX, deltaY){
 	var toRet = null;
 	if(this.letter == null) {
-		 toRet = new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
+		toRet = new Shape(this.currX + deltaX, this.currY + deltaY, this.points, this.color);
 	}
 	else {
 		toRet =  new Shape(this.currX + deltaX, this.currY + deltaY, this.letter, this.color);
@@ -270,19 +270,39 @@ function CanvasState(canvas) {
 		for (var i = shapes.length-1 ; i >= 0 ; i--) {
 			if (shapes[i].contains(mx, my, myState.ctx)) {
 				var mySel = shapes[i];
-
 				bringToFront(mySel); // bring the select shape to the front
 				myState.shapes = shapes; // sign the new reranged shapes to myState
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
-				selectedShape = shapes[shapes.length-1];
-				myState.dragoffx = mx - mySel.currX;
-				myState.dragoffy = my - mySel.currY;
-				myState.dragging = true;
-				myState.selection = mySel;
-				myState.valid = false;
-
-				return;
+				selectedShape = mySel;
+				if(selectedShape.currX<0){
+					selectedShape.currX = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY<0){
+					selectedShape.currY = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY>c.height - 150){
+					selectedShape.currY = c.height-150;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currX>c.width - 200){
+					selectedShape.currX = c.width-200;
+					myState.valid = false;
+					return;
+				}
+				else{
+					myState.dragoffx = mx - mySel.currX;
+					myState.dragoffy = my - mySel.currY;
+					myState.dragging = true;
+					myState.selection = mySel;
+					myState.valid = false;
+					return;
+				}
 			}
 		}
 
@@ -315,11 +335,34 @@ function CanvasState(canvas) {
 		if (myState == c){
 			if (myState.dragging){
 				var mouse = myState.getMouse(e);
-				// We don't want to drag the object by its top-left corner, we want to drag it
-				// from where we clicked. Thats why we saved the offset and use it here
-				myState.selection.currX = mouse.x - myState.dragoffx;
-				myState.selection.currY = mouse.y - myState.dragoffy;
-				myState.valid = false; // redraw
+
+				if(selectedShape.currX<0){
+					selectedShape.currX = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY<0){
+					selectedShape.currY = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY>c.height - 150){
+					selectedShape.currY = c.height-150;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currX>c.width - 200){
+					selectedShape.currX = c.width-200;
+					myState.valid = false;
+					return;
+				}
+				else{
+					// We don't want to drag the object by its top-left corner, we want to drag it
+					// from where we clicked. Thats why we saved the offset and use it here
+					myState.selection.currX = mouse.x - myState.dragoffx;
+					myState.selection.currY = mouse.y - myState.dragoffy;
+					myState.valid = false; // redraw
+				}
 			}
 		}
 	}, true);
@@ -355,16 +398,16 @@ CanvasState.prototype.draw = function() {
 		for (var i = 0; i < shapes.length; i++) {
 			if(selectedShape!=undefined){
 
-			if(i == shapes.length - 1){
-				ctx.strokeStyle = '#ff0000';
+				if(i == shapes.length - 1){
+					ctx.strokeStyle = '#ff0000';
+				}
 			}
-			}
-				shapes[i].draw(ctx);
+			shapes[i].draw(ctx);
 
-		
+
 		}
 		this.valid = true;
-		
+
 	}
 }
 
@@ -466,19 +509,19 @@ function buildShape(operator,x,y,scale){
 }
 
 var shapePoints={
-	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-	OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
-	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
-	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
-	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
-	RULE 		: [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-	QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+		AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+		OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
+		IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
+		NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+		TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
+		RULE 		: [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
+		QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
 
-	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
-	C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
-	T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
-	F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
+		A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+		B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
+		C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+		T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
+		F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
 };
 //initilisation method called from html on load up
 
@@ -492,7 +535,7 @@ function init() {
 	cs.height = canvasSvg.clientHeight;
 
 	var question = new ComboShape(10, 400, 225, 100,
-		[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
+			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
 	);
 	question.scale(0.5);
 	cs.addShape(question);
@@ -504,52 +547,51 @@ function init() {
 
 
 	//rules area
-	
-	
-	
-	
+
+
+
+
 	//rules area introduction
 	var canvasr = document.getElementById('canvasRules');
 	var csr = new CanvasState(canvasr);
 	canvasr.width = rulesPanelSvg.clientWidth;
 	canvasr.height = 1200;
 	$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
-	console.log("@@@@" + $("#canvasRules").parent().height());
 
-    //rules area elimination
-    var canvase = document.getElementById('canvasElimination');
-    var cse = new CanvasState(canvase);
-    canvase.width = rulesPanelSvg.clientWidth;
-    canvase.height = 1200;
-    $("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
-    
-    var mx = -1;
-    var my = -1;
+	//rules area elimination
+	var canvase = document.getElementById('canvasElimination');
+	var cse = new CanvasState(canvase);
+	canvase.width = rulesPanelSvg.clientWidth;
+	canvase.height = 1200;
+	$("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
+
+	var mx = -1;
+	var my = -1;
 	//get mouse x and y position when scroll bar moved
-    document.getElementById('canvasElimination').addEventListener('click', function(e) {
-    	mx = -1;
-    	my = -1;
-        var relativePosition = {
-          left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
-          top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
-        };
-        mx = relativePosition.left;
-        my = relativePosition.top
+	document.getElementById('canvasElimination').addEventListener('click', function(e) {
+		mx = -1;
+		my = -1;
+		var relativePosition = {
+				left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
+				top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
+		};
+		mx = relativePosition.left;
+		my = relativePosition.top
 	}, true);
-    
+
 	//get mouse x and y position when scroll bar moved
-    document.getElementById('canvasRules').addEventListener('click', function(e) {
-    	mx = -1;
-    	my = -1;
-        var relativePosition = {
-          left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
-          top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
-        };
-        mx = relativePosition.left;
-        my = relativePosition.top
+	document.getElementById('canvasRules').addEventListener('click', function(e) {
+		mx = -1;
+		my = -1;
+		var relativePosition = {
+				left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
+				top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
+		};
+		mx = relativePosition.left;
+		my = relativePosition.top
 	}, true);
-    
-  //click rule shape to create a same new rule shape on game area canvas
+
+	//click rule shape to create a same new rule shape on game area canvas
 	//introduction canvas click listener
 	canvasr.addEventListener('click', function(e) {
 		var sps = csr.shapes;
@@ -575,7 +617,7 @@ function init() {
 			}
 		}
 	}, true);
-	
+
 	// debugging purposes only
 	c = cs;
 	ce = cse;
@@ -585,7 +627,7 @@ function init() {
 	setCanvasHeight(canvasr,canvase);
 }
 function setCanvasHeight(canvasr, canvase){
-	
+
 	canvasr.height = rulesIntroPanelHeight;
 	canvase.height = rulesElimPanelHeight;
 
@@ -600,7 +642,7 @@ function drawRules(ruleArray) {
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
-		
+
 
 
 		if (ruleArray[i].type == "Introduction") {
@@ -636,7 +678,7 @@ function drawRules(ruleArray) {
 			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
 			cr.addShape(result);
 		}
-		else {
+		else if (ruleArray[i].type == "Elimination"){
 			for (var j = 0; j < above.length; j++) {
 				for (k = 0; k < above[j].length; k++) {
 					var operator = above[j];
