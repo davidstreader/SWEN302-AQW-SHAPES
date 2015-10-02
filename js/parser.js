@@ -168,11 +168,11 @@ function treeToString(expression) {
     }
     return list;
 }
-
+/*
 var Rule = function (above, below) {
     this.above = above;
     this.below = below;
-};
+};*/
 
 var OV = function (value) {
     this.value = value;

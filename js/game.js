@@ -2,11 +2,14 @@
 //For now they will just be defined as rectangles.
 
 //c is the canvas created for debugging purposes only
-var c, cr, ce, selectedShape, selectedRuleShape;
+var c, canvasIntroductionRulesPanel, canvasEliminationRulesPanel, selectedShape, selectedRuleShape;
 var MAX_COLLISION_RADIUS = 70;
 var DEFAULT_FONT_SIZE = 80;
 var RULES_BACKGROUND_COLOUR = "#FFDEDE";
 var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
+var LOWER_LEVEL_PADDING = 115;
+var LEFT_SIDE_PADDING = 15;
+var RIGHT_SIDE_PADDING = 315;
 
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
@@ -48,10 +51,12 @@ ComboShape.prototype.collidingWith = function(shape){
 	return false;
 };
 
-ComboShape.prototype.contains = function(mouseX, mouseY, ctx){
+ComboShape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY){
+    offsetX = offsetX || 0;
+    offsetY = offsetY || 0;
 	for(var i=0; i < this.shapeList.length; i++) {
 		var currShape = this.shapeList[i];
-		if(currShape.contains(mouseX, mouseY, ctx, this.currX, this.currY)){
+		if(currShape.contains(mouseX, mouseY, ctx, this.currX + offsetX, this.currY + offsetY)){
 			console.log("currshape contains point: " + mouseX + ", " + mouseY);
 			return true;
 		}
@@ -102,7 +107,11 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 		for (var i = 0; i < this.points.length; i++) {
 			ctx.lineTo(this.currX + offsetX + this.points[i].x, this.currY + offsetY + this.points[i].y);
 		}
+        ctx.closePath();
 	}
+    if(ctx.isPointInPath(mouseX, mouseY)){
+        console.log("Shape says mous in path");
+    }
 	return ctx.isPointInPath(mouseX,mouseY);
 };
 
@@ -437,91 +446,33 @@ CanvasState.prototype.getMouse = function(e) {
 	return {x: mx, y: my};
 }
 
-
-function createShape(logicArray,i){
-
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
-	var OpValue = logicArray[i].value;
-	var left = logicArray[i].left;
-	var right = logicArray[i].right;
-
-	if(OpValue.value!="")
-	{
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-	}
-	if(left.value !="") {
-
-		if (left instanceof Operator)
-			logicShapes.push(buildShape(left, 15, 115, 0.3));
-		else
-			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
-	}
-
-	if(right.value !="") {
-
-		if (right instanceof Operator)
-			logicShapes.push(buildShape(right, 315, 115, 0.3));
-		else
-			logicShapes.push(new Shape(315, 115, shapePoints[right.value]));
-	}
-
-	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
-	c.shapes[c.shapes.length-1].scale(0.5);
-
-
-}
-
-
-
-function buildShape(operator,x,y,scale){
-	var logicShapes =[];
-	var OpValue = operator.value;
-	var left = operator.left;
-	var right = operator.right;
-	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
-
-	if(OpValue !=""){
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-	}
-
-	if(left.value !="" && left instanceof Operator)
-		logicShapes.push(buildShape(left,15,115,0.3));
-
-	else if(left.value != "")
-		logicShapes.push(new Shape(15,115,shapePoints[left.value]));
-
-	if(right.value !="" && right instanceof Operator)
-		logicShapes.push(buildShape(right,315,115,0.3));
-
-	else if(right.value !="")
-		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
-
-	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
-	if(scale != 0) {
-		result.scale(scale);
-		result.currX = x;
-		result.currY = y;
-	}
-
-	return result;
-}
+var SHAPE_X = 450;
+var QSN_Y = 200;
+var RULE_Y = 300;
 
 var shapePoints={
-		AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-		OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
-		IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
-		NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
-		TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
-		RULE 		: [{x:0, y:0}, {x:150, y:0}, {x:150, y:100}, {x:300, y:100}, {x:300, y:0}, {x:450, y:0}, {x:450, y:300}, {x:300, y:300}, {x:300, y:200}, {x:150, y:200}, {x:150, y:300}, {x:0, y:300}, {x:0, y:0}],
-		QUESTION 	: [{x:0, y:100}, {x:150, y:100}, {x:150, y:0}, {x:300, y:0}, {x:300, y:100}, {x:450, y:100}, {x:450, y:200}, {x:0, y:200}, {x:0, y:100}],
+	AND 		: "∧"/*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+	OR 			: "∨"/*[{x:0, y:0}, {x:60, y:100}, {x:120, y:0}, {x:100, y:0}, {x:60, y:70}, {x:20, y:0}, {x:0, y:0}]*/,
+	IMPLIES		: "→"/*[{x:0, y:20}, {x:90, y:20}, {x:70, y:0}, {x:85, y:0}, {x:110, y:35}, {x:90, y:70}, {x:80, y:70}, {x:90, y:50}, {x:0, y:50}, {x:0, y:40}, {x:90, y:40}, {x:90, y:30}, {x:0, y:30}, {x:0, y:20}]*/,
+	NOT 		: "¬"/*[{x:0, y:0}, {x:120, y:0}, {x:50, y:60}, {x:30, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	TURNSTILE 	: "⊢"/*[{x:0, y:0}, {x:15, y:0}, {x:15, y:15}, {x:40, y:15}, {x:40, y:25}, {x:15, y:25}, {x:15, y:40}, {x:0, y:40}, {x:0, y:0}]*/,
+	RULE: [{x: 0, y: RULE_Y / 3}, {x: SHAPE_X / 3, y: RULE_Y / 3}, {x: SHAPE_X / 3, y: 0},
+		{x: SHAPE_X * 2 / 3, y: 0}, {x: SHAPE_X * 2 / 3, y: RULE_Y / 3}, {x: SHAPE_X, y: RULE_Y / 3}, {x: SHAPE_X,y: RULE_Y},
+		{x: SHAPE_X * 2 / 3, y: 300}, {x: SHAPE_X * 2 / 3, y: 200}, {x: SHAPE_X / 3, y: 200},
+		{x: SHAPE_X / 3, y: 300}, {x: 0, y: 300}, {x: 0, y: 100}],
+	QUESTION: [{x: 0, y: QSN_Y / 2}, {x: SHAPE_X / 3, y: QSN_Y / 2}, {x: SHAPE_X / 3, y: 0}, {
+		x: SHAPE_X * 2 / 3,
+		y: 0
+	}, {x: SHAPE_X * 2 / 3, y: QSN_Y / 2}, {x: SHAPE_X, y: QSN_Y / 2}, {x: SHAPE_X, y: QSN_Y}, {
+		x: 0,
+		y: QSN_Y
+	}, {x: 0, y: QSN_Y/2}],
 
-		A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
-		B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
-		C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
-		T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
-		F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
+	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
+	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
+	C :  "C"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/,
+	T :  "T"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/, //same as A
+	F :  "F"/*[{x:0, y:0}, {x:100, y:0}, {x:100, y:60}, {x:80, y:60}, {x:80, y:20}, {x:0, y:20}, {x:0, y:0}]*/  //same as A
 };
 //initilisation method called from html on load up
 
@@ -597,7 +548,7 @@ function init() {
 		var sps = csr.shapes;
 		selectedShape = undefined;
 		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
+			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
@@ -610,7 +561,7 @@ function init() {
 		selectedShape = undefined;
 		var sps = cse.shapes;
 		for (var i = 0; i < sps.length; i++) {
-			if (sps[i].contains(mx, my, cr.ctx)) {
+			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
 				matchShapeSize();
 				return;
@@ -620,19 +571,100 @@ function init() {
 
 	// debugging purposes only
 	c = cs;
-	ce = cse;
-	cr = csr;
+	canvasEliminationRulesPanel = cse;
+	canvasIntroductionRulesPanel = csr;
 
 	drawRules(rules);
 	setCanvasHeight(canvasr,canvase);
 }
 function setCanvasHeight(canvasr, canvase){
-
 	canvasr.height = rulesIntroPanelHeight;
 	canvase.height = rulesElimPanelHeight;
-
-
 }
+
+
+function createShape(logicArray,i){
+
+	var logicShapes =[];
+	var OpValue = logicArray[i].value;
+	var left = logicArray[i].left;
+	var right = logicArray[i].right;
+
+    var leftShape = createShape2(left,10,10,logicArray[i],i);
+    var rightShape = createShape2(right,460,10,logicArray[i],i);
+    logicShapes.push(leftShape);
+    logicShapes.push(rightShape);
+
+	c.addShape(new ComboShape(400,400,225,100,logicShapes,"Question "+i,logicArray[i],true));
+	c.shapes[c.shapes.length-1].scale(0.5);
+}
+
+function createShape2(operator,x,y,dickTree,i) {
+    var logicShapes = [];
+    var OpValue = operator.value;
+    var left = operator.left;
+    var right = operator.right;
+    logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+
+    if (left instanceof Operator) {
+        logicShapes.push(buildShape(left, LEFT_SIDE_PADDING, LOWER_LEVEL_PADDING, 0.3));
+    }
+    else if(left instanceof Variable){
+        //logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+        if( left.value !== ""){
+            logicShapes.push(new Shape(LEFT_SIDE_PADDING, LOWER_LEVEL_PADDING, shapePoints[left.value]));
+        }
+    }
+
+    if (right instanceof Operator) {
+        logicShapes.push(buildShape(right, RIGHT_SIDE_PADDING, LOWER_LEVEL_PADDING, 0.3));
+    }
+    else if(right instanceof Variable ){
+       // logicShapes.push(new Shape(rightsidepadding,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+        if( right.value !== ""){
+            logicShapes.push(new Shape(RIGHT_SIDE_PADDING, LOWER_LEVEL_PADDING, shapePoints[right.value]));
+        }
+    }
+    if (OpValue !== "") {
+        logicShapes.push(new Shape(180, 15, shapePoints[OpValue]));
+    }
+    return new ComboShape(x, y, 225, 100, logicShapes, " ", dickTree);
+}
+
+
+function buildShape(operator,x,y,scale){
+	var logicShapes =[];
+	var OpValue = operator.value;
+	var left = operator.left;
+	var right = operator.right;
+	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+
+	if(OpValue !=""){
+    	logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+
+	if(left.value !="" && left instanceof Operator)
+		logicShapes.push(buildShape(left,LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(left.value != "")
+		logicShapes.push(new Shape(LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[left.value]));
+
+	if(right.value !="" && right instanceof Operator)
+		logicShapes.push(buildShape(right,RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(right.value !="")
+		logicShapes.push(new Shape(RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[right.value]));
+
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
+
+	return result;
+}
+
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
@@ -676,7 +708,7 @@ function drawRules(ruleArray) {
 
 			result.scale(0.5);
 			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
-			cr.addShape(result);
+			canvasIntroductionRulesPanel.addShape(result);
 		}
 		else if (ruleArray[i].type == "Elimination"){
 			for (var j = 0; j < above.length; j++) {
@@ -709,7 +741,7 @@ function drawRules(ruleArray) {
 
 			result.scale(0.5);
 			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
-			ce.addShape(result);
+			canvasEliminationRulesPanel.addShape(result);
 		}
 	}
 
