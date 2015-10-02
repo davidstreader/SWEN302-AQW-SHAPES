@@ -526,36 +526,52 @@ function setCanvasHeight(canvasr, canvase){
 
 function createShape(logicArray,i){
 
-	var logicShapes =[new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR),new Shape(460,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR)];
+	var logicShapes =[];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
 
-	if(OpValue.value!="" && OpValue!= "TURNSTILE")
-	{
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
-	}
-	if(left.value !="") {
-
-		if (left instanceof Operator)
-			logicShapes.push(buildShape(left, 15, 115, 0.3));
-		else
-			logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
-	}
-
-	if(right.value !="") {
-
-		if (right instanceof Operator)
-			logicShapes.push(buildShape(right, 460, 115, 0.3));
-		else
-			logicShapes.push(new Shape(460, 115, shapePoints[right.value]));
-	}
+    var leftShape = createShape2(left,10,10,logicArray[i],i);
+    var rightShape = createShape2(right,460,10,logicArray[i],i);
+    logicShapes.push(leftShape);
+    logicShapes.push(rightShape);
 
 	c.addShape(new ComboShape(400,400,225,100,logicShapes," ",logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
+function createShape2(operator,x,y,dickTree,i) {
+    var logicShapes = [];
+    var OpValue = operator.value;
+    var left = operator.left;
+    var right = operator.right;
+    var rightsidepadding = 300;
+    logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+
+    if (left instanceof Operator) {
+        logicShapes.push(buildShape(left, 15, 115, 0.3));
+    }
+    else if(left instanceof Variable){
+        //logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+        if( left.value !== ""){
+            logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+        }
+    }
+
+    if (right instanceof Operator) {
+        logicShapes.push(buildShape(right, rightsidepadding, 115, 0.3));
+    }
+    else if(right instanceof Variable ){
+       // logicShapes.push(new Shape(rightsidepadding,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+        if( right.value !== ""){
+            logicShapes.push(new Shape(rightsidepadding, 115, shapePoints[right.value]));
+        }
+    }
+    if (OpValue !== "") {
+        logicShapes.push(new Shape(180, 15, shapePoints[OpValue]));
+    }
+    return new ComboShape(x, y, 225, 100, logicShapes, " ", dickTree);
+}
 
 
 function buildShape(operator,x,y,scale){
@@ -566,8 +582,7 @@ function buildShape(operator,x,y,scale){
 	logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
 
 	if(OpValue !=""){
-		var sp = shapePoints[OpValue];
-		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+    	logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
 	}
 
 	if(left.value !="" && left instanceof Operator)
@@ -625,8 +640,8 @@ function drawRules(ruleArray) {
 			logicshapes.push(shape);
 
 
-		}
 
+		}
 
 		if (ruleArray[i].type == "Introduction") {
 			countIntroductionRules++;
