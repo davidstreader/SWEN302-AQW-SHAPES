@@ -126,10 +126,9 @@ arrowRight.addEventListener("click", function(){
 window.onresize = function(){
 reSizePanelHeight();	
 
-	canvasGameArea.width = canvasGameArea.parentNode.clientWidth;
-	canvasGameArea.height = canvasGameArea.parentNode.clientHeight;
-	c.width = canvasGameArea.width;
-	c.height = canvasGameArea.height;
+$("#canvasRules").parent().css('height', rulesPanelSvg.clientHeight);
+$("#canvasElimination").parent().css('height', rulesPanelSvg.clientHeight);
+
 	c.clear();
 	c.valid = false;
 	c.draw();
