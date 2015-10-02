@@ -156,8 +156,8 @@ describe("Test getAbove", function () {
 
     var expression = parse("A∧B∨A∧C ⊢ A∧(B∨C)");
 
-    var above1 = parse("⊢A");
-    var above2 = parse("⊢(B∨C)");
+    var above1 = parse("A∧B∨A∧C⊢A");
+    var above2 = parse("A∧B∨A∧C⊢(B∨C)");
     var above = [above1, above2];
     it("Above 1", function () {
         expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
@@ -166,4 +166,27 @@ describe("Test getAbove", function () {
     it("Above 2", function () {
         expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
     });
+
+
 });
+
+describe("Test getAbove complex",function(){
+
+    var data =  { "type": "Introduction", "name": "Implies Introduction", "above": ["A⊢B"], "below": "⊢A→B"};
+    var currentRule = generateRuleFromJSON(data);
+
+    var expression = parse("A→B ⊢ (B→C)→A→C");
+
+    var above1 = parse("A→B");
+    var above2 = parse("(B→C)⊢A→C");
+
+    it("Above complex 1", function(){
+        expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
+    });
+    it("Above complex 2", function(){
+        expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
+    });
+    it("Nothing else", function(){
+       expect((getAbove(currentRule, expression).length)).toBe(2);
+    });
+})
