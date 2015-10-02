@@ -7,7 +7,10 @@ var MAX_COLLISION_RADIUS = 70;
 var DEFAULT_FONT_SIZE = 80;
 var RULES_BACKGROUND_COLOUR = "#FFDEDE";
 var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
+var LOWER_LEVEL_PADDING = 115;
+var LEFT_SIDE_PADDING = 15;
 
+var RIGHT_SIDE_PADDING = 315;
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
 }
@@ -545,26 +548,25 @@ function createShape2(operator,x,y,dickTree,i) {
     var OpValue = operator.value;
     var left = operator.left;
     var right = operator.right;
-    var rightsidepadding = 300;
     logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
 
     if (left instanceof Operator) {
-        logicShapes.push(buildShape(left, 15, 115, 0.3));
+        logicShapes.push(buildShape(left, LEFT_SIDE_PADDING, LOWER_LEVEL_PADDING, 0.3));
     }
     else if(left instanceof Variable){
         //logicShapes.push(new Shape(10,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
         if( left.value !== ""){
-            logicShapes.push(new Shape(15, 115, shapePoints[left.value]));
+            logicShapes.push(new Shape(LEFT_SIDE_PADDING, LOWER_LEVEL_PADDING, shapePoints[left.value]));
         }
     }
 
     if (right instanceof Operator) {
-        logicShapes.push(buildShape(right, rightsidepadding, 115, 0.3));
+        logicShapes.push(buildShape(right, RIGHT_SIDE_PADDING, LOWER_LEVEL_PADDING, 0.3));
     }
     else if(right instanceof Variable ){
        // logicShapes.push(new Shape(rightsidepadding,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
         if( right.value !== ""){
-            logicShapes.push(new Shape(rightsidepadding, 115, shapePoints[right.value]));
+            logicShapes.push(new Shape(RIGHT_SIDE_PADDING, LOWER_LEVEL_PADDING, shapePoints[right.value]));
         }
     }
     if (OpValue !== "") {
@@ -586,16 +588,16 @@ function buildShape(operator,x,y,scale){
 	}
 
 	if(left.value !="" && left instanceof Operator)
-		logicShapes.push(buildShape(left,15,115,0.3));
+		logicShapes.push(buildShape(left,LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
 
 	else if(left.value != "")
-		logicShapes.push(new Shape(15,115,shapePoints[left.value]));
+		logicShapes.push(new Shape(LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[left.value]));
 
 	if(right.value !="" && right instanceof Operator)
-		logicShapes.push(buildShape(right,315,115,0.3));
+		logicShapes.push(buildShape(right,RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
 
 	else if(right.value !="")
-		logicShapes.push(new Shape(315,115,shapePoints[right.value]));
+		logicShapes.push(new Shape(RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[right.value]));
 
 	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
 	if(scale != 0) {

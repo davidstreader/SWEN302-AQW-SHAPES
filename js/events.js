@@ -35,12 +35,13 @@ inputFile.change(function () {
 				selectedFile = data;
 				generateASTs();
 				createShape(questions, 0);
+				reset();
+
 			});
 		} else {
 			alert("json file only!")
 		}
 	}
-	reset();
 });
 
 function update() {
