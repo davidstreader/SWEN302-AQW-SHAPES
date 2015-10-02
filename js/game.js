@@ -553,7 +553,7 @@ function createShape(logicArray,i){
     logicShapes.push(leftShape);
     logicShapes.push(rightShape);
 
-	c.addShape(new ComboShape(400,400,225,100,logicShapes,"Question "+i,logicArray[i],true));
+	c.addShape(new ComboShape(400,400,685,110,logicShapes,"Question "+i,logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
