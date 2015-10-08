@@ -255,6 +255,7 @@ function CanvasState(canvas) {
 				if (shapes[i].collidingWith(shapes[j])) {
 					console.log(i + " " + j);
 					var newShapes = [];
+					//shapes[j] =
 					var deltaX = shapes[j].collX - shapes[i].collX;
 					var deltaY = shapes[j].collY - shapes[i].collY;
 					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
@@ -420,9 +421,6 @@ CanvasState.prototype.draw = function() {
 	}
 }
 
-
-
-
 //Creates an object with x and y defined, set to the mouse position relative to the state's canvas
 //If you wanna be super-correct this can be tricky, we have to worry about padding and borders
 CanvasState.prototype.getMouse = function(e) {
@@ -494,13 +492,7 @@ function init() {
 	// debugging purposes only
 	c = cs;
 
-
-
-
 	//rules area
-
-
-
 
 	//rules area introduction
 	var canvasr = document.getElementById('canvasRules');
@@ -523,8 +515,8 @@ function init() {
 		mx = -1;
 		my = -1;
 		var relativePosition = {
-				left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
-				top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
+			left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
+			top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
 		};
 		mx = relativePosition.left;
 		my = relativePosition.top
@@ -535,8 +527,8 @@ function init() {
 		mx = -1;
 		my = -1;
 		var relativePosition = {
-				left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
-				top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
+			left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
+			top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
 		};
 		mx = relativePosition.left;
 		my = relativePosition.top
@@ -589,17 +581,20 @@ function createShape(logicArray,i){
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
+	var padding = 10;
+	if(left.value !== "") {
+		var leftShape = createShape2(left, 10, 10, logicArray[i]);
+		logicShapes.push(leftShape);
+		padding = 460;
+	}
+	var rightShape = createShape2(right,padding,10,logicArray[i]);
+	logicShapes.push(rightShape);
 
-    var leftShape = createShape2(left,10,10,logicArray[i],i);
-    var rightShape = createShape2(right,460,10,logicArray[i],i);
-    logicShapes.push(leftShape);
-    logicShapes.push(rightShape);
-
-	c.addShape(new ComboShape(400,400,685,110,logicShapes,"Question "+i,logicArray[i],true));
+	c.addShape(new ComboShape(400,400,235,110,logicShapes,"Question "+i,logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
-function createShape2(operator,x,y,dickTree,i) {
+function createShape2(operator,x,y,dickTree) {
     var logicShapes = [];
     var OpValue = operator.value;
     var left = operator.left;
@@ -674,9 +669,6 @@ function drawRules(ruleArray) {
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
-
-
-
 		if (ruleArray[i].type == "Introduction") {
 			for (var j = 0; j < above.length; j++) {
 				for (k = 0; k < above[j].length; k++) {
@@ -687,10 +679,7 @@ function drawRules(ruleArray) {
 					shape.scale((150 / above[j].length) / 90);
 					shape.currX += (j * 300);
 					logicshapes.push(shape);
-
-
 				}
-
 			}
 
 			for (var j = 0; j < below.length; j++) {
@@ -700,8 +689,6 @@ function drawRules(ruleArray) {
 				shape.scale((150 / below.length) / 90);
 				shape.currX += (j * 10);
 				logicshapes.push(shape);
-
-
 			}
 			countIntroductionRules++;
 			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
@@ -720,10 +707,7 @@ function drawRules(ruleArray) {
 					shape.scale((150 / above[j].length) / 90);
 					shape.currX += (j * 300);
 					logicshapes.push(shape);
-
-
 				}
-
 			}
 
 			for (var j = 0; j < below.length; j++) {
@@ -733,8 +717,6 @@ function drawRules(ruleArray) {
 				shape.scale((150 / below.length) / 90);
 //				shape.currX += (j * 10);
 				logicshapes.push(shape);
-
-
 			}
 			countEliminationRules++;
 			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
@@ -744,5 +726,4 @@ function drawRules(ruleArray) {
 			canvasEliminationRulesPanel.addShape(result);
 		}
 	}
-
 }
