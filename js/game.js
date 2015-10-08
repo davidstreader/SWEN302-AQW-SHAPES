@@ -45,7 +45,7 @@ ComboShape.prototype.collidingWith = function(shape){
 		console.log("Collision detected, hypotenuse length: " + hypot);
 		console.log(this);
 		console.log(shape);
-		return(canSnap(this.logicTree,shape.logicTree) && (shape.isQuestion != this.isQuestion));
+		return(canSnap(shape.logicTree.belowTree,this.logicTree) && (this.isQuestion));
 
 	}
 	return false;
@@ -249,19 +249,19 @@ function CanvasState(canvas) {
 
 	canvas.addEventListener('mouseup', function(e){
 		var shapes = myState.shapes;
-		for(var i=0; i<shapes.length; i++){
-			for(var j=0; j<shapes.length; j++) {
-				if(shapes[i]===shapes[j]){continue;}
-				if (shapes[i].collidingWith(shapes[j])) {
-					console.log(i + " " + j);
+		for(var questionIndex=0; questionIndex<shapes.length; questionIndex++){
+			for(var ruleIndex=0; ruleIndex<shapes.length; ruleIndex++) {
+				if(shapes[questionIndex]===shapes[ruleIndex]){continue;}
+				if (shapes[questionIndex].collidingWith(shapes[ruleIndex])) {
+					console.log(questionIndex + " " + ruleIndex);
 					var newShapes = [];
-					//shapes[j] =
-					var deltaX = shapes[j].collX - shapes[i].collX;
-					var deltaY = shapes[j].collY - shapes[i].collY;
-					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
-					newShapes = shapes[j].shapeList.concat(s1.shapeList);
-					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree, true);
-					shapes = shapes.splice(j, 1);
+					var newAbove = getAbove(shapes[ruleIndex].logicTree,shapes[questionIndex].logicTree);
+					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
+					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
+					var s1 = shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
+					newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
+					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX, shapes[ruleIndex].currY, 0, 0, newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
+					shapes = shapes.splice(ruleIndex, 1);
 					myState.valid = false;
 					myState.draw();
 					break;
@@ -485,7 +485,7 @@ function init() {
 
 	var question = new ComboShape(10, 400, 225, 100,
 			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	);
+	,true);
 	question.scale(0.5);
 	cs.addShape(question);
 
@@ -576,7 +576,6 @@ function setCanvasHeight(canvasr, canvase){
 
 
 function createShape(logicArray,i){
-
 	var logicShapes =[];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
@@ -594,7 +593,7 @@ function createShape(logicArray,i){
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
-function createShape2(operator,x,y,dickTree) {
+function createShape2(operator,x,y,dictTree) {
     var logicShapes = [];
     var OpValue = operator.value;
     var left = operator.left;
@@ -623,7 +622,7 @@ function createShape2(operator,x,y,dickTree) {
     if (OpValue !== "") {
         logicShapes.push(new Shape(180, 15, shapePoints[OpValue]));
     }
-    return new ComboShape(x, y, 225, 100, logicShapes, " ", dickTree);
+    return new ComboShape(x, y, 225, 100, logicShapes, " ", dictTree,true);
 }
 
 
@@ -691,7 +690,7 @@ function drawRules(ruleArray) {
 				logicshapes.push(shape);
 			}
 			countIntroductionRules++;
-			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i],false);
 
 			result.scale(0.5);
 			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
@@ -719,7 +718,7 @@ function drawRules(ruleArray) {
 				logicshapes.push(shape);
 			}
 			countEliminationRules++;
-			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i],false);
 
 			result.scale(0.5);
 			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
