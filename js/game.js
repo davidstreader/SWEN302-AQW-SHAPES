@@ -736,6 +736,7 @@ function drawShape(above,below) {
 	return new ComboShape(200,300,0,0,logicShapeFull,"",null,true);
 }
 
+
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;
 	var countEliminationRules = 0;
