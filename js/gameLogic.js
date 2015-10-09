@@ -26,11 +26,11 @@ function canSnap(ruleExp, expression) {
 }
 
 /**
- *
+ * Given a single variable from the rule, returns the corresponding subtree in the expression.
  * @param rule
  * @param expression
  * @param variable
- * @returns {*}
+ * @returns {OperValue} object representing a subtree of the given variable}
  */
 function getSubtreeFromVariables(rule, expression, variable) {
     if (rule instanceof Variable) {
