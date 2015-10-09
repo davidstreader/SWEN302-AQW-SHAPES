@@ -263,16 +263,21 @@ function CanvasState(canvas) {
 					console.log(newAbove);
 					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
 					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
-					var s1 = shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
+					shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
 					//newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
 					var topLeft = buildAboveShape(newAbove[0],shapes[ruleIndex].currX, shapes[ruleIndex].currY, 1);
 					var topRight = buildAboveShape(newAbove[1],shapes[ruleIndex].currX+450, shapes[ruleIndex].currY, 1);
-					var result = new ComboShape(topLeft.currX,topLeft.currY,225,110,[topLeft,topRight],"",null,true);
+					var exp = new Operator("TURNSTILE");
+					exp.left = newAbove[0];
+					exp.right = newAbove[1];
+
+					var result = new ComboShape(topLeft.currX,topLeft.currY,0,0,[topLeft,topRight],"",exp,true);
 					result.scale(0.5);
 					newShapes.push(result);
 					shapes[questionIndex].name = "";
+
 					newShapes.push(shapes[questionIndex]);
-					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX-1, shapes[ruleIndex].currY, 225,110,
+					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX, shapes[ruleIndex].currY, 225,110,
 						newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
 
 					//shapes[questionIndex] = result;
