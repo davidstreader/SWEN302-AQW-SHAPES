@@ -54,7 +54,7 @@ ComboShape.prototype.collidingWith = function(shape){
 ComboShape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY){
     offsetX = offsetX || 0;
     offsetY = offsetY || 0;
-	for(var i=0; i < this.shapeList.length; i++) {
+	for(var i=this.shapeList.length-1; i >= 0; i--) {
 		var currShape = this.shapeList[i];
 		if(currShape.contains(mouseX, mouseY, ctx, this.currX + offsetX, this.currY + offsetY)){
 			console.log("currshape contains point: " + mouseX + ", " + mouseY);
@@ -99,6 +99,10 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter!=null){
+		var width = ctx.measureText(this.letter).width;
+		if(mouseX > this.currX+offsetX && mouseX < this.currX+offsetX+(this.fontSize * 0.75) && mouseY > this.currY+offsetY && mouseY < this.currY+offsetY+(this.fontSize*0.75)){
+			return true;
+		}
 		return false;
 	}
 	else {
@@ -110,7 +114,7 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
         ctx.closePath();
 	}
     if(ctx.isPointInPath(mouseX, mouseY)){
-        console.log("Shape says mous in path");
+        console.log("Shape says mouse in path");
     }
 	return ctx.isPointInPath(mouseX,mouseY);
 };
