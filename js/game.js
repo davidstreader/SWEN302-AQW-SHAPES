@@ -263,7 +263,7 @@ function CanvasState(canvas) {
 					console.log(newAbove);
 					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
 					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
-					shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
+					//shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
 					//newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
 					var topLeft = buildAboveShape(newAbove[0],shapes[ruleIndex].currX, shapes[ruleIndex].currY, 1);
 					var topRight = buildAboveShape(newAbove[1],shapes[ruleIndex].currX+450, shapes[ruleIndex].currY, 1);
@@ -279,7 +279,7 @@ function CanvasState(canvas) {
 					newShapes.push(shapes[questionIndex]);
 					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX, shapes[ruleIndex].currY, 225,110,
 						newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
-
+					shapes[questionIndex].applyDelta(deltaX, deltaY);
 					//shapes[questionIndex] = result;
 					shapes = shapes.splice(ruleIndex, 1);
 					myState.valid = false;
@@ -485,7 +485,7 @@ var shapePoints={
 		x: 0,
 		y: QSN_Y
 	}, {x: 0, y: QSN_Y/2}],
-	RULEBELOW: [{x:0,y:0},{x:SHAPE_X,y:0},{x:SHAPE_X,y:QSN_Y},{x:SHAPE_X*2/3,y:QSN_Y/2},{x:SHAPE_X/3,y:QSN_Y/2},
+	RULEBELOW: [{x:0,y:0},{x:SHAPE_X,y:0},{x:SHAPE_X,y:QSN_Y},{x:SHAPE_X*2/3,y:QSN_Y},{x:SHAPE_X*2/3,y:QSN_Y/2},{x:SHAPE_X/3,y:QSN_Y/2},
 		{x:SHAPE_X/3,y:QSN_Y},{x:0,y:QSN_Y},{x:0,y:0}	],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
@@ -504,10 +504,15 @@ function init() {
 	canvas.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
-
-	var question = new ComboShape(10, 400, 225, 100,
+	/*=======================================================
+	*=======================================================
+	* =======================================================
+	* =======================================================
+	* */
+	/*var question = new ComboShape(10, 400, 225, 100,
 			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	,true);
+	,true);*/
+	var question = drawShape(4,3);
 	question.scale(0.5);
 	cs.addShape(question);
 
@@ -710,6 +715,26 @@ function buildShape(operator,x,y,scale){
 	}
 
 	return result;
+}
+
+
+function drawShape(above,below) {
+	var logicShapesAbove =[];
+	for(var i = 0; i< above; i++){
+		logicShapesAbove.push(new Shape(450*i,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+	}
+	var top = (new ComboShape(0,0,0,0,logicShapesAbove,"",null,true));
+	var logicShapesBelow = [];
+	for(var i = 0; i< below; i++){
+		logicShapesBelow.push(new Shape(450*i,10,shapePoints.RULEBELOW,QUESTION_BACKGROUND_COLOUR));
+	}
+	var xPadding = ((above-below)*450)/2;
+	console.log(xPadding);
+	var bot  = new ComboShape(xPadding,200,0,0,logicShapesBelow,"",null,true);
+	var logicShapeFull = [];
+	logicShapeFull.push(top);
+	logicShapeFull.push(bot);
+	return new ComboShape(200,300,0,0,logicShapeFull,"",null,true);
 }
 
 function drawRules(ruleArray) {
