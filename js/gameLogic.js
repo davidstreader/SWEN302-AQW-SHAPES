@@ -178,3 +178,12 @@ function contains(array, item) {
     }
     return false;
 }
+
+function getArrayAbove(belowArray,expressions){
+    if(belowArray.length != expressions.length){
+        console.error("Illegal Arguments");
+    }
+    for(var i=0;i<expressions.length;i++){
+
+    }
+}

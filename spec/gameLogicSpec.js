@@ -190,3 +190,45 @@ describe("Test getAbove complex",function(){
        expect((getAbove(currentRule, expression).length)).toBe(2);
     });
 })
+
+describe("Test getAbove complex2",function(){
+
+    var data =  { "type": "Introduction", "name": "And Introduction", "above": ["⊢A","⊢B"], "below": "⊢A∧B" };
+    var currentRule = generateRuleFromJSON(data);
+
+    var expression = parse("A∧(B∧C) ⊢ (A∧B)∧C");
+
+    var above1 = parse("A∧(B∧C)⊢(A∧B)");
+    var above2 = parse("A∧(B∧C)⊢C");
+
+    it("Above complex 1", function(){
+        expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
+    });
+    it("Above complex 2", function(){
+        expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
+    });
+    it("Nothing else", function(){
+        expect((getAbove(currentRule, expression).length)).toBe(2);
+    });
+})
+/*
+describe("Test getAbove complex2",function(){
+
+    var data =  { "type": "Introduction", "name": "Implies Introduction", "above": ["A⊢B"], "below": "⊢A→B"};
+    var currentRule = generateRuleFromJSON(data);
+
+    var expression = parse("¬B→¬A ⊢ A→B");
+
+    var above1 = parse("⊢");
+    var above2 = parse("A∧(B∧C)⊢C");
+
+    it("Above complex 1", function(){
+        expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
+    });
+    it("Above complex 2", function(){
+        expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
+    });
+    it("Nothing else", function(){
+        expect((getAbove(currentRule, expression).length)).toBe(2);
+    });
+})*/

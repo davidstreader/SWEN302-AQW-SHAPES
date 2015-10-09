@@ -480,6 +480,8 @@ var shapePoints={
 		x: 0,
 		y: QSN_Y
 	}, {x: 0, y: QSN_Y/2}],
+	RULEBELOW: [{x:0,y:0},{x:SHAPE_X,y:0},{x:SHAPE_X,y:QSN_Y},{x:SHAPE_X*2/3,y:QSN_Y/2},{x:SHAPE_X/3,y:QSN_Y/2},
+		{x:SHAPE_X/3,y:QSN_Y},{x:0,y:QSN_Y},{x:0,y:0}	],
 
 	A :  "A" /*[{x:0, y:100}, {x:60, y:0}, {x:120, y:100}, {x:100, y:100}, {x:60, y:35}, {x:20, y:100}, {x:0, y:100}]*/,
 	B :  "B"/*[{x:0, y:0}, {x:0, y:100}, {x:60, y:100}, {x:60, y:80}, {x:20, y:80}, {x:20, y:0}, {x:0, y:0}]*/,
