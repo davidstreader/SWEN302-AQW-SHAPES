@@ -1,6 +1,10 @@
 var questions;
 var rules = [];
 loadRules();
+
+/**
+ * Loads the rules from the json file and puts them into the global rules variable. This function is called when the page is loaded.
+ */
 function loadRules() {
     d3.json("js/rules.json", function (error, data) {
         for (var i = 0; i < data.length; i++) {
@@ -10,6 +14,11 @@ function loadRules() {
     });
 }
 
+/**
+ * Reads a json string containing a rule and generates a rule object from it.
+ * @param data json data containing one rule
+ * @returns {Rule} object that is built from the data given
+ */
 function generateRuleFromJSON(data) {
     var aboveArray = [];
     var aboveTreeArray = [];
@@ -28,6 +37,9 @@ function generateRuleFromJSON(data) {
     return currentRule;
 }
 
+/**
+ * Generates abstract syntax trees of the questions from the selected and puts them into the global questions variable.
+ */
 function generateASTs() {
     questions = [];
     for (var i = 0; i < selectedFile.length; i++) {
@@ -35,6 +47,11 @@ function generateASTs() {
     }
 }
 
+/**
+ * Returns the precedence of the given token. Lower number means lower precedence (dealth with last)
+ * @param token
+ * @returns {number}
+ */
 function precedence(token) {
     switch (token) {
         case '⊢':
@@ -53,6 +70,11 @@ function precedence(token) {
     return 98;
 }
 
+/**
+ * Tells is a token is a delimiter or not.
+ * @param token
+ * @returns {boolean} true if given token is a delimited, false otherwise
+ */
 function isDelimiter(token) {
     switch (token) {
         case '⊢':
@@ -69,6 +91,8 @@ function isDelimiter(token) {
     }
     return false;
 }
+
+
 function findOperator(token) {
     switch (token) {
         case '⊢':
@@ -84,6 +108,11 @@ function findOperator(token) {
     }
 }
 
+/**
+ * Parses a string into an abstract syntax tree and returns it
+ * @param str ASCII string containing the expression
+ * @returns {*}
+ */
 function parse(str) {
     return eval(str.replace(/\s+/g, ''));
 }
@@ -174,12 +203,12 @@ var Rule = function (above, below) {
     this.below = below;
 };*/
 
-var OV = function (value) {
+var OperValue = function (value) {
     this.value = value;
 };
 
-OV.prototype.equals = function (other) {
-    if (!(other instanceof OV)) {
+OperValue.prototype.equals = function (other) {
+    if (!(other instanceof OperValue)) {
         return false;
     }
     else {
@@ -188,17 +217,17 @@ OV.prototype.equals = function (other) {
 };
 
 function Operator(value) {
-    OV.call(this, value);
+    OperValue.call(this, value);
     this.left;
     this.right;
 }
 
 function Variable(value) {
-    OV.call(this, value);
+    OperValue.call(this, value);
 }
 
-Operator.prototype = Object.create(OV.prototype);
-Variable.prototype = Object.create(OV.prototype);
+Operator.prototype = Object.create(OperValue.prototype);
+Variable.prototype = Object.create(OperValue.prototype);
 
 
 Operator.prototype.equals = function (other) {
