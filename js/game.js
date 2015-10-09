@@ -256,11 +256,22 @@ function CanvasState(canvas) {
 					console.log(questionIndex + " " + ruleIndex);
 					var newShapes = [];
 					var newAbove = getAbove(shapes[ruleIndex].logicTree,shapes[questionIndex].logicTree);
+					console.log(newAbove);
 					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
 					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
 					var s1 = shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
-					newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
-					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX, shapes[ruleIndex].currY, 0, 0, newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
+					//newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
+					var topLeft = buildAboveShape(newAbove[0],shapes[ruleIndex].currX, shapes[ruleIndex].currY, 1);
+					var topRight = buildAboveShape(newAbove[1],shapes[ruleIndex].currX+450, shapes[ruleIndex].currY, 1);
+					var result = new ComboShape(topLeft.currX,topLeft.currY,225,110,[topLeft,topRight],"",null,true);
+					result.scale(0.5);
+					newShapes.push(result);
+					shapes[questionIndex].name = "";
+					newShapes.push(shapes[questionIndex]);
+					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX-1, shapes[ruleIndex].currY, 225,110,
+						newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
+
+					//shapes[questionIndex] = result;
 					shapes = shapes.splice(ruleIndex, 1);
 					myState.valid = false;
 					myState.draw();
@@ -624,7 +635,38 @@ function createShape2(operator,x,y,dictTree) {
     }
     return new ComboShape(x, y, 225, 100, logicShapes, " ", dictTree,true);
 }
+function buildAboveShape(operator,x,y,scale){
+	var logicShapes =[];
+	var OpValue = operator.value;
+	var left = operator.left;
+	var right = operator.right;
+	logicShapes.push(new Shape(10,10,shapePoints.RULE,QUESTION_BACKGROUND_COLOUR));
 
+	if(OpValue !=""){
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+
+	if(left.value !="" && left instanceof Operator)
+		logicShapes.push(buildShape(left,LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(left.value != "")
+		logicShapes.push(new Shape(LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[left.value]));
+
+	if(right.value !="" && right instanceof Operator)
+		logicShapes.push(buildShape(right,RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(right.value !="")
+		logicShapes.push(new Shape(RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[right.value]));
+
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
+
+	return result;
+}
 
 function buildShape(operator,x,y,scale){
 	var logicShapes =[];
