@@ -284,34 +284,34 @@ function CanvasState(canvas) {
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
 				selectedShape = mySel;
-				if(selectedShape.currX<0){
-					selectedShape.currX = 0;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currY<0){
-					selectedShape.currY = 0;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currY>c.height - 150){
-					selectedShape.currY = c.height-150;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currX>c.width - 200){
-					selectedShape.currX = c.width-200;
-					myState.valid = false;
-					return;
-				}
-				else{
+//				if(selectedShape.currX<0){
+//					selectedShape.currX = 0;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currY<0){
+//					selectedShape.currY = 0;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currY>c.height - 150){
+//					selectedShape.currY = c.height-150;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currX>c.width - 200){
+//					selectedShape.currX = c.width-200;
+//					myState.valid = false;
+//					return;
+//				}
+//				else{
 					myState.dragoffx = mx - mySel.currX;
 					myState.dragoffy = my - mySel.currY;
 					myState.dragging = true;
 					myState.selection = mySel;
 					myState.valid = false;
 					return;
-				}
+//				}
 			}
 		}
 
@@ -345,33 +345,33 @@ function CanvasState(canvas) {
 			if (myState.dragging){
 				var mouse = myState.getMouse(e);
 
-				if(selectedShape.currX<0){
-					selectedShape.currX = 0;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currY<0){
-					selectedShape.currY = 0;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currY>c.height - 150){
-					selectedShape.currY = c.height-150;
-					myState.valid = false;
-					return;
-				}
-				else if(selectedShape.currX>c.width - 200){
-					selectedShape.currX = c.width-200;
-					myState.valid = false;
-					return;
-				}
-				else{
+//				if(selectedShape.currX<0){
+//					selectedShape.currX = 0;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currY<0){
+//					selectedShape.currY = 0;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currY>c.height - 150){
+//					selectedShape.currY = c.height-150;
+//					myState.valid = false;
+//					return;
+//				}
+//				else if(selectedShape.currX>c.width - 200){
+//					selectedShape.currX = c.width-200;
+//					myState.valid = false;
+//					return;
+//				}
+//				else{
 					// We don't want to drag the object by its top-left corner, we want to drag it
 					// from where we clicked. Thats why we saved the offset and use it here
 					myState.selection.currX = mouse.x - myState.dragoffx;
 					myState.selection.currY = mouse.y - myState.dragoffy;
 					myState.valid = false; // redraw
-				}
+//				}
 			}
 		}
 	}, true);
@@ -478,10 +478,9 @@ var shapePoints={
 
 function init() {
 	//game area
-	var canvas = document.getElementById('canvasGameArea');
-	var cs = new CanvasState(canvas);
-	canvas.width = canvasSvg.clientWidth;
-	canvas.height = canvasSvg.clientHeight;
+	var cs = new CanvasState(canvasGameArea);
+	canvasGameArea.width = canvasSvg.clientWidth;
+	canvasGameArea.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
 
@@ -550,7 +549,7 @@ function init() {
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
-				matchShapeSize();
+				matchShapeSize(sizefactor);
 				return;
 			}
 		}
@@ -563,7 +562,7 @@ function init() {
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
-				matchShapeSize();
+				matchShapeSize(sizefactor);
 				return;
 			}
 		}
