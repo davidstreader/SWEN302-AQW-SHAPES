@@ -45,7 +45,7 @@ ComboShape.prototype.collidingWith = function(shape){
 		console.log("Collision detected, hypotenuse length: " + hypot);
 		console.log(this);
 		console.log(shape);
-		return(canSnap(this.logicTree,shape.logicTree) && (shape.isQuestion != this.isQuestion));
+		return(canSnap(shape.logicTree.belowTree,this.logicTree) && (this.isQuestion));
 
 	}
 	return false;
@@ -54,7 +54,7 @@ ComboShape.prototype.collidingWith = function(shape){
 ComboShape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY){
     offsetX = offsetX || 0;
     offsetY = offsetY || 0;
-	for(var i=0; i < this.shapeList.length; i++) {
+	for(var i=this.shapeList.length-1; i >= 0; i--) {
 		var currShape = this.shapeList[i];
 		if(currShape.contains(mouseX, mouseY, ctx, this.currX + offsetX, this.currY + offsetY)){
 			console.log("currshape contains point: " + mouseX + ", " + mouseY);
@@ -99,6 +99,10 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter!=null){
+		var width = ctx.measureText(this.letter).width;
+		if(mouseX > this.currX+offsetX && mouseX < this.currX+offsetX+(this.fontSize * 0.75) && mouseY > this.currY+offsetY && mouseY < this.currY+offsetY+(this.fontSize*0.75)){
+			return true;
+		}
 		return false;
 	}
 	else {
@@ -110,7 +114,7 @@ Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
         ctx.closePath();
 	}
     if(ctx.isPointInPath(mouseX, mouseY)){
-        console.log("Shape says mous in path");
+        console.log("Shape says mouse in path");
     }
 	return ctx.isPointInPath(mouseX,mouseY);
 };
@@ -249,18 +253,35 @@ function CanvasState(canvas) {
 
 	canvas.addEventListener('mouseup', function(e){
 		var shapes = myState.shapes;
-		for(var i=0; i<shapes.length; i++){
-			for(var j=0; j<shapes.length; j++) {
-				if(shapes[i]===shapes[j]){continue;}
-				if (shapes[i].collidingWith(shapes[j])) {
-					console.log(i + " " + j);
+		for(var questionIndex=0; questionIndex<shapes.length; questionIndex++){
+			for(var ruleIndex=0; ruleIndex<shapes.length; ruleIndex++) {
+				if(shapes[questionIndex]===shapes[ruleIndex]){continue;}
+				if (shapes[questionIndex].collidingWith(shapes[ruleIndex])) {
+					console.log(questionIndex + " " + ruleIndex);
 					var newShapes = [];
-					var deltaX = shapes[j].collX - shapes[i].collX;
-					var deltaY = shapes[j].collY - shapes[i].collY;
-					var s1 = shapes[i].applyDelta(deltaX, deltaY); // new comboshape
-					newShapes = shapes[j].shapeList.concat(s1.shapeList);
-					shapes[i] = new ComboShape(shapes[j].currX, shapes[j].currY, 0, 0, newShapes, shapes[i].name, shapes[i].logicTree, true);
-					shapes = shapes.splice(j, 1);
+					var newAbove = getAbove(shapes[ruleIndex].logicTree,shapes[questionIndex].logicTree);
+					console.log(newAbove);
+					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
+					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
+					shapes[questionIndex].applyDelta(deltaX, deltaY); // new comboshape
+					//newShapes = shapes[ruleIndex].shapeList.concat(s1.shapeList);
+					var topLeft = buildAboveShape(newAbove[0],shapes[ruleIndex].currX, shapes[ruleIndex].currY, 1);
+					var topRight = buildAboveShape(newAbove[1],shapes[ruleIndex].currX+450, shapes[ruleIndex].currY, 1);
+					var exp = new Operator("TURNSTILE");
+					exp.left = newAbove[0];
+					exp.right = newAbove[1];
+
+					var result = new ComboShape(topLeft.currX,topLeft.currY,0,0,[topLeft,topRight],"",exp,true);
+					result.scale(0.5);
+					newShapes.push(result);
+					shapes[questionIndex].name = "";
+
+					newShapes.push(shapes[questionIndex]);
+					shapes[questionIndex] = new ComboShape(shapes[ruleIndex].currX, shapes[ruleIndex].currY, 225,110,
+						newShapes, shapes[questionIndex].name, shapes[questionIndex].logicTree, true);
+
+					//shapes[questionIndex] = result;
+					shapes = shapes.splice(ruleIndex, 1);
 					myState.valid = false;
 					myState.draw();
 					break;
@@ -420,9 +441,6 @@ CanvasState.prototype.draw = function() {
 	}
 }
 
-
-
-
 //Creates an object with x and y defined, set to the mouse position relative to the state's canvas
 //If you wanna be super-correct this can be tricky, we have to worry about padding and borders
 CanvasState.prototype.getMouse = function(e) {
@@ -486,20 +504,14 @@ function init() {
 
 	var question = new ComboShape(10, 400, 225, 100,
 			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	);
+	,true);
 	question.scale(0.5);
 	cs.addShape(question);
 
 	// debugging purposes only
 	c = cs;
 
-
-
-
 	//rules area
-
-
-
 
 	//rules area introduction
 	var canvasr = document.getElementById('canvasRules');
@@ -522,8 +534,8 @@ function init() {
 		mx = -1;
 		my = -1;
 		var relativePosition = {
-				left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
-				top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
+			left: e.pageX - $(document).scrollLeft() - $('#canvasElimination').offset().left,
+			top : e.pageY - $(document).scrollTop() - $('#canvasElimination').offset().top
 		};
 		mx = relativePosition.left;
 		my = relativePosition.top
@@ -534,8 +546,8 @@ function init() {
 		mx = -1;
 		my = -1;
 		var relativePosition = {
-				left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
-				top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
+			left: e.pageX - $(document).scrollLeft() - $('#canvasRules').offset().left,
+			top : e.pageY - $(document).scrollTop() - $('#canvasRules').offset().top
 		};
 		mx = relativePosition.left;
 		my = relativePosition.top
@@ -583,22 +595,24 @@ function setCanvasHeight(canvasr, canvase){
 
 
 function createShape(logicArray,i){
-
 	var logicShapes =[];
 	var OpValue = logicArray[i].value;
 	var left = logicArray[i].left;
 	var right = logicArray[i].right;
+	var padding = 10;
+	if(left.value !== "") {
+		var leftShape = createShape2(left, 10, 10, logicArray[i]);
+		logicShapes.push(leftShape);
+		padding = 460;
+	}
+	var rightShape = createShape2(right,padding,10,logicArray[i]);
+	logicShapes.push(rightShape);
 
-    var leftShape = createShape2(left,10,10,logicArray[i],i);
-    var rightShape = createShape2(right,460,10,logicArray[i],i);
-    logicShapes.push(leftShape);
-    logicShapes.push(rightShape);
-
-	c.addShape(new ComboShape(400,400,225,100,logicShapes,"Question "+i,logicArray[i],true));
+	c.addShape(new ComboShape(400,400,235,110,logicShapes,"Question "+i,logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
-function createShape2(operator,x,y,dickTree,i) {
+function createShape2(operator,x,y,dictTree) {
     var logicShapes = [];
     var OpValue = operator.value;
     var left = operator.left;
@@ -627,9 +641,40 @@ function createShape2(operator,x,y,dickTree,i) {
     if (OpValue !== "") {
         logicShapes.push(new Shape(180, 15, shapePoints[OpValue]));
     }
-    return new ComboShape(x, y, 225, 100, logicShapes, " ", dickTree);
+    return new ComboShape(x, y, 225, 100, logicShapes, " ", dictTree,true);
 }
+function buildAboveShape(operator,x,y,scale){
+	var logicShapes =[];
+	var OpValue = operator.value;
+	var left = operator.left;
+	var right = operator.right;
+	logicShapes.push(new Shape(10,10,shapePoints.RULE,QUESTION_BACKGROUND_COLOUR));
 
+	if(OpValue !=""){
+		logicShapes.push(new Shape(180,15, shapePoints[OpValue]));
+	}
+
+	if(left.value !="" && left instanceof Operator)
+		logicShapes.push(buildShape(left,LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(left.value != "")
+		logicShapes.push(new Shape(LEFT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[left.value]));
+
+	if(right.value !="" && right instanceof Operator)
+		logicShapes.push(buildShape(right,RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,0.3));
+
+	else if(right.value !="")
+		logicShapes.push(new Shape(RIGHT_SIDE_PADDING,LOWER_LEVEL_PADDING,shapePoints[right.value]));
+
+	var result = (new ComboShape(x,y,225,15,logicShapes,"",operator,true));
+	if(scale != 0) {
+		result.scale(scale);
+		result.currX = x;
+		result.currY = y;
+	}
+
+	return result;
+}
 
 function buildShape(operator,x,y,scale){
 	var logicShapes =[];
@@ -673,9 +718,6 @@ function drawRules(ruleArray) {
 		var above = ruleArray[i].above;
 		var below = ruleArray[i].below;
 
-
-
-
 		if (ruleArray[i].type == "Introduction") {
 			for (var j = 0; j < above.length; j++) {
 				for (k = 0; k < above[j].length; k++) {
@@ -686,10 +728,7 @@ function drawRules(ruleArray) {
 					shape.scale((150 / above[j].length) / 90);
 					shape.currX += (j * 300);
 					logicshapes.push(shape);
-
-
 				}
-
 			}
 
 			for (var j = 0; j < below.length; j++) {
@@ -699,11 +738,9 @@ function drawRules(ruleArray) {
 				shape.scale((150 / below.length) / 90);
 				shape.currX += (j * 10);
 				logicshapes.push(shape);
-
-
 			}
 			countIntroductionRules++;
-			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countEliminationRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i],false);
 
 			result.scale(0.5);
 			rulesIntroPanelHeight = (i - countEliminationRules) * 230;
@@ -719,10 +756,7 @@ function drawRules(ruleArray) {
 					shape.scale((150 / above[j].length) / 90);
 					shape.currX += (j * 300);
 					logicshapes.push(shape);
-
-
 				}
-
 			}
 
 			for (var j = 0; j < below.length; j++) {
@@ -732,16 +766,13 @@ function drawRules(ruleArray) {
 				shape.scale((150 / below.length) / 90);
 //				shape.currX += (j * 10);
 				logicshapes.push(shape);
-
-
 			}
 			countEliminationRules++;
-			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i].belowTree,false);
+			var result = new ComboShape(10, (i - countIntroductionRules) * 350 + 10, 225, 300, logicshapes, ruleArray[i].name,ruleArray[i],false);
 
 			result.scale(0.5);
 			rulesElimPanelHeight = (i - countIntroductionRules) * 230;
 			canvasEliminationRulesPanel.addShape(result);
 		}
 	}
-
 }
