@@ -10,6 +10,7 @@ var viewAnswerButton = document.getElementById("viewAnswerButton");
 var hintButton = document.getElementById("hintButton");
 var zoomInButton = document.getElementById("zoomInButton");
 var uploadButton = document.getElementById("zoomOutButton");
+var helpButton = document.getElementById("helpButton");
 var imageBin = document.getElementById("imageBin");
 var canvasGameArea = document.getElementById("canvasGameArea");
 var canvasSvg = document.getElementById("gameAreaPanel");
@@ -90,6 +91,17 @@ zoomOutButton.addEventListener("click", function(){
 	c.draw();
 	sizeFactor--;
 });
+
+//show user the rules of the game
+helpButton.addEventListener("click", function(){
+alert("Logic Learning Game Rules \n \nBefore starting playing, click the Browse button to load a set of " +
+		"questions. The left panel \nis a series of introduction rules and elimination rules. The right " +
+		"panel displays the question \nwhich can be dragged around. The three buttons above the right panel " +
+		"allow user to delete \nthe shapes and go to the next or previous question. The user can get the" +
+		"rules by click on \nany of the rules on the left panel. Successfully matching the rules and questions" +
+		"will lead the win!");
+});
+
 // remove button - remove selected shape
 imageBin.addEventListener("click", function(){
 
