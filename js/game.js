@@ -11,6 +11,8 @@ var LOWER_LEVEL_PADDING = 115;
 var LEFT_SIDE_PADDING = 15;
 var RIGHT_SIDE_PADDING = 315;
 var selectedLetter = new Shape(0,0,"T");
+var prevLetter;
+
 
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
@@ -96,15 +98,16 @@ ComboShape.prototype.scale = function(scaleFactor){
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
-Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
+Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY, isDblClcik) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter!=null){
-		var width = ctx.measureText(this.letter).width;
 		if(mouseX > this.currX+offsetX && mouseX < this.currX+offsetX+(this.fontSize * 0.75) && mouseY > this.currY+offsetY && mouseY < this.currY+offsetY+(this.fontSize*0.75)){
 			selectedLetter.fontSize = this.fontSize;
 			selectedLetter.currX = this.currX+offsetX;
 			selectedLetter.currY = this.currY+offsetY;
+			selectedLetter.letter = this.letter;
+
 			return true;
 		}
 		return false;
@@ -410,13 +413,23 @@ function CanvasState(canvas) {
 	var mouse = myState.getMouse(e);
 	var mx = mouse.x;
 	var my = mouse.y;
-	var shapes = myState.shapes;
+		selectedLetter.letter = "-1";
+
+		var shapes = myState.shapes;
 		for (var i = shapes.length - 1; i >= 0; i--) {
 			if (shapes[i].contains(mx, my, myState.ctx)) {
+				if(prevLetter == selectedLetter.letter){
+					window.alert("Question Complete, Press OK for the next question");
+					currentQuestionIndex++;
+					reset();
+				}
 				myState.ctx.globalAlpha = 0.4;
 				myState.ctx.fillStyle = "green";
 				myState.ctx.fillRect(selectedLetter.currX - selectedLetter.fontSize*0.1,selectedLetter.currY,selectedLetter.fontSize,selectedLetter.fontSize*0.8);
 				myState.ctx.globalAlpha = 1.0;
+				prevLetter = selectedLetter.letter;
+
+
 
 			}
 
