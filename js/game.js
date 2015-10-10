@@ -10,6 +10,9 @@ var QUESTION_BACKGROUND_COLOUR = "#46C7F2";
 var LOWER_LEVEL_PADDING = 115;
 var LEFT_SIDE_PADDING = 15;
 var RIGHT_SIDE_PADDING = 315;
+var selectedLetter = new Shape(0,0,"T");
+var prevLetter;
+
 
 function isString(s) {
 	return typeof(s) === 'string' || s instanceof String;
@@ -95,12 +98,16 @@ ComboShape.prototype.scale = function(scaleFactor){
 
 //Determine if a point is inside the shape's bounds by pathing each shape and calling isPointInPath
 //Start from back to get the newest placed if theres overlap
-Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY) {
+Shape.prototype.contains = function(mouseX, mouseY, ctx, offsetX, offsetY, isDblClcik) {
 	offsetX = offsetX || 0;
 	offsetY = offsetY || 0;
 	if(this.letter!=null){
-		var width = ctx.measureText(this.letter).width;
 		if(mouseX > this.currX+offsetX && mouseX < this.currX+offsetX+(this.fontSize * 0.75) && mouseY > this.currY+offsetY && mouseY < this.currY+offsetY+(this.fontSize*0.75)){
+			selectedLetter.fontSize = this.fontSize;
+			selectedLetter.currX = this.currX+offsetX;
+			selectedLetter.currY = this.currY+offsetY;
+			selectedLetter.letter = this.letter;
+
 			return true;
 		}
 		return false;
@@ -305,34 +312,34 @@ function CanvasState(canvas) {
 				// Keep track of where in the object we clicked
 				// so we can move it smoothly (see mousemove)
 				selectedShape = mySel;
-//				if(selectedShape.currX<0){
-//					selectedShape.currX = 0;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currY<0){
-//					selectedShape.currY = 0;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currY>c.height - 150){
-//					selectedShape.currY = c.height-150;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currX>c.width - 200){
-//					selectedShape.currX = c.width-200;
-//					myState.valid = false;
-//					return;
-//				}
-//				else{
+				if(selectedShape.currX<0){
+					selectedShape.currX = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY<0){
+					selectedShape.currY = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY>c.height - 150){
+					selectedShape.currY = c.height-150;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currX>c.width - 200){
+					selectedShape.currX = c.width-200;
+					myState.valid = false;
+					return;
+				}
+				else{
 					myState.dragoffx = mx - mySel.currX;
 					myState.dragoffy = my - mySel.currY;
 					myState.dragging = true;
 					myState.selection = mySel;
 					myState.valid = false;
 					return;
-//				}
+				}
 			}
 		}
 
@@ -366,33 +373,33 @@ function CanvasState(canvas) {
 			if (myState.dragging){
 				var mouse = myState.getMouse(e);
 
-//				if(selectedShape.currX<0){
-//					selectedShape.currX = 0;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currY<0){
-//					selectedShape.currY = 0;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currY>c.height - 150){
-//					selectedShape.currY = c.height-150;
-//					myState.valid = false;
-//					return;
-//				}
-//				else if(selectedShape.currX>c.width - 200){
-//					selectedShape.currX = c.width-200;
-//					myState.valid = false;
-//					return;
-//				}
-//				else{
+				if(selectedShape.currX<0){
+					selectedShape.currX = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY<0){
+					selectedShape.currY = 0;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currY>c.height - 150){
+					selectedShape.currY = c.height-150;
+					myState.valid = false;
+					return;
+				}
+				else if(selectedShape.currX>c.width - 200){
+					selectedShape.currX = c.width-200;
+					myState.valid = false;
+					return;
+				}
+				else{
 					// We don't want to drag the object by its top-left corner, we want to drag it
 					// from where we clicked. Thats why we saved the offset and use it here
 					myState.selection.currX = mouse.x - myState.dragoffx;
 					myState.selection.currY = mouse.y - myState.dragoffy;
 					myState.valid = false; // redraw
-//				}
+				}
 			}
 		}
 	}, true);
@@ -401,7 +408,38 @@ function CanvasState(canvas) {
 		myState.dragging = false;
 	}, true);
 
-	// **** Options! ****
+	canvas.addEventListener('dblclick', function(e){
+	selectedLetter.fontSize = 0;
+	var mouse = myState.getMouse(e);
+	var mx = mouse.x;
+	var my = mouse.y;
+		selectedLetter.letter = "-1";
+
+		var shapes = myState.shapes;
+		for (var i = shapes.length - 1; i >= 0; i--) {
+			if (shapes[i].contains(mx, my, myState.ctx)) {
+				if(prevLetter == selectedLetter.letter){
+					window.alert("Question Complete, Press OK for the next question");
+					currentQuestionIndex++;
+					selectedLetter.fontSize = 0;
+					selectedLetter.letter = "-1";
+					reset();
+				}
+				myState.ctx.globalAlpha = 0.4;
+				myState.ctx.fillStyle = "green";
+				myState.ctx.fillRect(selectedLetter.currX - selectedLetter.fontSize*0.1,selectedLetter.currY,selectedLetter.fontSize,selectedLetter.fontSize*0.8);
+				myState.ctx.globalAlpha = 1.0;
+				prevLetter = selectedLetter.letter;
+
+
+
+			}
+
+
+		}
+	}, true);
+
+		// **** Options! ****
 	this.interval = 1000/60;
 	setInterval(function() { myState.draw(); }, myState.interval);
 }
@@ -496,19 +534,13 @@ var shapePoints={
 
 function init() {
 	//game area
-	var cs = new CanvasState(canvasGameArea);
-	canvasGameArea.width = canvasSvg.clientWidth;
-	canvasGameArea.height = canvasSvg.clientHeight;
+	var canvas = document.getElementById('canvasGameArea');
+	var cs = new CanvasState(canvas);
+	canvas.width = canvasSvg.clientWidth;
+	canvas.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
-
-	var question = new ComboShape(10, 400, 225, 100,
-			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	,true);
-	question.scale(0.5);
-	cs.addShape(question);
-
-	// debugging purposes only
+	
 	c = cs;
 
 	//rules area
@@ -643,6 +675,27 @@ function createShape2(operator,x,y,dictTree) {
     }
     return new ComboShape(x, y, 225, 100, logicShapes, " ", dictTree,true);
 }
+
+function drawShape(above,below) {
+	var logicShapesAbove =[];
+		for(var i = 0; i< above; i++){
+				logicShapesAbove.push(new Shape(450*i,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+			}
+		var top = (new ComboShape(0,0,0,0,logicShapesAbove,"",null,true));
+		var logicShapesBelow = [];
+		for(var i = 0; i< below; i++){
+				logicShapesBelow.push(new Shape(450*i,10,shapePoints.RULEBELOW,QUESTION_BACKGROUND_COLOUR));
+			}
+		var xPadding = ((above-below)*450)/2;
+		console.log(xPadding);
+		var bot  = new ComboShape(xPadding,200,0,0,logicShapesBelow,"",null,true);
+		var logicShapeFull = [];
+		logicShapeFull.push(top);
+		logicShapeFull.push(bot);
+		return new ComboShape(200,300,0,0,logicShapeFull,"",null,true);
+	}
+
+
 function buildAboveShape(operator,x,y,scale){
 	var logicShapes =[];
 	var OpValue = operator.value;
@@ -708,6 +761,7 @@ function buildShape(operator,x,y,scale){
 
 	return result;
 }
+
 
 function drawRules(ruleArray) {
 	var countIntroductionRules = 0;

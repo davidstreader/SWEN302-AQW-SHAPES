@@ -44,7 +44,10 @@ inputFile.change(function () {
 				generateASTs();
 				createShape(questions, 0);
 				reset();
-
+				if(inputFile.parent().hasClass("btn-success")) {
+					inputFile.parent().removeClass("btn-success");
+					inputFile.parent().addClass("btn-primary");
+				}
 			});
 		} else {
 			alert("json file only!")
