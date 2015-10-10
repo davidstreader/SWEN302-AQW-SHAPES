@@ -422,6 +422,7 @@ function CanvasState(canvas) {
 					window.alert("Question Complete, Press OK for the next question");
 					currentQuestionIndex++;
 					selectedLetter.fontSize = 0;
+					selectedLetter.letter = "-1";
 					reset();
 				}
 				myState.ctx.globalAlpha = 0.4;
