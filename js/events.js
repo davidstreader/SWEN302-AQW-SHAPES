@@ -206,7 +206,7 @@ function questionIndex(){
     	questionIndexButton.textContent = "No question Loaded";
     }
     else {
-    	questionIndexButton.textContent = "Current Question: "+currentQuestionIndex ;
+    	questionIndexButton.textContent = "Current Question: "+(currentQuestionIndex + 1 );
     }
 }
 

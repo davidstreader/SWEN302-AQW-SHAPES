@@ -640,7 +640,7 @@ function createShape(logicArray,i){
 	var rightShape = createShape2(right,padding,10,logicArray[i]);
 	logicShapes.push(rightShape);
 
-	c.addShape(new ComboShape(400,400,235,110,logicShapes,"Question "+i,logicArray[i],true));
+	c.addShape(new ComboShape(400,400,235,110,logicShapes,"",logicArray[i],true));
 	c.shapes[c.shapes.length-1].scale(0.5);
 }
 
