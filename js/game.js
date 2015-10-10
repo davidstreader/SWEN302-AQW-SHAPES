@@ -525,9 +525,7 @@ function init() {
 	canvas.height = canvasSvg.clientHeight;
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
-
-	alert("Please browse to the question file provided by your lecturer.");
-
+	
 	c = cs;
 
 	//rules area
