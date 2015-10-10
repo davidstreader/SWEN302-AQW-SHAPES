@@ -1,7 +1,7 @@
 [  
     { "name": "Question1", "value": "A∧B ⊢ B"},
     { "name": "Question2", "value": "A∧B ⊢ A"},
-    { "name": "Question3", "value": "A ⊢ B→A"},
+    { "name": "Question3", "value": "A∧B ⊢ A→B"},
     { "name": "Question4", "value": "¬B→¬A ⊢ A→B"},
     { "name": "Question5", "value": "¬(¬A∧¬B) ⊢ A∨B"},
     { "name": "Question6", "value": "¬(A∧B) ⊢ ¬A∨¬B"},
@@ -20,7 +20,7 @@
     { "name": "Question19", "value": "A→B→C→H ⊢ C→B→A→H"},
     { "name": "Question20", "value": "⊢ (A→B→C)→(A→B)→A→C"},
     { "name": "Question21", "value": "(A→B)→C ⊢ A→B→C"},
-    { "name": "Question22", "value": "A∧B ⊢ A→B"},
+    { "name": "Question22", "value": "A ⊢ B→A"},
     { "name": "Question23", "value": "(A→B)∧(A→C) ⊢ A→(B∧C)"},
     { "name": "Question24", "value": "A→B→C ⊢ (A∧B)→C"},
     { "name": "Question25", "value": "(A∧B)→C ⊢ A→B→C"},
