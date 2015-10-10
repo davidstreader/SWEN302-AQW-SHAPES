@@ -409,7 +409,7 @@ function CanvasState(canvas) {
 	}, true);
 
 	canvas.addEventListener('dblclick', function(e){
-	var selectedShape = undefined;
+	selectedLetter.fontSize = 0;
 	var mouse = myState.getMouse(e);
 	var mx = mouse.x;
 	var my = mouse.y;
@@ -421,6 +421,7 @@ function CanvasState(canvas) {
 				if(prevLetter == selectedLetter.letter){
 					window.alert("Question Complete, Press OK for the next question");
 					currentQuestionIndex++;
+					selectedLetter.fontSize = 0;
 					reset();
 				}
 				myState.ctx.globalAlpha = 0.4;
