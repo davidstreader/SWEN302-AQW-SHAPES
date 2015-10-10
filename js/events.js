@@ -1,3 +1,4 @@
+
 // =================================================================================
 // Author: Claire Sun & Jacky Chang
 // Contains: Event handlers for most GUI elements, including:
@@ -95,10 +96,10 @@ zoomOutButton.addEventListener("click", function(){
 //show user the rules of the game
 helpButton.addEventListener("click", function(){
 alert("Logic Learning Game Rules \n \nBefore starting playing, click the Browse button to load a set of " +
-		"questions. The left panel \nis a series of introduction rules and elimination rules. The right " +
-		"panel displays the question \nwhich can be dragged around. The three buttons above the right panel " +
-		"allow user to delete \nthe shapes and go to the next or previous question. The user can get the" +
-		"rules by click on \nany of the rules on the left panel. Successfully matching the rules and questions" +
+		"questions. \n\nThe left panel is a series of introduction rules and elimination rules. \n\nThe right " +
+		"panel displays the question which can be dragged around. The three buttons above the right panel " +
+		"allow user to delete \nthe shapes and go to the next or previous question. \n\nThe user can get the" +
+		"rules by click on any of the rules on the left panel. \n\nSuccessfully matching the rules and questions" +
 		"will lead the win!");
 });
 
