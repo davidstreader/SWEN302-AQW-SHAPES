@@ -526,13 +526,8 @@ function init() {
 	cs.width = canvasSvg.clientWidth;
 	cs.height = canvasSvg.clientHeight;
 
-	var question = new ComboShape(10, 400, 225, 100,
-			[new Shape(10,10,shapePoints.QUESTION,"#FFF"), new Shape(15,130,shapePoints.B,"#00F"), new Shape(330,110,shapePoints.A,"#00F"), new Shape(180,15,shapePoints.IMPLIES,"#00F")]
-	,true);
-	question.scale(0.5);
-	cs.addShape(question);
+	alert("Please browse to the question file provided by your lecturer.");
 
-	// debugging purposes only
 	c = cs;
 
 	//rules area
