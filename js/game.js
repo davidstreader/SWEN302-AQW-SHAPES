@@ -585,7 +585,7 @@ function init() {
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
-				matchShapeSize();
+				matchShapeSize(sizefactor);
 				return;
 			}
 		}
@@ -598,7 +598,7 @@ function init() {
 		for (var i = 0; i < sps.length; i++) {
 			if (sps[i].contains(mx, my, canvasIntroductionRulesPanel.ctx)) {
 				c.addShape(sps[i].clone());
-				matchShapeSize();
+				matchShapeSize(sizefactor);
 				return;
 			}
 		}
@@ -667,6 +667,27 @@ function createShape2(operator,x,y,dictTree) {
     }
     return new ComboShape(x, y, 225, 100, logicShapes, " ", dictTree,true);
 }
+
+function drawShape(above,below) {
+	var logicShapesAbove =[];
+		for(var i = 0; i< above; i++){
+				logicShapesAbove.push(new Shape(450*i,10,shapePoints.QUESTION,QUESTION_BACKGROUND_COLOUR));
+			}
+		var top = (new ComboShape(0,0,0,0,logicShapesAbove,"",null,true));
+		var logicShapesBelow = [];
+		for(var i = 0; i< below; i++){
+				logicShapesBelow.push(new Shape(450*i,10,shapePoints.RULEBELOW,QUESTION_BACKGROUND_COLOUR));
+			}
+		var xPadding = ((above-below)*450)/2;
+		console.log(xPadding);
+		var bot  = new ComboShape(xPadding,200,0,0,logicShapesBelow,"",null,true);
+		var logicShapeFull = [];
+		logicShapeFull.push(top);
+		logicShapeFull.push(bot);
+		return new ComboShape(200,300,0,0,logicShapeFull,"",null,true);
+	}
+
+
 function buildAboveShape(operator,x,y,scale){
 	var logicShapes =[];
 	var OpValue = operator.value;
