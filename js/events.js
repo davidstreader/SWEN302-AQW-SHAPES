@@ -163,6 +163,7 @@ function reset(){
 	c.shapes = [];
 	if(questions!=undefined){
 		createShape(questions, currentQuestionIndex);
+		questionIndex();
 	}
 	sizefactor = 0;
 	c.valid = false;
@@ -188,6 +189,22 @@ function matchShapeSize(sizeFactor) {
 			c.draw();
 		}
 	
+}
+
+function matchSuccessful(){
+	alert("MatchSuccessful");
+	currentQuestionIndex +=1;
+	reset();
+}
+// show current question index when click previous or next quesiton button
+function questionIndex(){
+	var questionIndexButton = document.getElementById("currentQuestion");
+    if (questions==undefined) {
+    	questionIndexButton.textContent = "No question Loaded";
+    }
+    else {
+    	questionIndexButton.textContent = "Current Question: "+currentQuestionIndex ;
+    }
 }
 
 //	resize rule panel and game area panel to fit the screen with the current window inner height
