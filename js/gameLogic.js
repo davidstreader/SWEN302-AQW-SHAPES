@@ -100,7 +100,11 @@ function getAbove(rule, expression) {
  */
 function replaceVariablesWithSubtrees(currentNode, dict) {
     if (currentNode instanceof Variable /*|| currentNode === ""*/) {
-        return dict[currentNode.value];
+        if(dict[currentNode.value] === undefined){
+            return new Variable("T");
+        }else {
+            return dict[currentNode.value];
+        }
     }
     var node = new Operator(currentNode.value);
     node.left = replaceVariablesWithSubtrees(currentNode.left, dict);
@@ -179,11 +183,19 @@ function contains(array, item) {
     return false;
 }
 
-function getArrayAbove(belowArray,expressions){
-    if(belowArray.length != expressions.length){
-        console.error("Illegal Arguments");
+function getArrayAbove(rule,expression){
+    var exp = getAbove(rule,expression);
+    var array=[];
+    for(var i=0;i<exp.length;i++){
+        if(exp[i] instanceof Operator){
+            if(exp[i].value === "TURNSTILE"){
+                array.push(exp[i].left);
+                array.push(exp[i].right);
+                continue;
+            }
+        }
+        array.push(exp[i]);
     }
-    for(var i=0;i<expressions.length;i++){
-
-    }
+    console.log(array);
+    return array;
 }

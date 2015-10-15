@@ -211,6 +211,29 @@ describe("Test getAbove complex2",function(){
         expect((getAbove(currentRule, expression).length)).toBe(2);
     });
 })
+
+describe("Test getAbove complex3",function(){
+
+    var data =      { "type": "Elimination", "name": "And Elimination", "above": ["⊢A∧B"], "below": "⊢B"};
+    var currentRule = generateRuleFromJSON(data);
+
+    var expression = parse("A∧B ⊢ B");
+
+    var above1 = parse("A∧B⊢T∧B");
+    //var above2 = parse("A∧(B∧C)⊢C");
+
+    it("Above complex 1", function(){
+        console.log(getAbove(currentRule, expression)[0]);
+        console.log(above1);
+        expect(getAbove(currentRule, expression)[0].equals(above1)).toBe(true);
+    });
+    /*it("Above complex 2", function(){
+        expect(getAbove(currentRule, expression)[1].equals(above2)).toBe(true);
+    });*/
+    it("Nothing else", function(){
+        expect((getAbove(currentRule, expression).length)).toBe(1);
+    });
+})
 /*
 describe("Test getAbove complex2",function(){
 

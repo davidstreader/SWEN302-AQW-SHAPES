@@ -266,7 +266,7 @@ function CanvasState(canvas) {
 				if (shapes[questionIndex].collidingWith(shapes[ruleIndex])) {
 					console.log(questionIndex + " " + ruleIndex);
 					var newShapes = [];
-					var newAbove = getAbove(shapes[ruleIndex].logicTree,shapes[questionIndex].logicTree);
+					var newAbove = getArrayAbove(shapes[ruleIndex].logicTree,shapes[questionIndex].logicTree);
 					console.log(newAbove);
 					var deltaX = shapes[ruleIndex].collX - shapes[questionIndex].collX;
 					var deltaY = shapes[ruleIndex].collY - shapes[questionIndex].collY;
